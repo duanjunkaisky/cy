@@ -17,6 +17,10 @@
             <artifactId>core-mbg</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.quhaodian</groupId>
             <artifactId>freemaker</artifactId>
             <version>1.8.1</version>

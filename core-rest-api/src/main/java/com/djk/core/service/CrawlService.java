@@ -1,6 +1,10 @@
 package com.djk.core.service;
 
+import com.djk.core.model.BasePort;
+import com.djk.core.model.BasePortExample;
 import com.djk.core.vo.QueryRouteVo;
+
+import java.util.List;
 
 /**
  * @author duanjunkai
@@ -8,10 +12,13 @@ import com.djk.core.vo.QueryRouteVo;
  */
 public interface CrawlService
 {
+
     /**
-     * 查询航班信息
+     * 爬取
+     *
      * @param queryRouteVo
-     * @return {@link String}
+     * @return
+     * @throws InterruptedException
      */
     String queryData(QueryRouteVo queryRouteVo) throws InterruptedException;
 }

@@ -1,16 +1,24 @@
 package com.djk.core.service;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.djk.core.config.Constant;
 import com.djk.core.config.SpringUtil;
+import com.djk.core.mapper.CrawlRequestStatusMapper;
+import com.djk.core.model.CrawlRequestStatus;
+import com.djk.core.model.CrawlRequestStatusExample;
+import com.djk.core.mq.ConsumerPull;
 import com.djk.core.vo.QueryRouteVo;
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -26,40 +34,58 @@ public class CrawlChain
 {
     private List<String> target;
 
-    private static final int CORE_THREAD_COUNT = 10;
-    private static final int MAX_THREAD_COUNT = 15;
-    private static ArrayBlockingQueue queue = new ArrayBlockingQueue<>(MAX_THREAD_COUNT * 2);
-    public static ExecutorService POOL = new ThreadPoolExecutor(
-            CORE_THREAD_COUNT,
-            MAX_THREAD_COUNT,
-            10,
-            TimeUnit.SECONDS,
-            queue,
-            Executors.defaultThreadFactory(),
-            new ThreadPoolExecutor.CallerRunsPolicy());
+    public static ListeningExecutorService EXECUTOR_SERVICE = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(3));
 
-    public void doBusiness(QueryRouteVo queryRouteVo)
+    @Autowired
+    CrawlRequestStatusMapper requestStatusMapper;
+
+    @Async
+    public void doBusiness(QueryRouteVo queryRouteVo) throws ExecutionException, InterruptedException
     {
-        if (queue.size() <= MAX_THREAD_COUNT) {
-            for (String beanName : target) {
-                POOL.submit(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        CrawlService crawlService = (CrawlService) SpringUtil.getBean(beanName);
-                        try {
-                            crawlService.queryData(queryRouteVo);
-                        } catch (Exception e) {
-                            log.error(ExceptionUtil.getMessage(e));
-                            log.error(ExceptionUtil.stacktraceToString(e));
-                        }
-                    }
-                });
-            }
-        } else {
-            log.info("爬数线程数大于" + MAX_THREAD_COUNT + ", 跳过");
+        List<ListenableFuture<String>> futureList = new ArrayList<>();
+        for (String beanName : target) {
+            String hostCode = getHostCode(beanName);
+            futureList.add(EXECUTOR_SERVICE.submit(() -> {
+                CrawlService crawlService = (CrawlService) SpringUtil.getBean(beanName);
+                try {
+                    CrawlRequestStatus requestStatus = new CrawlRequestStatus();
+                    requestStatus.setRequestId(String.valueOf(queryRouteVo.getRequestId()));
+                    requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
+                    requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
+                    requestStatus.setHostCode(hostCode);
+                    requestStatusMapper.insertSelective(requestStatus);
+
+                    crawlService.queryData(queryRouteVo);
+                } catch (Exception e) {
+                    log.error(ExceptionUtil.getMessage(e));
+                    log.error(ExceptionUtil.stacktraceToString(e));
+                    CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
+                    crawlRequestStatusExample.createCriteria().andRequestIdEqualTo(String.valueOf(queryRouteVo.getRequestId())).andHostCodeEqualTo(hostCode);
+                    CrawlRequestStatus requestStatus = new CrawlRequestStatus();
+                    requestStatus.setStatus(Constant.CRAWL_STATUS.ERROR.ordinal());
+                    requestStatus.setMsg(ExceptionUtil.stacktraceToString(e));
+                    requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
+                }
+                return beanName;
+            }));
         }
+        ListenableFuture<List<String>> listListenableFuture = Futures.allAsList(Lists.newArrayList(futureList));
+        List<String> implNameList = listListenableFuture.get();
+        implNameList.forEach(item -> {
+            log.debug(item + "爬取完成!");
+            CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
+            crawlRequestStatusExample.createCriteria().andRequestIdEqualTo(String.valueOf(queryRouteVo.getRequestId())).andHostCodeEqualTo(getHostCode(item));
+            CrawlRequestStatus requestStatus = new CrawlRequestStatus();
+            requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
+            requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
+        });
+        ConsumerPull.currentJobs.remove(String.valueOf(queryRouteVo.getRequestId()));
+    }
+
+    public static String getHostCode(String beanName)
+    {
+        String str = beanName.toLowerCase();
+        return str.replaceAll("crawlservicefro", "").replaceAll("impl", "");
     }
 
 }

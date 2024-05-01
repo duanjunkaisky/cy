@@ -14,11 +14,15 @@ public class QueryRouteVo
      */
     private String departurePortEn;
     /**
-     * 离港时间
+     * 离港时间,2024-05-02
      */
     private String departureDate;
     /**
      * 到达港口英文名称
      */
     private String destinationPortEn;
+
+    private long requestId;
+
+    private long startTime;
 }

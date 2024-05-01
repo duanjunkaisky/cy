@@ -13,6 +13,16 @@ spring:
         login-username: druid
         login-password: druid
 
+rocketmq:
+  name-server: 124.223.114.215:9876
+  producer:
+    group: async_crawl_group
+    topic: ASYNC_CRAWL_TOPIC
+    send-message-timeout: 3000
+    mqMax: 32
+  maxCrawlTime: 1800000 #一次爬取最大30分钟
+  maxCrawlCount: 3 #一台机器最多执行3个爬取请求,因为每个请求中最多可能有10个网站的爬取线程
+
 crawl:
   target:
     - crawlServiceFroOneImpl
