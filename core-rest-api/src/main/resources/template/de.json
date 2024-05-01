@@ -1,78 +1,41 @@
-https://api.maersk.com/v2/departures  post
-{"correlationId":"541536da-aac3-4bfe-b1b3-e1e05e8061e3"}
-
 {
-  "bookingType": "NEW",
-  "originLocation": {
-    "geoId": "2IW9P6J7XAW72",
-    "rkstCode": "CNSGH",
-    "countryCode": "CN"
+  "alternateOfferRequest": true,
+  "from": {
+    "maerskGeoId": "03B8IKYXH3VYM",
+    "maerskRkstCode": "CNGMK",
+    "countryCode": "CN",
+    "maerskServiceMode": "CY",
+    "name": "Yue Yang, China"
   },
-  "destinationLocation": {
-    "geoId": "1JUKNJGWHQBNJ",
-    "rkstCode": "NLROT",
-    "countryCode": "NL"
+  "to": {
+    "maerskGeoId": "1JUKNJGWHQBNJ",
+    "maerskRkstCode": "NLROT",
+    "countryCode": "NL",
+    "maerskServiceMode": "CY",
+    "name": "Rotterdam (Zuid-Holland), Netherlands"
   },
-  "batchSizeInWeeks": 2,
-  "productsFetchSizeInWeeks": 2,
-  "validationFlags": {
-    "checkEquipmentAvailability": true,
-    "checkDeadlines": true,
-    "checkSpace": true,
-    "checkYield": true,
-    "checkFixedPrices": true
-  },
-  "carrierCode": "MAEU",
-  "exportServiceMode": "CY",
-  "importServiceMode": "CY",
-  "cargoDetails": {
-    "commodityCode": "004403",
-    "cargoType": "DRY",
-    "isDangerous": false,
-    "isTempControlled": false
-  },
-  "containerDetails": [
+  "containers": [
     {
-      "size": "20",
-      "type": "DRY",
-      "height": "8 6",
-      "quantity": 1,
-      "cargoWeight": 18000,
-      "weightMeasurementUnit": "KGS",
-      "isNOR": false,
-      "isFoodGrade": false,
       "isoCode": "22G1",
-      "isShipperOwned": false,
-      "isOutOfGauge": false,
-      "isImportReturned": false,
-      "containerRefs": [
-        "53611OZSMORRL"
-      ]
+      "size": "20",
+      "name": "20 Dry Standard",
+      "type": "DRY",
+      "weight": 18000,
+      "quantity": 1,
+      "isReefer": false,
+      "isNonOperatingReefer": false,
+      "isShipperOwnedContainer": false
     }
   ],
-  "metricUnits": true,
-  "isContainerPickedUp": false,
-  "isContainerGatedIn": false,
-  "earliestDepartureDate": "2024-05-04",
-  "priceCalculationDate": "2024-05-04",
-  "parties": [
-    {
-      "scvCode": "40605170076",
-      "cmdCode": "CN05170076",
-      "roleName": "Booked By",
-      "roleCode": 1,
-      "companyName": "TIANJIN HIGHWAY CLOUD TECHNOLOGY DEVELOPMENT CO LTD",
-      "companyAddress": "1118 , PILOT FREE TRADE ZONE , BINHAI STREET , TIANJIN , China , 300010"
-    },
-    {
-      "scvCode": "40605170076",
-      "cmdCode": "CN05170076",
-      "roleName": "Price Owner",
-      "companyName": "TIANJIN HIGHWAY CLOUD TECHNOLOGY DEVELOPMENT CO LTD",
-      "roleCode": 44
-    }
-  ],
-  "buCode": "2162",
-  "productsEagerFetch": true,
-  "previousCorrelationId": "e704996c-047d-484e-95da-80b037c28eb6"
+  "shipmentPriceCalculationDate": "2024-05-07",
+  "commodity": {
+    "id": "004403",
+    "isDangerous": false,
+    "dangerousDetails": []
+  },
+  "unit": "KG",
+  "brandCode": "MAEU",
+  "customerCode": "40605170076",
+  "loadAFLS": false,
+  "weekOffset": 4
 }
