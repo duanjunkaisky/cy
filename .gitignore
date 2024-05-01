@@ -1,0 +1,4 @@
+# Project exclude paths
+/core-common/target/
+/core-mbg/target/
+/core-rest-api/target/

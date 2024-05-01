@@ -1,0 +1,57 @@
+{
+  "maerskCorrelationId": "29d0e03347f0ac40",
+  "offers": [
+    {
+      "productOffer": null,
+      "routeScheduleWithPrices": null,
+      "contracts": null,
+      "spotScope": {
+        "spotOnlyAllowedFreesale": true,
+        "spotSupported": true
+      },
+      "offerFilteredReasons": {
+        "requestId": null,
+        "traceId": "29d0e03347f0ac40",
+        "productCode": "MaerskSpot",
+        "brandScac": "MAEU",
+        "routeCode": "E1W",
+        "originServiceMode": "CY",
+        "destinationServiceMode": "CY",
+        "origin": "CNSGH",
+        "originLabel": "Shanghai China",
+        "destination": "NLROT",
+        "destinationLabel": "Rotterdam Netherlands",
+        "firstLoadPort": "CNSGHY3",
+        "firstLoadPortLabel": "Shanghai China",
+        "lastDischargePort": "NLROTTM",
+        "lastDischargePortLabel": "Rotterdam Netherlands",
+        "vesselVoyages": [
+          "1YM/417W"
+        ],
+        "container": "[20DRY]",
+        "departureDate": "2024-05-09",
+        "departureWeek": 19,
+        "detailedSchedule": "Schedule segments: CNSGHY3 > NLROTTM. ",
+        "status": "NOT_ALLOWED",
+        "type": "CAPACITY",
+        "reason": "No more space available for spot products for CNSGH > CNSGHY3 > NLROTTM > NLROT with [20DRY] on 2024-05-09.\nUNAVAILABILITY(RID: 82408dab-55a5-41c2-867e-ed6948189031) (E1W): No FFE Availability. No FFE Availability for segment CNSGHY3 > NLROTTM (431 on MVS 1YM/417W):  No FFE Availability for leg MYTPPTM > NLROTTM; ",
+        "time": "2024-05-01T07:36:41.313654179",
+        "productAttributes": null,
+        "productVariances": null,
+        "vesselName": "MARCHEN MAERSK",
+        "vesselCode": "1YM",
+        "voyageNumber": "417W"
+      }
+    }
+  ],
+  "loadMore": true,
+  "noSchedules": false,
+  "nextOffsetWeek": 2,
+  "currentWeekOffset": 0,
+  "spotScope": {
+    "spotOnlyAllowedFreesale": true,
+    "spotSupported": true
+  },
+  "brandRedirectOffer": null,
+  "isAlternativeOfferPresent": true
+}

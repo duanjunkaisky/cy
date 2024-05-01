@@ -1,0 +1,127 @@
+package com.djk.core.model;
+
+import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.util.Date;
+
+public class CrawlRequestStatus implements Serializable {
+    private Long id;
+
+    @ApiModelProperty(value = "请求标识")
+    private String requestId;
+
+    @ApiModelProperty(value = "请求组装参数，也可用来唯一标识")
+    private String requestParams;
+
+    @ApiModelProperty(value = "网站简码")
+    private String hostCode;
+
+    @ApiModelProperty(value = "0:爬取中,1:爬取完成,2:爬取出错")
+    private Integer status;
+
+    @ApiModelProperty(value = "出错信息")
+    private String msg;
+
+    @ApiModelProperty(value = "爬取数量")
+    private Integer dataCount;
+
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime;
+
+    @ApiModelProperty(value = "最后更新时间")
+    private Date updateTime;
+
+    private static final long serialVersionUID = 1L;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getRequestParams() {
+        return requestParams;
+    }
+
+    public void setRequestParams(String requestParams) {
+        this.requestParams = requestParams;
+    }
+
+    public String getHostCode() {
+        return hostCode;
+    }
+
+    public void setHostCode(String hostCode) {
+        this.hostCode = hostCode;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public Integer getDataCount() {
+        return dataCount;
+    }
+
+    public void setDataCount(Integer dataCount) {
+        this.dataCount = dataCount;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+        sb.append(", id=").append(id);
+        sb.append(", requestId=").append(requestId);
+        sb.append(", requestParams=").append(requestParams);
+        sb.append(", hostCode=").append(hostCode);
+        sb.append(", status=").append(status);
+        sb.append(", msg=").append(msg);
+        sb.append(", dataCount=").append(dataCount);
+        sb.append(", createTime=").append(createTime);
+        sb.append(", updateTime=").append(updateTime);
+        sb.append(", serialVersionUID=").append(serialVersionUID);
+        sb.append("]");
+        return sb.toString();
+    }
+}

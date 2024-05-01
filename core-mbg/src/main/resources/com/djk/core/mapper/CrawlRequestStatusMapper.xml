@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.djk.core.mapper.CrawlRequestStatusMapper">
+  <resultMap id="BaseResultMap" type="com.djk.core.model.CrawlRequestStatus">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="request_id" jdbcType="VARCHAR" property="requestId" />
+    <result column="request_params" jdbcType="VARCHAR" property="requestParams" />
+    <result column="host_code" jdbcType="VARCHAR" property="hostCode" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="msg" jdbcType="VARCHAR" property="msg" />
+    <result column="data_count" jdbcType="INTEGER" property="dataCount" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, request_id, request_params, host_code, status, msg, data_count, create_time, 
+    update_time
+  </sql>
+  <select id="selectByExample" parameterType="com.djk.core.model.CrawlRequestStatusExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from crawl_request_status
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from crawl_request_status
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from crawl_request_status
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.djk.core.model.CrawlRequestStatusExample">
+    delete from crawl_request_status
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.djk.core.model.CrawlRequestStatus">
+    insert into crawl_request_status (id, request_id, request_params, 
+      host_code, status, msg, 
+      data_count, create_time, update_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{requestId,jdbcType=VARCHAR}, #{requestParams,jdbcType=VARCHAR}, 
+      #{hostCode,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{msg,jdbcType=VARCHAR}, 
+      #{dataCount,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.djk.core.model.CrawlRequestStatus">
+    insert into crawl_request_status
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="requestId != null">
+        request_id,
+      </if>
+      <if test="requestParams != null">
+        request_params,
+      </if>
+      <if test="hostCode != null">
+        host_code,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="msg != null">
+        msg,
+      </if>
+      <if test="dataCount != null">
+        data_count,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="requestId != null">
+        #{requestId,jdbcType=VARCHAR},
+      </if>
+      <if test="requestParams != null">
+        #{requestParams,jdbcType=VARCHAR},
+      </if>
+      <if test="hostCode != null">
+        #{hostCode,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="msg != null">
+        #{msg,jdbcType=VARCHAR},
+      </if>
+      <if test="dataCount != null">
+        #{dataCount,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.djk.core.model.CrawlRequestStatusExample" resultType="java.lang.Long">
+    select count(*) from crawl_request_status
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update crawl_request_status
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.requestId != null">
+        request_id = #{record.requestId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.requestParams != null">
+        request_params = #{record.requestParams,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hostCode != null">
+        host_code = #{record.hostCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.msg != null">
+        msg = #{record.msg,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dataCount != null">
+        data_count = #{record.dataCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update crawl_request_status
+    set id = #{record.id,jdbcType=BIGINT},
+      request_id = #{record.requestId,jdbcType=VARCHAR},
+      request_params = #{record.requestParams,jdbcType=VARCHAR},
+      host_code = #{record.hostCode,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=INTEGER},
+      msg = #{record.msg,jdbcType=VARCHAR},
+      data_count = #{record.dataCount,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.djk.core.model.CrawlRequestStatus">
+    update crawl_request_status
+    <set>
+      <if test="requestId != null">
+        request_id = #{requestId,jdbcType=VARCHAR},
+      </if>
+      <if test="requestParams != null">
+        request_params = #{requestParams,jdbcType=VARCHAR},
+      </if>
+      <if test="hostCode != null">
+        host_code = #{hostCode,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="msg != null">
+        msg = #{msg,jdbcType=VARCHAR},
+      </if>
+      <if test="dataCount != null">
+        data_count = #{dataCount,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.djk.core.model.CrawlRequestStatus">
+    update crawl_request_status
+    set request_id = #{requestId,jdbcType=VARCHAR},
+      request_params = #{requestParams,jdbcType=VARCHAR},
+      host_code = #{hostCode,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      msg = #{msg,jdbcType=VARCHAR},
+      data_count = #{dataCount,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <insert id="batchInsert">
+    <if test="items.get(0) != null">
+            insert into crawl_request_status  (id, request_id, request_params, 
+        host_code, status, msg, 
+        data_count, create_time, update_time
+        )
+      values
+      <foreach collection="items" item="item" index="index" separator=",">
+      (#{item.id,jdbcType=BIGINT}, #{item.requestId,jdbcType=VARCHAR}, #{item.requestParams,jdbcType=VARCHAR}, 
+        #{item.hostCode,jdbcType=VARCHAR}, #{item.status,jdbcType=INTEGER}, #{item.msg,jdbcType=VARCHAR}, 
+        #{item.dataCount,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP}
+        )
+      </foreach>
+    </if>
+  </insert>
+</mapper>

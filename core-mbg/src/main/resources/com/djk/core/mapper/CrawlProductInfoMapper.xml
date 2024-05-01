@@ -1,0 +1,1023 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.djk.core.mapper.CrawlProductInfoMapper">
+  <resultMap id="BaseResultMap" type="com.djk.core.model.CrawlProductInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="product_number" jdbcType="VARCHAR" property="productNumber" />
+    <result column="departure_port_zh" jdbcType="VARCHAR" property="departurePortZh" />
+    <result column="departure_port_en" jdbcType="VARCHAR" property="departurePortEn" />
+    <result column="destination_port_zh" jdbcType="VARCHAR" property="destinationPortZh" />
+    <result column="destination_port_en" jdbcType="VARCHAR" property="destinationPortEn" />
+    <result column="shipping_company_id" jdbcType="BIGINT" property="shippingCompanyId" />
+    <result column="cn_full_name" jdbcType="VARCHAR" property="cnFullName" />
+    <result column="cn_abbreviation" jdbcType="VARCHAR" property="cnAbbreviation" />
+    <result column="image" jdbcType="VARCHAR" property="image" />
+    <result column="estimated_departure_date" jdbcType="TIMESTAMP" property="estimatedDepartureDate" />
+    <result column="route" jdbcType="INTEGER" property="route" />
+    <result column="course" jdbcType="VARCHAR" property="course" />
+    <result column="arrival_time" jdbcType="TIMESTAMP" property="arrivalTime" />
+    <result column="product_expiry_date" jdbcType="TIMESTAMP" property="productExpiryDate" />
+    <result column="ship_name" jdbcType="VARCHAR" property="shipName" />
+    <result column="voyage_number" jdbcType="VARCHAR" property="voyageNumber" />
+    <result column="distance" jdbcType="VARCHAR" property="distance" />
+    <result column="cargo_type" jdbcType="VARCHAR" property="cargoType" />
+    <result column="product_type" jdbcType="VARCHAR" property="productType" />
+    <result column="reefer_temperature" jdbcType="VARCHAR" property="reeferTemperature" />
+    <result column="reefer_humidity" jdbcType="VARCHAR" property="reeferHumidity" />
+    <result column="reefer_ventilation_requirements" jdbcType="VARCHAR" property="reeferVentilationRequirements" />
+    <result column="special_container_remarks" jdbcType="VARCHAR" property="specialContainerRemarks" />
+    <result column="dangerous_goods_un_number" jdbcType="VARCHAR" property="dangerousGoodsUnNumber" />
+    <result column="dangerous_goods_class" jdbcType="VARCHAR" property="dangerousGoodsClass" />
+    <result column="dangerous_goods_remarks" jdbcType="VARCHAR" property="dangerousGoodsRemarks" />
+    <result column="waiver_of_container_instructions" jdbcType="VARCHAR" property="waiverOfContainerInstructions" />
+    <result column="deficit_freight_instructions" jdbcType="VARCHAR" property="deficitFreightInstructions" />
+    <result column="customer_remarks" jdbcType="VARCHAR" property="customerRemarks" />
+    <result column="publisher" jdbcType="BIGINT" property="publisher" />
+    <result column="publisher_phone" jdbcType="VARCHAR" property="publisherPhone" />
+    <result column="product_owner" jdbcType="BIGINT" property="productOwner" />
+    <result column="agent_company" jdbcType="VARCHAR" property="agentCompany" />
+    <result column="product_remarks" jdbcType="VARCHAR" property="productRemarks" />
+    <result column="submission_time" jdbcType="TIMESTAMP" property="submissionTime" />
+    <result column="review_status" jdbcType="INTEGER" property="reviewStatus" />
+    <result column="shelves_time" jdbcType="TIMESTAMP" property="shelvesTime" />
+    <result column="views" jdbcType="INTEGER" property="views" />
+    <result column="business_type" jdbcType="VARCHAR" property="businessType" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="approver" jdbcType="BIGINT" property="approver" />
+    <result column="approval_time" jdbcType="TIMESTAMP" property="approvalTime" />
+    <result column="approval_comment" jdbcType="VARCHAR" property="approvalComment" />
+    <result column="spot_id" jdbcType="VARCHAR" property="spotId" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater" jdbcType="VARCHAR" property="updater" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+    <result column="deleted_by" jdbcType="VARCHAR" property="deletedBy" />
+    <result column="deleted_time" jdbcType="TIMESTAMP" property="deletedTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, product_number, departure_port_zh, departure_port_en, destination_port_zh, destination_port_en, 
+    shipping_company_id, cn_full_name, cn_abbreviation, image, estimated_departure_date, 
+    route, course, arrival_time, product_expiry_date, ship_name, voyage_number, distance, 
+    cargo_type, product_type, reefer_temperature, reefer_humidity, reefer_ventilation_requirements, 
+    special_container_remarks, dangerous_goods_un_number, dangerous_goods_class, dangerous_goods_remarks, 
+    waiver_of_container_instructions, deficit_freight_instructions, customer_remarks, 
+    publisher, publisher_phone, product_owner, agent_company, product_remarks, submission_time, 
+    review_status, shelves_time, views, business_type, status, approver, approval_time, 
+    approval_comment, spot_id, creator, create_time, updater, update_time, deleted, tenant_id, 
+    deleted_by, deleted_time
+  </sql>
+  <select id="selectByExample" parameterType="com.djk.core.model.CrawlProductInfoExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from crawl_product_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from crawl_product_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from crawl_product_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.djk.core.model.CrawlProductInfoExample">
+    delete from crawl_product_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.djk.core.model.CrawlProductInfo">
+    insert into crawl_product_info (id, product_number, departure_port_zh, 
+      departure_port_en, destination_port_zh, destination_port_en, 
+      shipping_company_id, cn_full_name, cn_abbreviation, 
+      image, estimated_departure_date, route, 
+      course, arrival_time, product_expiry_date, 
+      ship_name, voyage_number, distance, 
+      cargo_type, product_type, reefer_temperature, 
+      reefer_humidity, reefer_ventilation_requirements, 
+      special_container_remarks, dangerous_goods_un_number, 
+      dangerous_goods_class, dangerous_goods_remarks, 
+      waiver_of_container_instructions, deficit_freight_instructions, 
+      customer_remarks, publisher, publisher_phone, 
+      product_owner, agent_company, product_remarks, 
+      submission_time, review_status, shelves_time, 
+      views, business_type, status, 
+      approver, approval_time, approval_comment, 
+      spot_id, creator, create_time, 
+      updater, update_time, deleted, 
+      tenant_id, deleted_by, deleted_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{productNumber,jdbcType=VARCHAR}, #{departurePortZh,jdbcType=VARCHAR}, 
+      #{departurePortEn,jdbcType=VARCHAR}, #{destinationPortZh,jdbcType=VARCHAR}, #{destinationPortEn,jdbcType=VARCHAR}, 
+      #{shippingCompanyId,jdbcType=BIGINT}, #{cnFullName,jdbcType=VARCHAR}, #{cnAbbreviation,jdbcType=VARCHAR}, 
+      #{image,jdbcType=VARCHAR}, #{estimatedDepartureDate,jdbcType=TIMESTAMP}, #{route,jdbcType=INTEGER}, 
+      #{course,jdbcType=VARCHAR}, #{arrivalTime,jdbcType=TIMESTAMP}, #{productExpiryDate,jdbcType=TIMESTAMP}, 
+      #{shipName,jdbcType=VARCHAR}, #{voyageNumber,jdbcType=VARCHAR}, #{distance,jdbcType=VARCHAR}, 
+      #{cargoType,jdbcType=VARCHAR}, #{productType,jdbcType=VARCHAR}, #{reeferTemperature,jdbcType=VARCHAR}, 
+      #{reeferHumidity,jdbcType=VARCHAR}, #{reeferVentilationRequirements,jdbcType=VARCHAR}, 
+      #{specialContainerRemarks,jdbcType=VARCHAR}, #{dangerousGoodsUnNumber,jdbcType=VARCHAR}, 
+      #{dangerousGoodsClass,jdbcType=VARCHAR}, #{dangerousGoodsRemarks,jdbcType=VARCHAR}, 
+      #{waiverOfContainerInstructions,jdbcType=VARCHAR}, #{deficitFreightInstructions,jdbcType=VARCHAR}, 
+      #{customerRemarks,jdbcType=VARCHAR}, #{publisher,jdbcType=BIGINT}, #{publisherPhone,jdbcType=VARCHAR}, 
+      #{productOwner,jdbcType=BIGINT}, #{agentCompany,jdbcType=VARCHAR}, #{productRemarks,jdbcType=VARCHAR}, 
+      #{submissionTime,jdbcType=TIMESTAMP}, #{reviewStatus,jdbcType=INTEGER}, #{shelvesTime,jdbcType=TIMESTAMP}, 
+      #{views,jdbcType=INTEGER}, #{businessType,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{approver,jdbcType=BIGINT}, #{approvalTime,jdbcType=TIMESTAMP}, #{approvalComment,jdbcType=VARCHAR}, 
+      #{spotId,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updater,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=BIT}, 
+      #{tenantId,jdbcType=BIGINT}, #{deletedBy,jdbcType=VARCHAR}, #{deletedTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.djk.core.model.CrawlProductInfo">
+    insert into crawl_product_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="productNumber != null">
+        product_number,
+      </if>
+      <if test="departurePortZh != null">
+        departure_port_zh,
+      </if>
+      <if test="departurePortEn != null">
+        departure_port_en,
+      </if>
+      <if test="destinationPortZh != null">
+        destination_port_zh,
+      </if>
+      <if test="destinationPortEn != null">
+        destination_port_en,
+      </if>
+      <if test="shippingCompanyId != null">
+        shipping_company_id,
+      </if>
+      <if test="cnFullName != null">
+        cn_full_name,
+      </if>
+      <if test="cnAbbreviation != null">
+        cn_abbreviation,
+      </if>
+      <if test="image != null">
+        image,
+      </if>
+      <if test="estimatedDepartureDate != null">
+        estimated_departure_date,
+      </if>
+      <if test="route != null">
+        route,
+      </if>
+      <if test="course != null">
+        course,
+      </if>
+      <if test="arrivalTime != null">
+        arrival_time,
+      </if>
+      <if test="productExpiryDate != null">
+        product_expiry_date,
+      </if>
+      <if test="shipName != null">
+        ship_name,
+      </if>
+      <if test="voyageNumber != null">
+        voyage_number,
+      </if>
+      <if test="distance != null">
+        distance,
+      </if>
+      <if test="cargoType != null">
+        cargo_type,
+      </if>
+      <if test="productType != null">
+        product_type,
+      </if>
+      <if test="reeferTemperature != null">
+        reefer_temperature,
+      </if>
+      <if test="reeferHumidity != null">
+        reefer_humidity,
+      </if>
+      <if test="reeferVentilationRequirements != null">
+        reefer_ventilation_requirements,
+      </if>
+      <if test="specialContainerRemarks != null">
+        special_container_remarks,
+      </if>
+      <if test="dangerousGoodsUnNumber != null">
+        dangerous_goods_un_number,
+      </if>
+      <if test="dangerousGoodsClass != null">
+        dangerous_goods_class,
+      </if>
+      <if test="dangerousGoodsRemarks != null">
+        dangerous_goods_remarks,
+      </if>
+      <if test="waiverOfContainerInstructions != null">
+        waiver_of_container_instructions,
+      </if>
+      <if test="deficitFreightInstructions != null">
+        deficit_freight_instructions,
+      </if>
+      <if test="customerRemarks != null">
+        customer_remarks,
+      </if>
+      <if test="publisher != null">
+        publisher,
+      </if>
+      <if test="publisherPhone != null">
+        publisher_phone,
+      </if>
+      <if test="productOwner != null">
+        product_owner,
+      </if>
+      <if test="agentCompany != null">
+        agent_company,
+      </if>
+      <if test="productRemarks != null">
+        product_remarks,
+      </if>
+      <if test="submissionTime != null">
+        submission_time,
+      </if>
+      <if test="reviewStatus != null">
+        review_status,
+      </if>
+      <if test="shelvesTime != null">
+        shelves_time,
+      </if>
+      <if test="views != null">
+        views,
+      </if>
+      <if test="businessType != null">
+        business_type,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="approver != null">
+        approver,
+      </if>
+      <if test="approvalTime != null">
+        approval_time,
+      </if>
+      <if test="approvalComment != null">
+        approval_comment,
+      </if>
+      <if test="spotId != null">
+        spot_id,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updater != null">
+        updater,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="deleted != null">
+        deleted,
+      </if>
+      <if test="tenantId != null">
+        tenant_id,
+      </if>
+      <if test="deletedBy != null">
+        deleted_by,
+      </if>
+      <if test="deletedTime != null">
+        deleted_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="productNumber != null">
+        #{productNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="departurePortZh != null">
+        #{departurePortZh,jdbcType=VARCHAR},
+      </if>
+      <if test="departurePortEn != null">
+        #{departurePortEn,jdbcType=VARCHAR},
+      </if>
+      <if test="destinationPortZh != null">
+        #{destinationPortZh,jdbcType=VARCHAR},
+      </if>
+      <if test="destinationPortEn != null">
+        #{destinationPortEn,jdbcType=VARCHAR},
+      </if>
+      <if test="shippingCompanyId != null">
+        #{shippingCompanyId,jdbcType=BIGINT},
+      </if>
+      <if test="cnFullName != null">
+        #{cnFullName,jdbcType=VARCHAR},
+      </if>
+      <if test="cnAbbreviation != null">
+        #{cnAbbreviation,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null">
+        #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="estimatedDepartureDate != null">
+        #{estimatedDepartureDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="route != null">
+        #{route,jdbcType=INTEGER},
+      </if>
+      <if test="course != null">
+        #{course,jdbcType=VARCHAR},
+      </if>
+      <if test="arrivalTime != null">
+        #{arrivalTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productExpiryDate != null">
+        #{productExpiryDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shipName != null">
+        #{shipName,jdbcType=VARCHAR},
+      </if>
+      <if test="voyageNumber != null">
+        #{voyageNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="distance != null">
+        #{distance,jdbcType=VARCHAR},
+      </if>
+      <if test="cargoType != null">
+        #{cargoType,jdbcType=VARCHAR},
+      </if>
+      <if test="productType != null">
+        #{productType,jdbcType=VARCHAR},
+      </if>
+      <if test="reeferTemperature != null">
+        #{reeferTemperature,jdbcType=VARCHAR},
+      </if>
+      <if test="reeferHumidity != null">
+        #{reeferHumidity,jdbcType=VARCHAR},
+      </if>
+      <if test="reeferVentilationRequirements != null">
+        #{reeferVentilationRequirements,jdbcType=VARCHAR},
+      </if>
+      <if test="specialContainerRemarks != null">
+        #{specialContainerRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="dangerousGoodsUnNumber != null">
+        #{dangerousGoodsUnNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="dangerousGoodsClass != null">
+        #{dangerousGoodsClass,jdbcType=VARCHAR},
+      </if>
+      <if test="dangerousGoodsRemarks != null">
+        #{dangerousGoodsRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="waiverOfContainerInstructions != null">
+        #{waiverOfContainerInstructions,jdbcType=VARCHAR},
+      </if>
+      <if test="deficitFreightInstructions != null">
+        #{deficitFreightInstructions,jdbcType=VARCHAR},
+      </if>
+      <if test="customerRemarks != null">
+        #{customerRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="publisher != null">
+        #{publisher,jdbcType=BIGINT},
+      </if>
+      <if test="publisherPhone != null">
+        #{publisherPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="productOwner != null">
+        #{productOwner,jdbcType=BIGINT},
+      </if>
+      <if test="agentCompany != null">
+        #{agentCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="productRemarks != null">
+        #{productRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="submissionTime != null">
+        #{submissionTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reviewStatus != null">
+        #{reviewStatus,jdbcType=INTEGER},
+      </if>
+      <if test="shelvesTime != null">
+        #{shelvesTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="views != null">
+        #{views,jdbcType=INTEGER},
+      </if>
+      <if test="businessType != null">
+        #{businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="approver != null">
+        #{approver,jdbcType=BIGINT},
+      </if>
+      <if test="approvalTime != null">
+        #{approvalTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="approvalComment != null">
+        #{approvalComment,jdbcType=VARCHAR},
+      </if>
+      <if test="spotId != null">
+        #{spotId,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updater != null">
+        #{updater,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        #{deleted,jdbcType=BIT},
+      </if>
+      <if test="tenantId != null">
+        #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="deletedBy != null">
+        #{deletedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="deletedTime != null">
+        #{deletedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.djk.core.model.CrawlProductInfoExample" resultType="java.lang.Long">
+    select count(*) from crawl_product_info
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update crawl_product_info
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.productNumber != null">
+        product_number = #{record.productNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.departurePortZh != null">
+        departure_port_zh = #{record.departurePortZh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.departurePortEn != null">
+        departure_port_en = #{record.departurePortEn,jdbcType=VARCHAR},
+      </if>
+      <if test="record.destinationPortZh != null">
+        destination_port_zh = #{record.destinationPortZh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.destinationPortEn != null">
+        destination_port_en = #{record.destinationPortEn,jdbcType=VARCHAR},
+      </if>
+      <if test="record.shippingCompanyId != null">
+        shipping_company_id = #{record.shippingCompanyId,jdbcType=BIGINT},
+      </if>
+      <if test="record.cnFullName != null">
+        cn_full_name = #{record.cnFullName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cnAbbreviation != null">
+        cn_abbreviation = #{record.cnAbbreviation,jdbcType=VARCHAR},
+      </if>
+      <if test="record.image != null">
+        image = #{record.image,jdbcType=VARCHAR},
+      </if>
+      <if test="record.estimatedDepartureDate != null">
+        estimated_departure_date = #{record.estimatedDepartureDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.route != null">
+        route = #{record.route,jdbcType=INTEGER},
+      </if>
+      <if test="record.course != null">
+        course = #{record.course,jdbcType=VARCHAR},
+      </if>
+      <if test="record.arrivalTime != null">
+        arrival_time = #{record.arrivalTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.productExpiryDate != null">
+        product_expiry_date = #{record.productExpiryDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.shipName != null">
+        ship_name = #{record.shipName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.voyageNumber != null">
+        voyage_number = #{record.voyageNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.distance != null">
+        distance = #{record.distance,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cargoType != null">
+        cargo_type = #{record.cargoType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productType != null">
+        product_type = #{record.productType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reeferTemperature != null">
+        reefer_temperature = #{record.reeferTemperature,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reeferHumidity != null">
+        reefer_humidity = #{record.reeferHumidity,jdbcType=VARCHAR},
+      </if>
+      <if test="record.reeferVentilationRequirements != null">
+        reefer_ventilation_requirements = #{record.reeferVentilationRequirements,jdbcType=VARCHAR},
+      </if>
+      <if test="record.specialContainerRemarks != null">
+        special_container_remarks = #{record.specialContainerRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dangerousGoodsUnNumber != null">
+        dangerous_goods_un_number = #{record.dangerousGoodsUnNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dangerousGoodsClass != null">
+        dangerous_goods_class = #{record.dangerousGoodsClass,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dangerousGoodsRemarks != null">
+        dangerous_goods_remarks = #{record.dangerousGoodsRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="record.waiverOfContainerInstructions != null">
+        waiver_of_container_instructions = #{record.waiverOfContainerInstructions,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deficitFreightInstructions != null">
+        deficit_freight_instructions = #{record.deficitFreightInstructions,jdbcType=VARCHAR},
+      </if>
+      <if test="record.customerRemarks != null">
+        customer_remarks = #{record.customerRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="record.publisher != null">
+        publisher = #{record.publisher,jdbcType=BIGINT},
+      </if>
+      <if test="record.publisherPhone != null">
+        publisher_phone = #{record.publisherPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productOwner != null">
+        product_owner = #{record.productOwner,jdbcType=BIGINT},
+      </if>
+      <if test="record.agentCompany != null">
+        agent_company = #{record.agentCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productRemarks != null">
+        product_remarks = #{record.productRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="record.submissionTime != null">
+        submission_time = #{record.submissionTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.reviewStatus != null">
+        review_status = #{record.reviewStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.shelvesTime != null">
+        shelves_time = #{record.shelvesTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.views != null">
+        views = #{record.views,jdbcType=INTEGER},
+      </if>
+      <if test="record.businessType != null">
+        business_type = #{record.businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=TINYINT},
+      </if>
+      <if test="record.approver != null">
+        approver = #{record.approver,jdbcType=BIGINT},
+      </if>
+      <if test="record.approvalTime != null">
+        approval_time = #{record.approvalTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.approvalComment != null">
+        approval_comment = #{record.approvalComment,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spotId != null">
+        spot_id = #{record.spotId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.creator != null">
+        creator = #{record.creator,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updater != null">
+        updater = #{record.updater,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.deleted != null">
+        deleted = #{record.deleted,jdbcType=BIT},
+      </if>
+      <if test="record.tenantId != null">
+        tenant_id = #{record.tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="record.deletedBy != null">
+        deleted_by = #{record.deletedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deletedTime != null">
+        deleted_time = #{record.deletedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update crawl_product_info
+    set id = #{record.id,jdbcType=BIGINT},
+      product_number = #{record.productNumber,jdbcType=VARCHAR},
+      departure_port_zh = #{record.departurePortZh,jdbcType=VARCHAR},
+      departure_port_en = #{record.departurePortEn,jdbcType=VARCHAR},
+      destination_port_zh = #{record.destinationPortZh,jdbcType=VARCHAR},
+      destination_port_en = #{record.destinationPortEn,jdbcType=VARCHAR},
+      shipping_company_id = #{record.shippingCompanyId,jdbcType=BIGINT},
+      cn_full_name = #{record.cnFullName,jdbcType=VARCHAR},
+      cn_abbreviation = #{record.cnAbbreviation,jdbcType=VARCHAR},
+      image = #{record.image,jdbcType=VARCHAR},
+      estimated_departure_date = #{record.estimatedDepartureDate,jdbcType=TIMESTAMP},
+      route = #{record.route,jdbcType=INTEGER},
+      course = #{record.course,jdbcType=VARCHAR},
+      arrival_time = #{record.arrivalTime,jdbcType=TIMESTAMP},
+      product_expiry_date = #{record.productExpiryDate,jdbcType=TIMESTAMP},
+      ship_name = #{record.shipName,jdbcType=VARCHAR},
+      voyage_number = #{record.voyageNumber,jdbcType=VARCHAR},
+      distance = #{record.distance,jdbcType=VARCHAR},
+      cargo_type = #{record.cargoType,jdbcType=VARCHAR},
+      product_type = #{record.productType,jdbcType=VARCHAR},
+      reefer_temperature = #{record.reeferTemperature,jdbcType=VARCHAR},
+      reefer_humidity = #{record.reeferHumidity,jdbcType=VARCHAR},
+      reefer_ventilation_requirements = #{record.reeferVentilationRequirements,jdbcType=VARCHAR},
+      special_container_remarks = #{record.specialContainerRemarks,jdbcType=VARCHAR},
+      dangerous_goods_un_number = #{record.dangerousGoodsUnNumber,jdbcType=VARCHAR},
+      dangerous_goods_class = #{record.dangerousGoodsClass,jdbcType=VARCHAR},
+      dangerous_goods_remarks = #{record.dangerousGoodsRemarks,jdbcType=VARCHAR},
+      waiver_of_container_instructions = #{record.waiverOfContainerInstructions,jdbcType=VARCHAR},
+      deficit_freight_instructions = #{record.deficitFreightInstructions,jdbcType=VARCHAR},
+      customer_remarks = #{record.customerRemarks,jdbcType=VARCHAR},
+      publisher = #{record.publisher,jdbcType=BIGINT},
+      publisher_phone = #{record.publisherPhone,jdbcType=VARCHAR},
+      product_owner = #{record.productOwner,jdbcType=BIGINT},
+      agent_company = #{record.agentCompany,jdbcType=VARCHAR},
+      product_remarks = #{record.productRemarks,jdbcType=VARCHAR},
+      submission_time = #{record.submissionTime,jdbcType=TIMESTAMP},
+      review_status = #{record.reviewStatus,jdbcType=INTEGER},
+      shelves_time = #{record.shelvesTime,jdbcType=TIMESTAMP},
+      views = #{record.views,jdbcType=INTEGER},
+      business_type = #{record.businessType,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=TINYINT},
+      approver = #{record.approver,jdbcType=BIGINT},
+      approval_time = #{record.approvalTime,jdbcType=TIMESTAMP},
+      approval_comment = #{record.approvalComment,jdbcType=VARCHAR},
+      spot_id = #{record.spotId,jdbcType=VARCHAR},
+      creator = #{record.creator,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      updater = #{record.updater,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      deleted = #{record.deleted,jdbcType=BIT},
+      tenant_id = #{record.tenantId,jdbcType=BIGINT},
+      deleted_by = #{record.deletedBy,jdbcType=VARCHAR},
+      deleted_time = #{record.deletedTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.djk.core.model.CrawlProductInfo">
+    update crawl_product_info
+    <set>
+      <if test="productNumber != null">
+        product_number = #{productNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="departurePortZh != null">
+        departure_port_zh = #{departurePortZh,jdbcType=VARCHAR},
+      </if>
+      <if test="departurePortEn != null">
+        departure_port_en = #{departurePortEn,jdbcType=VARCHAR},
+      </if>
+      <if test="destinationPortZh != null">
+        destination_port_zh = #{destinationPortZh,jdbcType=VARCHAR},
+      </if>
+      <if test="destinationPortEn != null">
+        destination_port_en = #{destinationPortEn,jdbcType=VARCHAR},
+      </if>
+      <if test="shippingCompanyId != null">
+        shipping_company_id = #{shippingCompanyId,jdbcType=BIGINT},
+      </if>
+      <if test="cnFullName != null">
+        cn_full_name = #{cnFullName,jdbcType=VARCHAR},
+      </if>
+      <if test="cnAbbreviation != null">
+        cn_abbreviation = #{cnAbbreviation,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null">
+        image = #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="estimatedDepartureDate != null">
+        estimated_departure_date = #{estimatedDepartureDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="route != null">
+        route = #{route,jdbcType=INTEGER},
+      </if>
+      <if test="course != null">
+        course = #{course,jdbcType=VARCHAR},
+      </if>
+      <if test="arrivalTime != null">
+        arrival_time = #{arrivalTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productExpiryDate != null">
+        product_expiry_date = #{productExpiryDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shipName != null">
+        ship_name = #{shipName,jdbcType=VARCHAR},
+      </if>
+      <if test="voyageNumber != null">
+        voyage_number = #{voyageNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="distance != null">
+        distance = #{distance,jdbcType=VARCHAR},
+      </if>
+      <if test="cargoType != null">
+        cargo_type = #{cargoType,jdbcType=VARCHAR},
+      </if>
+      <if test="productType != null">
+        product_type = #{productType,jdbcType=VARCHAR},
+      </if>
+      <if test="reeferTemperature != null">
+        reefer_temperature = #{reeferTemperature,jdbcType=VARCHAR},
+      </if>
+      <if test="reeferHumidity != null">
+        reefer_humidity = #{reeferHumidity,jdbcType=VARCHAR},
+      </if>
+      <if test="reeferVentilationRequirements != null">
+        reefer_ventilation_requirements = #{reeferVentilationRequirements,jdbcType=VARCHAR},
+      </if>
+      <if test="specialContainerRemarks != null">
+        special_container_remarks = #{specialContainerRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="dangerousGoodsUnNumber != null">
+        dangerous_goods_un_number = #{dangerousGoodsUnNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="dangerousGoodsClass != null">
+        dangerous_goods_class = #{dangerousGoodsClass,jdbcType=VARCHAR},
+      </if>
+      <if test="dangerousGoodsRemarks != null">
+        dangerous_goods_remarks = #{dangerousGoodsRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="waiverOfContainerInstructions != null">
+        waiver_of_container_instructions = #{waiverOfContainerInstructions,jdbcType=VARCHAR},
+      </if>
+      <if test="deficitFreightInstructions != null">
+        deficit_freight_instructions = #{deficitFreightInstructions,jdbcType=VARCHAR},
+      </if>
+      <if test="customerRemarks != null">
+        customer_remarks = #{customerRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="publisher != null">
+        publisher = #{publisher,jdbcType=BIGINT},
+      </if>
+      <if test="publisherPhone != null">
+        publisher_phone = #{publisherPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="productOwner != null">
+        product_owner = #{productOwner,jdbcType=BIGINT},
+      </if>
+      <if test="agentCompany != null">
+        agent_company = #{agentCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="productRemarks != null">
+        product_remarks = #{productRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="submissionTime != null">
+        submission_time = #{submissionTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="reviewStatus != null">
+        review_status = #{reviewStatus,jdbcType=INTEGER},
+      </if>
+      <if test="shelvesTime != null">
+        shelves_time = #{shelvesTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="views != null">
+        views = #{views,jdbcType=INTEGER},
+      </if>
+      <if test="businessType != null">
+        business_type = #{businessType,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="approver != null">
+        approver = #{approver,jdbcType=BIGINT},
+      </if>
+      <if test="approvalTime != null">
+        approval_time = #{approvalTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="approvalComment != null">
+        approval_comment = #{approvalComment,jdbcType=VARCHAR},
+      </if>
+      <if test="spotId != null">
+        spot_id = #{spotId,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updater != null">
+        updater = #{updater,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+      <if test="tenantId != null">
+        tenant_id = #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="deletedBy != null">
+        deleted_by = #{deletedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="deletedTime != null">
+        deleted_time = #{deletedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.djk.core.model.CrawlProductInfo">
+    update crawl_product_info
+    set product_number = #{productNumber,jdbcType=VARCHAR},
+      departure_port_zh = #{departurePortZh,jdbcType=VARCHAR},
+      departure_port_en = #{departurePortEn,jdbcType=VARCHAR},
+      destination_port_zh = #{destinationPortZh,jdbcType=VARCHAR},
+      destination_port_en = #{destinationPortEn,jdbcType=VARCHAR},
+      shipping_company_id = #{shippingCompanyId,jdbcType=BIGINT},
+      cn_full_name = #{cnFullName,jdbcType=VARCHAR},
+      cn_abbreviation = #{cnAbbreviation,jdbcType=VARCHAR},
+      image = #{image,jdbcType=VARCHAR},
+      estimated_departure_date = #{estimatedDepartureDate,jdbcType=TIMESTAMP},
+      route = #{route,jdbcType=INTEGER},
+      course = #{course,jdbcType=VARCHAR},
+      arrival_time = #{arrivalTime,jdbcType=TIMESTAMP},
+      product_expiry_date = #{productExpiryDate,jdbcType=TIMESTAMP},
+      ship_name = #{shipName,jdbcType=VARCHAR},
+      voyage_number = #{voyageNumber,jdbcType=VARCHAR},
+      distance = #{distance,jdbcType=VARCHAR},
+      cargo_type = #{cargoType,jdbcType=VARCHAR},
+      product_type = #{productType,jdbcType=VARCHAR},
+      reefer_temperature = #{reeferTemperature,jdbcType=VARCHAR},
+      reefer_humidity = #{reeferHumidity,jdbcType=VARCHAR},
+      reefer_ventilation_requirements = #{reeferVentilationRequirements,jdbcType=VARCHAR},
+      special_container_remarks = #{specialContainerRemarks,jdbcType=VARCHAR},
+      dangerous_goods_un_number = #{dangerousGoodsUnNumber,jdbcType=VARCHAR},
+      dangerous_goods_class = #{dangerousGoodsClass,jdbcType=VARCHAR},
+      dangerous_goods_remarks = #{dangerousGoodsRemarks,jdbcType=VARCHAR},
+      waiver_of_container_instructions = #{waiverOfContainerInstructions,jdbcType=VARCHAR},
+      deficit_freight_instructions = #{deficitFreightInstructions,jdbcType=VARCHAR},
+      customer_remarks = #{customerRemarks,jdbcType=VARCHAR},
+      publisher = #{publisher,jdbcType=BIGINT},
+      publisher_phone = #{publisherPhone,jdbcType=VARCHAR},
+      product_owner = #{productOwner,jdbcType=BIGINT},
+      agent_company = #{agentCompany,jdbcType=VARCHAR},
+      product_remarks = #{productRemarks,jdbcType=VARCHAR},
+      submission_time = #{submissionTime,jdbcType=TIMESTAMP},
+      review_status = #{reviewStatus,jdbcType=INTEGER},
+      shelves_time = #{shelvesTime,jdbcType=TIMESTAMP},
+      views = #{views,jdbcType=INTEGER},
+      business_type = #{businessType,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      approver = #{approver,jdbcType=BIGINT},
+      approval_time = #{approvalTime,jdbcType=TIMESTAMP},
+      approval_comment = #{approvalComment,jdbcType=VARCHAR},
+      spot_id = #{spotId,jdbcType=VARCHAR},
+      creator = #{creator,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      updater = #{updater,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=BIT},
+      tenant_id = #{tenantId,jdbcType=BIGINT},
+      deleted_by = #{deletedBy,jdbcType=VARCHAR},
+      deleted_time = #{deletedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <insert id="batchInsert">
+    <if test="items.get(0) != null">
+            insert into crawl_product_info  (id, product_number, departure_port_zh, 
+        departure_port_en, destination_port_zh, destination_port_en, 
+        shipping_company_id, cn_full_name, cn_abbreviation, 
+        image, estimated_departure_date, route, 
+        course, arrival_time, product_expiry_date, 
+        ship_name, voyage_number, distance, 
+        cargo_type, product_type, reefer_temperature, 
+        reefer_humidity, reefer_ventilation_requirements, 
+        special_container_remarks, dangerous_goods_un_number, 
+        dangerous_goods_class, dangerous_goods_remarks, 
+        waiver_of_container_instructions, deficit_freight_instructions, 
+        customer_remarks, publisher, publisher_phone, 
+        product_owner, agent_company, product_remarks, 
+        submission_time, review_status, shelves_time, 
+        views, business_type, status, 
+        approver, approval_time, approval_comment, 
+        spot_id, creator, create_time, 
+        updater, update_time, deleted, 
+        tenant_id, deleted_by, deleted_time
+        )
+      values
+      <foreach collection="items" item="item" index="index" separator=",">
+      (#{item.id,jdbcType=BIGINT}, #{item.productNumber,jdbcType=VARCHAR}, #{item.departurePortZh,jdbcType=VARCHAR}, 
+        #{item.departurePortEn,jdbcType=VARCHAR}, #{item.destinationPortZh,jdbcType=VARCHAR}, #{item.destinationPortEn,jdbcType=VARCHAR}, 
+        #{item.shippingCompanyId,jdbcType=BIGINT}, #{item.cnFullName,jdbcType=VARCHAR}, #{item.cnAbbreviation,jdbcType=VARCHAR}, 
+        #{item.image,jdbcType=VARCHAR}, #{item.estimatedDepartureDate,jdbcType=TIMESTAMP}, #{item.route,jdbcType=INTEGER}, 
+        #{item.course,jdbcType=VARCHAR}, #{item.arrivalTime,jdbcType=TIMESTAMP}, #{item.productExpiryDate,jdbcType=TIMESTAMP}, 
+        #{item.shipName,jdbcType=VARCHAR}, #{item.voyageNumber,jdbcType=VARCHAR}, #{item.distance,jdbcType=VARCHAR}, 
+        #{item.cargoType,jdbcType=VARCHAR}, #{item.productType,jdbcType=VARCHAR}, #{item.reeferTemperature,jdbcType=VARCHAR}, 
+        #{item.reeferHumidity,jdbcType=VARCHAR}, #{item.reeferVentilationRequirements,jdbcType=VARCHAR}, 
+        #{item.specialContainerRemarks,jdbcType=VARCHAR}, #{item.dangerousGoodsUnNumber,jdbcType=VARCHAR}, 
+        #{item.dangerousGoodsClass,jdbcType=VARCHAR}, #{item.dangerousGoodsRemarks,jdbcType=VARCHAR}, 
+        #{item.waiverOfContainerInstructions,jdbcType=VARCHAR}, #{item.deficitFreightInstructions,jdbcType=VARCHAR}, 
+        #{item.customerRemarks,jdbcType=VARCHAR}, #{item.publisher,jdbcType=BIGINT}, #{item.publisherPhone,jdbcType=VARCHAR}, 
+        #{item.productOwner,jdbcType=BIGINT}, #{item.agentCompany,jdbcType=VARCHAR}, #{item.productRemarks,jdbcType=VARCHAR}, 
+        #{item.submissionTime,jdbcType=TIMESTAMP}, #{item.reviewStatus,jdbcType=INTEGER}, #{item.shelvesTime,jdbcType=TIMESTAMP}, 
+        #{item.views,jdbcType=INTEGER}, #{item.businessType,jdbcType=VARCHAR}, #{item.status,jdbcType=TINYINT}, 
+        #{item.approver,jdbcType=BIGINT}, #{item.approvalTime,jdbcType=TIMESTAMP}, #{item.approvalComment,jdbcType=VARCHAR}, 
+        #{item.spotId,jdbcType=VARCHAR}, #{item.creator,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, 
+        #{item.updater,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.deleted,jdbcType=BIT}, 
+        #{item.tenantId,jdbcType=BIGINT}, #{item.deletedBy,jdbcType=VARCHAR}, #{item.deletedTime,jdbcType=TIMESTAMP}
+        )
+      </foreach>
+    </if>
+  </insert>
+</mapper>

@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.djk.core.mapper.CrawlProductFeeItemMapper">
+  <resultMap id="BaseResultMap" type="com.djk.core.model.CrawlProductFeeItem">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="product_id" jdbcType="BIGINT" property="productId" />
+    <result column="fee_cn_name" jdbcType="VARCHAR" property="feeCnName" />
+    <result column="fee_en_name" jdbcType="VARCHAR" property="feeEnName" />
+    <result column="fee_unit" jdbcType="INTEGER" property="feeUnit" />
+    <result column="container_type" jdbcType="INTEGER" property="containerType" />
+    <result column="fee_source" jdbcType="INTEGER" property="feeSource" />
+    <result column="fee_cost_type" jdbcType="INTEGER" property="feeCostType" />
+    <result column="fee_currency" jdbcType="INTEGER" property="feeCurrency" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="spot_id" jdbcType="VARCHAR" property="spotId" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater" jdbcType="VARCHAR" property="updater" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+    <result column="deleted_by" jdbcType="VARCHAR" property="deletedBy" />
+    <result column="deleted_time" jdbcType="TIMESTAMP" property="deletedTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, product_id, fee_cn_name, fee_en_name, fee_unit, container_type, fee_source, fee_cost_type, 
+    fee_currency, price, spot_id, creator, create_time, updater, update_time, deleted, 
+    tenant_id, deleted_by, deleted_time
+  </sql>
+  <select id="selectByExample" parameterType="com.djk.core.model.CrawlProductFeeItemExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from crawl_product_fee_item
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from crawl_product_fee_item
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from crawl_product_fee_item
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.djk.core.model.CrawlProductFeeItemExample">
+    delete from crawl_product_fee_item
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.djk.core.model.CrawlProductFeeItem">
+    insert into crawl_product_fee_item (id, product_id, fee_cn_name, 
+      fee_en_name, fee_unit, container_type, 
+      fee_source, fee_cost_type, fee_currency, 
+      price, spot_id, creator, 
+      create_time, updater, update_time, 
+      deleted, tenant_id, deleted_by, 
+      deleted_time)
+    values (#{id,jdbcType=BIGINT}, #{productId,jdbcType=BIGINT}, #{feeCnName,jdbcType=VARCHAR}, 
+      #{feeEnName,jdbcType=VARCHAR}, #{feeUnit,jdbcType=INTEGER}, #{containerType,jdbcType=INTEGER}, 
+      #{feeSource,jdbcType=INTEGER}, #{feeCostType,jdbcType=INTEGER}, #{feeCurrency,jdbcType=INTEGER}, 
+      #{price,jdbcType=DECIMAL}, #{spotId,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updater,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{deleted,jdbcType=BIT}, #{tenantId,jdbcType=BIGINT}, #{deletedBy,jdbcType=VARCHAR}, 
+      #{deletedTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.djk.core.model.CrawlProductFeeItem">
+    insert into crawl_product_fee_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="productId != null">
+        product_id,
+      </if>
+      <if test="feeCnName != null">
+        fee_cn_name,
+      </if>
+      <if test="feeEnName != null">
+        fee_en_name,
+      </if>
+      <if test="feeUnit != null">
+        fee_unit,
+      </if>
+      <if test="containerType != null">
+        container_type,
+      </if>
+      <if test="feeSource != null">
+        fee_source,
+      </if>
+      <if test="feeCostType != null">
+        fee_cost_type,
+      </if>
+      <if test="feeCurrency != null">
+        fee_currency,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="spotId != null">
+        spot_id,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updater != null">
+        updater,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="deleted != null">
+        deleted,
+      </if>
+      <if test="tenantId != null">
+        tenant_id,
+      </if>
+      <if test="deletedBy != null">
+        deleted_by,
+      </if>
+      <if test="deletedTime != null">
+        deleted_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="productId != null">
+        #{productId,jdbcType=BIGINT},
+      </if>
+      <if test="feeCnName != null">
+        #{feeCnName,jdbcType=VARCHAR},
+      </if>
+      <if test="feeEnName != null">
+        #{feeEnName,jdbcType=VARCHAR},
+      </if>
+      <if test="feeUnit != null">
+        #{feeUnit,jdbcType=INTEGER},
+      </if>
+      <if test="containerType != null">
+        #{containerType,jdbcType=INTEGER},
+      </if>
+      <if test="feeSource != null">
+        #{feeSource,jdbcType=INTEGER},
+      </if>
+      <if test="feeCostType != null">
+        #{feeCostType,jdbcType=INTEGER},
+      </if>
+      <if test="feeCurrency != null">
+        #{feeCurrency,jdbcType=INTEGER},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="spotId != null">
+        #{spotId,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updater != null">
+        #{updater,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        #{deleted,jdbcType=BIT},
+      </if>
+      <if test="tenantId != null">
+        #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="deletedBy != null">
+        #{deletedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="deletedTime != null">
+        #{deletedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.djk.core.model.CrawlProductFeeItemExample" resultType="java.lang.Long">
+    select count(*) from crawl_product_fee_item
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update crawl_product_fee_item
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.productId != null">
+        product_id = #{record.productId,jdbcType=BIGINT},
+      </if>
+      <if test="record.feeCnName != null">
+        fee_cn_name = #{record.feeCnName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeEnName != null">
+        fee_en_name = #{record.feeEnName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.feeUnit != null">
+        fee_unit = #{record.feeUnit,jdbcType=INTEGER},
+      </if>
+      <if test="record.containerType != null">
+        container_type = #{record.containerType,jdbcType=INTEGER},
+      </if>
+      <if test="record.feeSource != null">
+        fee_source = #{record.feeSource,jdbcType=INTEGER},
+      </if>
+      <if test="record.feeCostType != null">
+        fee_cost_type = #{record.feeCostType,jdbcType=INTEGER},
+      </if>
+      <if test="record.feeCurrency != null">
+        fee_currency = #{record.feeCurrency,jdbcType=INTEGER},
+      </if>
+      <if test="record.price != null">
+        price = #{record.price,jdbcType=DECIMAL},
+      </if>
+      <if test="record.spotId != null">
+        spot_id = #{record.spotId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.creator != null">
+        creator = #{record.creator,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updater != null">
+        updater = #{record.updater,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.deleted != null">
+        deleted = #{record.deleted,jdbcType=BIT},
+      </if>
+      <if test="record.tenantId != null">
+        tenant_id = #{record.tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="record.deletedBy != null">
+        deleted_by = #{record.deletedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deletedTime != null">
+        deleted_time = #{record.deletedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update crawl_product_fee_item
+    set id = #{record.id,jdbcType=BIGINT},
+      product_id = #{record.productId,jdbcType=BIGINT},
+      fee_cn_name = #{record.feeCnName,jdbcType=VARCHAR},
+      fee_en_name = #{record.feeEnName,jdbcType=VARCHAR},
+      fee_unit = #{record.feeUnit,jdbcType=INTEGER},
+      container_type = #{record.containerType,jdbcType=INTEGER},
+      fee_source = #{record.feeSource,jdbcType=INTEGER},
+      fee_cost_type = #{record.feeCostType,jdbcType=INTEGER},
+      fee_currency = #{record.feeCurrency,jdbcType=INTEGER},
+      price = #{record.price,jdbcType=DECIMAL},
+      spot_id = #{record.spotId,jdbcType=VARCHAR},
+      creator = #{record.creator,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      updater = #{record.updater,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      deleted = #{record.deleted,jdbcType=BIT},
+      tenant_id = #{record.tenantId,jdbcType=BIGINT},
+      deleted_by = #{record.deletedBy,jdbcType=VARCHAR},
+      deleted_time = #{record.deletedTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.djk.core.model.CrawlProductFeeItem">
+    update crawl_product_fee_item
+    <set>
+      <if test="productId != null">
+        product_id = #{productId,jdbcType=BIGINT},
+      </if>
+      <if test="feeCnName != null">
+        fee_cn_name = #{feeCnName,jdbcType=VARCHAR},
+      </if>
+      <if test="feeEnName != null">
+        fee_en_name = #{feeEnName,jdbcType=VARCHAR},
+      </if>
+      <if test="feeUnit != null">
+        fee_unit = #{feeUnit,jdbcType=INTEGER},
+      </if>
+      <if test="containerType != null">
+        container_type = #{containerType,jdbcType=INTEGER},
+      </if>
+      <if test="feeSource != null">
+        fee_source = #{feeSource,jdbcType=INTEGER},
+      </if>
+      <if test="feeCostType != null">
+        fee_cost_type = #{feeCostType,jdbcType=INTEGER},
+      </if>
+      <if test="feeCurrency != null">
+        fee_currency = #{feeCurrency,jdbcType=INTEGER},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="spotId != null">
+        spot_id = #{spotId,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updater != null">
+        updater = #{updater,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+      <if test="tenantId != null">
+        tenant_id = #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="deletedBy != null">
+        deleted_by = #{deletedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="deletedTime != null">
+        deleted_time = #{deletedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.djk.core.model.CrawlProductFeeItem">
+    update crawl_product_fee_item
+    set product_id = #{productId,jdbcType=BIGINT},
+      fee_cn_name = #{feeCnName,jdbcType=VARCHAR},
+      fee_en_name = #{feeEnName,jdbcType=VARCHAR},
+      fee_unit = #{feeUnit,jdbcType=INTEGER},
+      container_type = #{containerType,jdbcType=INTEGER},
+      fee_source = #{feeSource,jdbcType=INTEGER},
+      fee_cost_type = #{feeCostType,jdbcType=INTEGER},
+      fee_currency = #{feeCurrency,jdbcType=INTEGER},
+      price = #{price,jdbcType=DECIMAL},
+      spot_id = #{spotId,jdbcType=VARCHAR},
+      creator = #{creator,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      updater = #{updater,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=BIT},
+      tenant_id = #{tenantId,jdbcType=BIGINT},
+      deleted_by = #{deletedBy,jdbcType=VARCHAR},
+      deleted_time = #{deletedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <insert id="batchInsert">
+    <if test="items.get(0) != null">
+            insert into crawl_product_fee_item  (id, product_id, fee_cn_name, 
+        fee_en_name, fee_unit, container_type, 
+        fee_source, fee_cost_type, fee_currency, 
+        price, spot_id, creator, 
+        create_time, updater, update_time, 
+        deleted, tenant_id, deleted_by, 
+        deleted_time)
+      values
+      <foreach collection="items" item="item" index="index" separator=",">
+      (#{item.id,jdbcType=BIGINT}, #{item.productId,jdbcType=BIGINT}, #{item.feeCnName,jdbcType=VARCHAR}, 
+        #{item.feeEnName,jdbcType=VARCHAR}, #{item.feeUnit,jdbcType=INTEGER}, #{item.containerType,jdbcType=INTEGER}, 
+        #{item.feeSource,jdbcType=INTEGER}, #{item.feeCostType,jdbcType=INTEGER}, #{item.feeCurrency,jdbcType=INTEGER}, 
+        #{item.price,jdbcType=DECIMAL}, #{item.spotId,jdbcType=VARCHAR}, #{item.creator,jdbcType=VARCHAR}, 
+        #{item.createTime,jdbcType=TIMESTAMP}, #{item.updater,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP}, 
+        #{item.deleted,jdbcType=BIT}, #{item.tenantId,jdbcType=BIGINT}, #{item.deletedBy,jdbcType=VARCHAR}, 
+        #{item.deletedTime,jdbcType=TIMESTAMP})
+      </foreach>
+    </if>
+  </insert>
+</mapper>
