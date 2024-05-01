@@ -1,0 +1,40 @@
+{
+  "from": {
+    "maerskGeoId": "2IW9P6J7XAW72",
+    "maerskRkstCode": "CNSGH",
+    "countryCode": "CN",
+    "maerskServiceMode": "CY",
+    "name": "Shanghai (Shanghai), China"
+  },
+  "to": {
+    "maerskGeoId": "1JUKNJGWHQBNJ",
+    "maerskRkstCode": "NLROT",
+    "countryCode": "NL",
+    "maerskServiceMode": "CY",
+    "name": "Rotterdam (Zuid-Holland), Netherlands"
+  },
+  "containers": [
+    {
+      "isoCode": "42G1",
+      "size": "40",
+      "type": "DRY",
+      "weight": 18000,
+      "quantity": 1,
+      "isReefer": false,
+      "isNonOperatingReefer": false,
+      "isShipperOwnedContainer": false
+    }
+  ],
+  "shipmentPriceCalculationDate": "2024-05-02",
+  "initialWeekOffset": 0,
+  "commodity": {
+    "id": "004403",
+    "isDangerous": false,
+    "dangerousDetails": []
+  },
+  "unit": "KG",
+  "brandCode": "MAEU",
+  "customerCode": "40605170076",
+  "loadAFLS": false,
+  "weekOffset": 2
+}

@@ -13,5 +13,5 @@ public interface CrawlService
      * @param queryRouteVo
      * @return {@link String}
      */
-    String queryData(QueryRouteVo queryRouteVo);
+    String queryData(QueryRouteVo queryRouteVo) throws InterruptedException;
 }

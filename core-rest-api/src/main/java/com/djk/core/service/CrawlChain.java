@@ -1,5 +1,6 @@
 package com.djk.core.service;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import com.djk.core.config.SpringUtil;
 import com.djk.core.vo.QueryRouteVo;
 import lombok.Data;
@@ -47,17 +48,18 @@ public class CrawlChain
                     public void run()
                     {
                         CrawlService crawlService = (CrawlService) SpringUtil.getBean(beanName);
-                        crawlService.queryData(queryRouteVo);
+                        try {
+                            crawlService.queryData(queryRouteVo);
+                        } catch (Exception e) {
+                            log.error(ExceptionUtil.getMessage(e));
+                            log.error(ExceptionUtil.stacktraceToString(e));
+                        }
                     }
                 });
             }
+        } else {
+            log.info("爬数线程数大于" + MAX_THREAD_COUNT + ", 跳过");
         }
-        log.info("爬数线程数大于" + MAX_THREAD_COUNT + ", 跳过");
     }
 
-//    @Scheduled(cron = "0/2 * * * * ?")
-//    public void aaa()
-//    {
-//        System.out.println(queue.size());
-//    }
 }

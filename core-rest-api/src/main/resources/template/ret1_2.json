@@ -1,0 +1,42 @@
+{
+  "productOffer": null,
+  "routeScheduleWithPrices": null,
+  "contracts": null,
+  "spotScope": {
+    "spotOnlyAllowedFreesale": true,
+    "spotSupported": true
+  },
+  "offerFilteredReasons": {
+    "requestId": null,
+    "traceId": "96606605015d1722",
+    "productCode": "MaerskSpot",
+    "brandScac": "MAEU",
+    "routeCode": "E1W",
+    "originServiceMode": "CY",
+    "destinationServiceMode": "CY",
+    "origin": "CNGMK",
+    "originLabel": "Yue Yang China",
+    "destination": "NLROT",
+    "destinationLabel": "Rotterdam Netherlands",
+    "firstLoadPort": "CNGMKHO",
+    "firstLoadPortLabel": "Yue Yang China",
+    "lastDischargePort": "NLROTTM",
+    "lastDischargePortLabel": "Rotterdam Netherlands",
+    "vesselVoyages": [
+      "1LM/420W"
+    ],
+    "container": "[20DRY]",
+    "departureDate": "2024-05-18",
+    "departureWeek": 20,
+    "detailedSchedule": "Schedule segments: CNGMKHO > CNSGHY3 > NLROTTM. ",
+    "status": "NOT_ALLOWED",
+    "type": "CAPACITY",
+    "reason": "No more space available for spot products for CNGMK > CNGMKHO > NLROTTM > NLROT with [20DRY] on 2024-05-18.\nUNAVAILABILITY(RID: 08a7c454-f184-4d97-b00f-0193c4957ff2) (E1W): No FFE, MTON Availability. No FFE, MTON Availability for segment CNSGHY3 > NLROTTM (431 on MVS 1LM/420W):  No FFE, MTON Availability for leg MYTPPTM > NLROTTM; ",
+    "time": "2024-05-01T08:09:43.112383466",
+    "productAttributes": null,
+    "productVariances": null,
+    "vesselName": "MAGLEBY MAERSK",
+    "vesselCode": "1LM",
+    "voyageNumber": "420W"
+  }
+}

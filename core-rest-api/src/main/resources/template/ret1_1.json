@@ -1,0 +1,465 @@
+{
+  "productOffer": {
+    "productCode": "MaerskSpot",
+    "productName": "Maersk Spot",
+    "productVersion": "1",
+    "gcssProductId": "2",
+    "brandScac": "maeu",
+    "routeCode": "E1W",
+    "originRkstCode": "CNGMK",
+    "originGeoId": "03B8IKYXH3VYM",
+    "originDisplayName": "Yue Yang, China",
+    "originCityName": "Yue Yang",
+    "originCountryName": "China",
+    "originUnLocCode": "CNYYA",
+    "destinationRkstCode": "NLROT",
+    "destinationGeoId": "1JUKNJGWHQBNJ",
+    "destinationDisplayName": "Rotterdam, Netherlands",
+    "destinationCityName": "Rotterdam",
+    "destinationCountryName": "Netherlands",
+    "destinationUnLocCode": "NLRTM",
+    "originServiceMode": "CY",
+    "destinationServiceMode": "CY",
+    "deepLink": "https://maersk.com/book",
+    "containers": [
+      {
+        "iso": "22G1",
+        "size": "20",
+        "name": "20DRY",
+        "type": "DRY",
+        "label": "20 Dry Standard",
+        "height": "8 6"
+      }
+    ]
+  },
+  "routeScheduleWithPrices": {
+    "offerId": "O_P0du86cp",
+    "productPriceType": "spot",
+    "routeScheduleFull": {
+      "brandScac": "MAEU",
+      "routeCode": "E1",
+      "direction": "W",
+      "productSequence": 0,
+      "fromLocation": {
+        "cityGeoId": "03B8IKYXH3VYM",
+        "cityName": "Yue Yang",
+        "date": "2024-05-19",
+        "time": "08:00:00",
+        "siteGeoId": "266I6L69JSOA7",
+        "siteName": "YUEYANG HUNAN OCEAN TERMINAL",
+        "rkstCode": "CNGMK",
+        "unLocCode": "CNYYA",
+        "countryCode": "CN",
+        "countryName": "China"
+      },
+      "toLocation": {
+        "cityGeoId": "1JUKNJGWHQBNJ",
+        "cityName": "Rotterdam",
+        "date": "2024-07-18",
+        "time": "15:30:00",
+        "siteGeoId": "HHMT8D8RO96BR",
+        "siteName": "APM 2 Terminal Maasvlakte II",
+        "rkstCode": "NLROT",
+        "unLocCode": "NLMSV",
+        "countryCode": "NL",
+        "countryName": "Netherlands"
+      },
+      "firstLoadPort": {
+        "cityGeoId": "03B8IKYXH3VYM",
+        "cityName": "Yue Yang",
+        "date": "2024-05-19",
+        "time": "08:00:00",
+        "siteGeoId": "266I6L69JSOA7",
+        "siteName": "YUEYANG HUNAN OCEAN TERMINAL",
+        "rkstCode": "CNGMKHO",
+        "unLocCode": "CNYYA",
+        "countryCode": "CN",
+        "countryName": "China"
+      },
+      "lastDischargePort": {
+        "cityGeoId": "1JUKNJGWHQBNJ",
+        "cityName": "Rotterdam",
+        "date": "2024-07-18",
+        "time": "15:30:00",
+        "siteGeoId": "HHMT8D8RO96BR",
+        "siteName": "APM 2 Terminal Maasvlakte II",
+        "rkstCode": "NLROTTM",
+        "unLocCode": "NLMSV",
+        "countryCode": "NL",
+        "countryName": "Netherlands"
+      },
+      "hasInlandExport": false,
+      "hasInlandImport": false,
+      "vessel": {
+        "code": "W1R",
+        "name": "KOVEN SHELTER 4",
+        "longName": "KOVEN SHELTER 4",
+        "imoNumber": "",
+        "buildYear": "1970",
+        "callSign": "XXXXX",
+        "capacityTEU": "0"
+      },
+      "transitTime": "86850",
+      "voyageNumber": "422W",
+      "fmcRegulationApplies": false,
+      "scheduleDetails": [
+        {
+          "fromLocation": {
+            "cityGeoId": "03B8IKYXH3VYM",
+            "cityName": "Yue Yang",
+            "date": "2024-05-19",
+            "time": "08:00:00",
+            "siteGeoId": "266I6L69JSOA7",
+            "siteName": "YUEYANG HUNAN OCEAN TERMINAL",
+            "rkstCode": "CNGMKHO",
+            "unLocCode": "CNYYA",
+            "countryCode": "CN",
+            "countryName": "China"
+          },
+          "toLocation": {
+            "cityGeoId": "2IW9P6J7XAW72",
+            "cityName": "Shanghai",
+            "date": "2024-05-29",
+            "time": "08:00:00",
+            "siteGeoId": "37O5HQ17XCL3X",
+            "siteName": "YANGSHAN SGH GUANDONG TERMINAL",
+            "rkstCode": "CNSGHY3",
+            "unLocCode": "CNSHA",
+            "countryCode": "CN",
+            "countryName": "China"
+          },
+          "transport": {
+            "transportMode": "FEF",
+            "vessel": {},
+            "tradeLane": null,
+            "voyageNumber": null
+          },
+          "serviceCode": null,
+          "serviceName": null,
+          "carrierCode": null,
+          "routingType": null,
+          "deadlines": []
+        },
+        {
+          "fromLocation": {
+            "cityGeoId": "2IW9P6J7XAW72",
+            "cityName": "Shanghai",
+            "date": "2024-06-01",
+            "time": "02:00:00",
+            "siteGeoId": "37O5HQ17XCL3X",
+            "siteName": "YANGSHAN SGH GUANDONG TERMINAL",
+            "rkstCode": "CNSGHY3",
+            "unLocCode": "CNSHA",
+            "countryCode": "CN",
+            "countryName": "China"
+          },
+          "toLocation": {
+            "cityGeoId": "1JUKNJGWHQBNJ",
+            "cityName": "Rotterdam",
+            "date": "2024-07-18",
+            "time": "15:30:00",
+            "siteGeoId": "HHMT8D8RO96BR",
+            "siteName": "APM 2 Terminal Maasvlakte II",
+            "rkstCode": "NLROTTM",
+            "unLocCode": "NLMSV",
+            "countryCode": "NL",
+            "countryName": "Netherlands"
+          },
+          "transport": {
+            "transportMode": "MVS",
+            "vessel": {
+              "code": "W1R",
+              "name": "KOVEN SHELTER 4",
+              "longName": "KOVEN SHELTER 4",
+              "imoNumber": "",
+              "buildYear": "1970",
+              "callSign": "XXXXX",
+              "capacityTEU": "0"
+            },
+            "tradeLane": null,
+            "voyageNumber": "422W"
+          },
+          "serviceCode": "455",
+          "serviceName": null,
+          "carrierCode": null,
+          "routingType": null,
+          "deadlines": [
+            {
+              "deadline": "2024-05-30 02:00:00",
+              "deadlineKey": "CY",
+              "name": "Commercial Cargo Cutoff",
+              "type": "Documentation"
+            }
+          ]
+        }
+      ]
+    },
+    "importDnDConditions": [
+      {
+        "chargeType": "Demurrage",
+        "containerSizeType": "20DRY",
+        "commodity": "GENERAL CARGO",
+        "freetimeStartEvent": "discharge",
+        "freetimeGrantInDays": 4,
+        "rkstCode": "NLROT",
+        "chargePerDiemAfterFreetime": [
+          {
+            "startDayOfCharge": 5,
+            "endDayOfCharge": 10,
+            "chargePerDiem": "110",
+            "currencyOfCharge": "EUR"
+          },
+          {
+            "startDayOfCharge": 11,
+            "endDayOfCharge": null,
+            "chargePerDiem": "180",
+            "currencyOfCharge": "EUR"
+          }
+        ]
+      },
+      {
+        "chargeType": "Detention",
+        "containerSizeType": "20DRY",
+        "commodity": "GENERAL CARGO",
+        "freetimeStartEvent": "gate-out full",
+        "freetimeGrantInDays": 3,
+        "rkstCode": "NLROT",
+        "chargePerDiemAfterFreetime": [
+          {
+            "startDayOfCharge": 4,
+            "endDayOfCharge": null,
+            "chargePerDiem": "75",
+            "currencyOfCharge": "EUR"
+          }
+        ]
+      }
+    ],
+    "penaltyFees": [
+      {
+        "containerSizeType": "20DRY",
+        "currency": "USD",
+        "charges": [
+          {
+            "penaltyType": "AmendmentFee",
+            "chargeFee": 50,
+            "displayName": "Amendment Fee"
+          },
+          {
+            "penaltyType": "CancellationFee",
+            "chargeFee": 50,
+            "displayName": "Cancellation Fee"
+          },
+          {
+            "penaltyType": "NoShowFee",
+            "chargeFee": 100,
+            "displayName": "No Show Fee"
+          },
+          {
+            "penaltyType": "CompensationFee",
+            "chargeFee": -50,
+            "displayName": "Compensation Fee"
+          }
+        ]
+      }
+    ],
+    "price": {
+      "surcharges_per_doc": [
+        {
+          "currencyConversionFactor": 0.0,
+          "rateExpiryDate": null,
+          "freightType": null,
+          "lineItemNumber": null,
+          "rateUnitDescription": null,
+          "validFromDate": null,
+          "rate": "450.0",
+          "rateusd": "62.14",
+          "qty": "1",
+          "amount": "450.0",
+          "amountusd": "62.14",
+          "currency": "CNY",
+          "ratebasis": "PER_DOC",
+          "ratetype": "Paid at Origin",
+          "ratetypecode": "Origin",
+          "chargecode": "ODF",
+          "chargedescription": "Documentation Fee Origin"
+        },
+        {
+          "currencyConversionFactor": 0.0,
+          "rateExpiryDate": null,
+          "freightType": null,
+          "lineItemNumber": null,
+          "rateUnitDescription": null,
+          "validFromDate": null,
+          "rate": "40.0",
+          "rateusd": "42.88",
+          "qty": "1",
+          "amount": "40.0",
+          "amountusd": "42.88",
+          "currency": "EUR",
+          "ratebasis": "PER_DOC",
+          "ratetype": "Paid at Destination",
+          "ratetypecode": "Destination",
+          "chargecode": "DDF",
+          "chargedescription": "Documentation fee - Destination"
+        }
+      ],
+      "prices_per_container": [
+        {
+          "priceid": "P_2148161405_P0du86cp",
+          "containersizetype": "20DRY",
+          "priceValidFromDate": null,
+          "priceValidToDate": null,
+          "containerIsoCode": null,
+          "weight": null,
+          "bas": {
+            "currencyConversionFactor": 0.0,
+            "rateExpiryDate": null,
+            "freightType": null,
+            "lineItemNumber": null,
+            "rateUnitDescription": null,
+            "validFromDate": null,
+            "rate": "2788.0",
+            "rateusd": "2788.0",
+            "qty": "1",
+            "amount": "2788.0",
+            "amountusd": "2788.0",
+            "currency": "USD",
+            "ratebasis": "PER_CONTAINER",
+            "ratetype": "Paid with Freight",
+            "ratetypecode": "Freight",
+            "chargecode": "BAS",
+            "chargedescription": "Basic Ocean Freight"
+          },
+          "offerExpiringSoon": false,
+          "surcharges_per_container": [
+            {
+              "currencyConversionFactor": 0.0,
+              "rateExpiryDate": null,
+              "freightType": null,
+              "lineItemNumber": null,
+              "rateUnitDescription": null,
+              "validFromDate": null,
+              "rate": "50.0",
+              "rateusd": "6.9",
+              "qty": "1",
+              "amount": "50.0",
+              "amountusd": "6.9",
+              "currency": "CNY",
+              "ratebasis": "PER_CONTAINER",
+              "ratetype": "Paid at Origin",
+              "ratetypecode": "Origin",
+              "chargecode": "EXP",
+              "chargedescription": "Export Service"
+            },
+            {
+              "currencyConversionFactor": 0.0,
+              "rateExpiryDate": null,
+              "freightType": null,
+              "lineItemNumber": null,
+              "rateUnitDescription": null,
+              "validFromDate": null,
+              "rate": "990.0",
+              "rateusd": "136.72",
+              "qty": "1",
+              "amount": "990.0",
+              "amountusd": "136.72",
+              "currency": "CNY",
+              "ratebasis": "PER_CONTAINER",
+              "ratetype": "Paid at Origin",
+              "ratetypecode": "Origin",
+              "chargecode": "OHC",
+              "chargedescription": "Terminal Handling Service - Origin"
+            },
+            {
+              "currencyConversionFactor": 0.0,
+              "rateExpiryDate": null,
+              "freightType": null,
+              "lineItemNumber": null,
+              "rateUnitDescription": null,
+              "validFromDate": null,
+              "rate": "260.0",
+              "rateusd": "278.72",
+              "qty": "1",
+              "amount": "260.0",
+              "amountusd": "278.72",
+              "currency": "EUR",
+              "ratebasis": "PER_CONTAINER",
+              "ratetype": "Paid at Destination",
+              "ratetypecode": "Destination",
+              "chargecode": "DHC",
+              "chargedescription": "Terminal Handling Service - Destination"
+            },
+            {
+              "currencyConversionFactor": 0.0,
+              "rateExpiryDate": null,
+              "freightType": null,
+              "lineItemNumber": null,
+              "rateUnitDescription": null,
+              "validFromDate": null,
+              "rate": "142.0",
+              "rateusd": "142.0",
+              "qty": "1",
+              "amount": "142.0",
+              "amountusd": "142.0",
+              "currency": "USD",
+              "ratebasis": "PER_CONTAINER",
+              "ratetype": "Paid with Freight",
+              "ratetypecode": "Freight",
+              "chargecode": "EFF",
+              "chargedescription": "Environmental Fuel Fee"
+            },
+            {
+              "currencyConversionFactor": 0.0,
+              "rateExpiryDate": null,
+              "freightType": null,
+              "lineItemNumber": null,
+              "rateUnitDescription": null,
+              "validFromDate": null,
+              "rate": "15.0",
+              "rateusd": "15.0",
+              "qty": "1",
+              "amount": "15.0",
+              "amountusd": "15.0",
+              "currency": "USD",
+              "ratebasis": "PER_CONTAINER",
+              "ratetype": "Paid with Freight",
+              "ratetypecode": "Freight",
+              "chargecode": "LSS",
+              "chargedescription": "Low Sulphur Surcharge"
+            },
+            {
+              "currencyConversionFactor": 0.0,
+              "rateExpiryDate": null,
+              "freightType": null,
+              "lineItemNumber": null,
+              "rateUnitDescription": null,
+              "validFromDate": null,
+              "rate": "28.0",
+              "rateusd": "30.02",
+              "qty": "1",
+              "amount": "28.0",
+              "amountusd": "30.02",
+              "currency": "EUR",
+              "ratebasis": "PER_CONTAINER",
+              "ratetype": "Paid at Destination",
+              "ratetypecode": "Destination",
+              "chargecode": "CP1",
+              "chargedescription": "Container Protect Essential"
+            }
+          ]
+        }
+      ],
+      "total": "3502",
+      "totalbas": "2788",
+      "totalPriceCurrency": "USD"
+    },
+    "rollableOptionEnabled": true,
+    "spotOnlyAllowedFreesale": false
+  },
+  "contracts": null,
+  "spotScope": {
+    "spotOnlyAllowedFreesale": true,
+    "spotSupported": true
+  },
+  "offerFilteredReasons": null
+}

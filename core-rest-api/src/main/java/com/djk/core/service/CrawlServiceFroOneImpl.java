@@ -17,7 +17,7 @@ public class CrawlServiceFroOneImpl implements CrawlService
     @Override
     public String queryData(QueryRouteVo queryRouteVo)
     {
-        System.out.println("msk");
+        System.out.println("one");
         TimeUnit.SECONDS.sleep(20L);
         return null;
     }

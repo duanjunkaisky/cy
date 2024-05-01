@@ -44,4 +44,4 @@ ribbon:
 logging:
   level:
     root: debug
-    framework: error
+    framework: debug
