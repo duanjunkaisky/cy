@@ -72,7 +72,7 @@ public class CrawlChain
         ListenableFuture<List<String>> listListenableFuture = Futures.allAsList(Lists.newArrayList(futureList));
         List<String> implNameList = listListenableFuture.get();
         implNameList.forEach(item -> {
-            log.debug(item + "爬取完成!");
+            log.info(item + "爬取完成!");
             CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
             crawlRequestStatusExample.createCriteria().andRequestIdEqualTo(String.valueOf(queryRouteVo.getRequestId())).andHostCodeEqualTo(getHostCode(item)).andStatusEqualTo(Constant.CRAWL_STATUS.RUNNING.ordinal());
             CrawlRequestStatus requestStatus = new CrawlRequestStatus();

@@ -66,6 +66,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     @Transactional
     public String queryData(QueryRouteVo queryRouteVo)
     {
+        log.info(queryRouteVo.getRequestId() + "-开始爬取MSK数据");
         BasePort fromPort = getFromPort(queryRouteVo);
         BasePort toPort = getToPort(queryRouteVo);
         JSONObject portInfoFrom = getPortInfo(queryRouteVo.getDeparturePortEn(), fromPort.getCountryCode());
@@ -100,7 +101,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     throw new RuntimeException("爬取重试次数大于" + MAX_REQ_COUNT);
                 }
                 try {
-                    Map<String, String> header = getRemoteSensorData();
+                    Map<String, String> header = getRemoteSensorData(queryRouteVo);
                     Map<String, Object> data = new HashMap<>(1);
                     data.put("fromPortId", portInfoFrom.getString("maerskGeoLocationId"));
                     data.put("fromPortCode", portInfoFrom.getString("maerskRkstCode"));
@@ -119,20 +120,26 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     data.put("queryDate", format.format(queryTime));
                     data.put("weekOffset", (page - 1) * WEEK_STEP);
                     String jsonParam = FreeMakerUtil.createByTemplate("mskQuery.ftl", data);
+
+                    log.info(queryRouteVo.getRequestId() + "-第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
+
                     HttpResp resp = HttpUtil.postBody("https://api.maersk.com/productoffer/v2/productoffers", header, jsonParam);
                     Response response = resp.getResponse();
                     String bodyJson = resp.getBodyJson();
                     if (response.code() != 200) {
                         if (response.code() == 403) {
                             sensorData = null;
+                            log.info(queryRouteVo.getRequestId() + "-第" + reqCount + "次发起请求返回403");
                         } else if (response.code() == 401) {
                             tokenIndex++;
+                            log.info(queryRouteVo.getRequestId() + "-第" + reqCount + "次发起请求返回401");
                         }
                         continue;
                     }
 
                     JSONObject retObj = JSONObject.parseObject(bodyJson);
                     hasMore = retObj.getBoolean("loadMore");
+                    log.info(queryRouteVo.getRequestId() + "-第" + reqCount + "次发起请求返回成功, hasMore: " + hasMore);
                     page++;
 
                     //开始处理入库
@@ -140,8 +147,9 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     parseData(baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap);
                     reqCount = 0;
                 } catch (Exception e) {
-                    reqCount = 0;
-                    throw new RuntimeException("爬取数据出错", e);
+                    log.info(queryRouteVo.getRequestId() + "-第" + reqCount + "次发起请求出错");
+                    log.error(ExceptionUtil.getMessage(e));
+                    log.error(ExceptionUtil.stacktraceToString(e));
                 }
             }
             reqCount = 0;
@@ -165,6 +173,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
             productContainerMapper.batchInsert(productContainerList);
             productFeeItemMapper.batchInsert(productFeeItemList);
 
+            log.info(queryRouteVo.getRequestId() + "-入库完成");
         }
         return null;
     }
@@ -388,7 +397,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         throw new RuntimeException("箱型解析出错");
     }
 
-    public Map<String, String> getRemoteSensorData()
+    public Map<String, String> getRemoteSensorData(QueryRouteVo queryRouteVo)
     {
         reqCount++;
         CrawlMetadataWebsiteConfigExample crawlMetadataWebsiteConfigExample = new CrawlMetadataWebsiteConfigExample();
@@ -417,6 +426,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
             userAgent = retObj.getString("ua");
             sensorData = retObj.getString("sensorData");
             sensorData = Base64.getEncoder().encodeToString(sensorData.getBytes());
+            log.info(queryRouteVo.getRequestId() + "-msk获取sensorData:\n" + sensorData);
         }
         String str = tokenBean.getString("akamai-bm-telemetry");
         String start = str.split("sensor_data=")[0];
