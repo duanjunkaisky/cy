@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.djk.core.mapper.BaseShippingCompanyMapper">
+  <resultMap id="BaseResultMap" type="com.djk.core.model.BaseShippingCompany">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="en_full_name" jdbcType="VARCHAR" property="enFullName" />
+    <result column="en_abbreviation" jdbcType="VARCHAR" property="enAbbreviation" />
+    <result column="cn_full_name" jdbcType="VARCHAR" property="cnFullName" />
+    <result column="cn_abbreviation" jdbcType="VARCHAR" property="cnAbbreviation" />
+    <result column="image" jdbcType="VARCHAR" property="image" />
+    <result column="website" jdbcType="VARCHAR" property="website" />
+    <result column="alias" jdbcType="VARCHAR" property="alias" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater" jdbcType="VARCHAR" property="updater" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+    <result column="deleted_by" jdbcType="VARCHAR" property="deletedBy" />
+    <result column="deleted_time" jdbcType="TIMESTAMP" property="deletedTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, en_full_name, en_abbreviation, cn_full_name, cn_abbreviation, image, website, 
+    alias, remark, status, creator, create_time, updater, update_time, deleted, tenant_id, 
+    deleted_by, deleted_time
+  </sql>
+  <select id="selectByExample" parameterType="com.djk.core.model.BaseShippingCompanyExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from base_shipping_company
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from base_shipping_company
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from base_shipping_company
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.djk.core.model.BaseShippingCompanyExample">
+    delete from base_shipping_company
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.djk.core.model.BaseShippingCompany">
+    insert into base_shipping_company (id, en_full_name, en_abbreviation, 
+      cn_full_name, cn_abbreviation, image, 
+      website, alias, remark, 
+      status, creator, create_time, 
+      updater, update_time, deleted, 
+      tenant_id, deleted_by, deleted_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{enFullName,jdbcType=VARCHAR}, #{enAbbreviation,jdbcType=VARCHAR}, 
+      #{cnFullName,jdbcType=VARCHAR}, #{cnAbbreviation,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR}, 
+      #{website,jdbcType=VARCHAR}, #{alias,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{creator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updater,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=BIT}, 
+      #{tenantId,jdbcType=BIGINT}, #{deletedBy,jdbcType=VARCHAR}, #{deletedTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.djk.core.model.BaseShippingCompany">
+    insert into base_shipping_company
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="enFullName != null">
+        en_full_name,
+      </if>
+      <if test="enAbbreviation != null">
+        en_abbreviation,
+      </if>
+      <if test="cnFullName != null">
+        cn_full_name,
+      </if>
+      <if test="cnAbbreviation != null">
+        cn_abbreviation,
+      </if>
+      <if test="image != null">
+        image,
+      </if>
+      <if test="website != null">
+        website,
+      </if>
+      <if test="alias != null">
+        alias,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updater != null">
+        updater,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="deleted != null">
+        deleted,
+      </if>
+      <if test="tenantId != null">
+        tenant_id,
+      </if>
+      <if test="deletedBy != null">
+        deleted_by,
+      </if>
+      <if test="deletedTime != null">
+        deleted_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="enFullName != null">
+        #{enFullName,jdbcType=VARCHAR},
+      </if>
+      <if test="enAbbreviation != null">
+        #{enAbbreviation,jdbcType=VARCHAR},
+      </if>
+      <if test="cnFullName != null">
+        #{cnFullName,jdbcType=VARCHAR},
+      </if>
+      <if test="cnAbbreviation != null">
+        #{cnAbbreviation,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null">
+        #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="website != null">
+        #{website,jdbcType=VARCHAR},
+      </if>
+      <if test="alias != null">
+        #{alias,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updater != null">
+        #{updater,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        #{deleted,jdbcType=BIT},
+      </if>
+      <if test="tenantId != null">
+        #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="deletedBy != null">
+        #{deletedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="deletedTime != null">
+        #{deletedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.djk.core.model.BaseShippingCompanyExample" resultType="java.lang.Long">
+    select count(*) from base_shipping_company
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update base_shipping_company
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.enFullName != null">
+        en_full_name = #{record.enFullName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.enAbbreviation != null">
+        en_abbreviation = #{record.enAbbreviation,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cnFullName != null">
+        cn_full_name = #{record.cnFullName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cnAbbreviation != null">
+        cn_abbreviation = #{record.cnAbbreviation,jdbcType=VARCHAR},
+      </if>
+      <if test="record.image != null">
+        image = #{record.image,jdbcType=VARCHAR},
+      </if>
+      <if test="record.website != null">
+        website = #{record.website,jdbcType=VARCHAR},
+      </if>
+      <if test="record.alias != null">
+        alias = #{record.alias,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=TINYINT},
+      </if>
+      <if test="record.creator != null">
+        creator = #{record.creator,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updater != null">
+        updater = #{record.updater,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.deleted != null">
+        deleted = #{record.deleted,jdbcType=BIT},
+      </if>
+      <if test="record.tenantId != null">
+        tenant_id = #{record.tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="record.deletedBy != null">
+        deleted_by = #{record.deletedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deletedTime != null">
+        deleted_time = #{record.deletedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update base_shipping_company
+    set id = #{record.id,jdbcType=BIGINT},
+      en_full_name = #{record.enFullName,jdbcType=VARCHAR},
+      en_abbreviation = #{record.enAbbreviation,jdbcType=VARCHAR},
+      cn_full_name = #{record.cnFullName,jdbcType=VARCHAR},
+      cn_abbreviation = #{record.cnAbbreviation,jdbcType=VARCHAR},
+      image = #{record.image,jdbcType=VARCHAR},
+      website = #{record.website,jdbcType=VARCHAR},
+      alias = #{record.alias,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      status = #{record.status,jdbcType=TINYINT},
+      creator = #{record.creator,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      updater = #{record.updater,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      deleted = #{record.deleted,jdbcType=BIT},
+      tenant_id = #{record.tenantId,jdbcType=BIGINT},
+      deleted_by = #{record.deletedBy,jdbcType=VARCHAR},
+      deleted_time = #{record.deletedTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.djk.core.model.BaseShippingCompany">
+    update base_shipping_company
+    <set>
+      <if test="enFullName != null">
+        en_full_name = #{enFullName,jdbcType=VARCHAR},
+      </if>
+      <if test="enAbbreviation != null">
+        en_abbreviation = #{enAbbreviation,jdbcType=VARCHAR},
+      </if>
+      <if test="cnFullName != null">
+        cn_full_name = #{cnFullName,jdbcType=VARCHAR},
+      </if>
+      <if test="cnAbbreviation != null">
+        cn_abbreviation = #{cnAbbreviation,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null">
+        image = #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="website != null">
+        website = #{website,jdbcType=VARCHAR},
+      </if>
+      <if test="alias != null">
+        alias = #{alias,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updater != null">
+        updater = #{updater,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+      <if test="tenantId != null">
+        tenant_id = #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="deletedBy != null">
+        deleted_by = #{deletedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="deletedTime != null">
+        deleted_time = #{deletedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.djk.core.model.BaseShippingCompany">
+    update base_shipping_company
+    set en_full_name = #{enFullName,jdbcType=VARCHAR},
+      en_abbreviation = #{enAbbreviation,jdbcType=VARCHAR},
+      cn_full_name = #{cnFullName,jdbcType=VARCHAR},
+      cn_abbreviation = #{cnAbbreviation,jdbcType=VARCHAR},
+      image = #{image,jdbcType=VARCHAR},
+      website = #{website,jdbcType=VARCHAR},
+      alias = #{alias,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      creator = #{creator,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      updater = #{updater,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=BIT},
+      tenant_id = #{tenantId,jdbcType=BIGINT},
+      deleted_by = #{deletedBy,jdbcType=VARCHAR},
+      deleted_time = #{deletedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <insert id="batchInsert">
+    <if test="items.get(0) != null">
+            insert into base_shipping_company  (id, en_full_name, en_abbreviation, 
+        cn_full_name, cn_abbreviation, image, 
+        website, alias, remark, 
+        status, creator, create_time, 
+        updater, update_time, deleted, 
+        tenant_id, deleted_by, deleted_time
+        )
+      values
+      <foreach collection="items" item="item" index="index" separator=",">
+      (#{item.id,jdbcType=BIGINT}, #{item.enFullName,jdbcType=VARCHAR}, #{item.enAbbreviation,jdbcType=VARCHAR}, 
+        #{item.cnFullName,jdbcType=VARCHAR}, #{item.cnAbbreviation,jdbcType=VARCHAR}, #{item.image,jdbcType=VARCHAR}, 
+        #{item.website,jdbcType=VARCHAR}, #{item.alias,jdbcType=VARCHAR}, #{item.remark,jdbcType=VARCHAR}, 
+        #{item.status,jdbcType=TINYINT}, #{item.creator,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, 
+        #{item.updater,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.deleted,jdbcType=BIT}, 
+        #{item.tenantId,jdbcType=BIGINT}, #{item.deletedBy,jdbcType=VARCHAR}, #{item.deletedTime,jdbcType=TIMESTAMP}
+        )
+      </foreach>
+    </if>
+  </insert>
+</mapper>

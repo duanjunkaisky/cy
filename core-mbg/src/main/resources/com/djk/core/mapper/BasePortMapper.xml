@@ -1,0 +1,765 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.djk.core.mapper.BasePortMapper">
+  <resultMap id="BaseResultMap" type="com.djk.core.model.BasePort">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="port_name_en" jdbcType="VARCHAR" property="portNameEn" />
+    <result column="port_name_zh" jdbcType="VARCHAR" property="portNameZh" />
+    <result column="port_code" jdbcType="VARCHAR" property="portCode" />
+    <result column="country_name_en" jdbcType="VARCHAR" property="countryNameEn" />
+    <result column="country_name_zh" jdbcType="VARCHAR" property="countryNameZh" />
+    <result column="country_code" jdbcType="VARCHAR" property="countryCode" />
+    <result column="province_zh" jdbcType="VARCHAR" property="provinceZh" />
+    <result column="province_en" jdbcType="VARCHAR" property="provinceEn" />
+    <result column="state_zh" jdbcType="VARCHAR" property="stateZh" />
+    <result column="state_en" jdbcType="VARCHAR" property="stateEn" />
+    <result column="city_zh" jdbcType="VARCHAR" property="cityZh" />
+    <result column="city_en" jdbcType="VARCHAR" property="cityEn" />
+    <result column="port_type" jdbcType="INTEGER" property="portType" />
+    <result column="region" jdbcType="BIGINT" property="region" />
+    <result column="area" jdbcType="BIGINT" property="area" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="notes" jdbcType="VARCHAR" property="notes" />
+    <result column="cosco_code" jdbcType="VARCHAR" property="coscoCode" />
+    <result column="oocl_code" jdbcType="VARCHAR" property="ooclCode" />
+    <result column="emc_code" jdbcType="VARCHAR" property="emcCode" />
+    <result column="msk_code" jdbcType="VARCHAR" property="mskCode" />
+    <result column="mcc_code" jdbcType="VARCHAR" property="mccCode" />
+    <result column="one_code" jdbcType="VARCHAR" property="oneCode" />
+    <result column="msc_code" jdbcType="VARCHAR" property="mscCode" />
+    <result column="zim_code" jdbcType="VARCHAR" property="zimCode" />
+    <result column="hmm_code" jdbcType="VARCHAR" property="hmmCode" />
+    <result column="cma_code" jdbcType="VARCHAR" property="cmaCode" />
+    <result column="cnc_code" jdbcType="VARCHAR" property="cncCode" />
+    <result column="hpl_code" jdbcType="VARCHAR" property="hplCode" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater" jdbcType="VARCHAR" property="updater" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="deleted" jdbcType="BIT" property="deleted" />
+    <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+    <result column="deleted_by" jdbcType="VARCHAR" property="deletedBy" />
+    <result column="deleted_time" jdbcType="TIMESTAMP" property="deletedTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, port_name_en, port_name_zh, port_code, country_name_en, country_name_zh, country_code, 
+    province_zh, province_en, state_zh, state_en, city_zh, city_en, port_type, region, 
+    area, status, notes, cosco_code, oocl_code, emc_code, msk_code, mcc_code, one_code, 
+    msc_code, zim_code, hmm_code, cma_code, cnc_code, hpl_code, creator, create_time, 
+    updater, update_time, deleted, tenant_id, deleted_by, deleted_time
+  </sql>
+  <select id="selectByExample" parameterType="com.djk.core.model.BasePortExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from base_port
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from base_port
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from base_port
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.djk.core.model.BasePortExample">
+    delete from base_port
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.djk.core.model.BasePort">
+    insert into base_port (id, port_name_en, port_name_zh, 
+      port_code, country_name_en, country_name_zh, 
+      country_code, province_zh, province_en, 
+      state_zh, state_en, city_zh, 
+      city_en, port_type, region, 
+      area, status, notes, 
+      cosco_code, oocl_code, emc_code, 
+      msk_code, mcc_code, one_code, 
+      msc_code, zim_code, hmm_code, 
+      cma_code, cnc_code, hpl_code, 
+      creator, create_time, updater, 
+      update_time, deleted, tenant_id, 
+      deleted_by, deleted_time)
+    values (#{id,jdbcType=BIGINT}, #{portNameEn,jdbcType=VARCHAR}, #{portNameZh,jdbcType=VARCHAR}, 
+      #{portCode,jdbcType=VARCHAR}, #{countryNameEn,jdbcType=VARCHAR}, #{countryNameZh,jdbcType=VARCHAR}, 
+      #{countryCode,jdbcType=VARCHAR}, #{provinceZh,jdbcType=VARCHAR}, #{provinceEn,jdbcType=VARCHAR}, 
+      #{stateZh,jdbcType=VARCHAR}, #{stateEn,jdbcType=VARCHAR}, #{cityZh,jdbcType=VARCHAR}, 
+      #{cityEn,jdbcType=VARCHAR}, #{portType,jdbcType=INTEGER}, #{region,jdbcType=BIGINT}, 
+      #{area,jdbcType=BIGINT}, #{status,jdbcType=TINYINT}, #{notes,jdbcType=VARCHAR}, 
+      #{coscoCode,jdbcType=VARCHAR}, #{ooclCode,jdbcType=VARCHAR}, #{emcCode,jdbcType=VARCHAR}, 
+      #{mskCode,jdbcType=VARCHAR}, #{mccCode,jdbcType=VARCHAR}, #{oneCode,jdbcType=VARCHAR}, 
+      #{mscCode,jdbcType=VARCHAR}, #{zimCode,jdbcType=VARCHAR}, #{hmmCode,jdbcType=VARCHAR}, 
+      #{cmaCode,jdbcType=VARCHAR}, #{cncCode,jdbcType=VARCHAR}, #{hplCode,jdbcType=VARCHAR}, 
+      #{creator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updater,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=BIT}, #{tenantId,jdbcType=BIGINT}, 
+      #{deletedBy,jdbcType=VARCHAR}, #{deletedTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.djk.core.model.BasePort">
+    insert into base_port
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="portNameEn != null">
+        port_name_en,
+      </if>
+      <if test="portNameZh != null">
+        port_name_zh,
+      </if>
+      <if test="portCode != null">
+        port_code,
+      </if>
+      <if test="countryNameEn != null">
+        country_name_en,
+      </if>
+      <if test="countryNameZh != null">
+        country_name_zh,
+      </if>
+      <if test="countryCode != null">
+        country_code,
+      </if>
+      <if test="provinceZh != null">
+        province_zh,
+      </if>
+      <if test="provinceEn != null">
+        province_en,
+      </if>
+      <if test="stateZh != null">
+        state_zh,
+      </if>
+      <if test="stateEn != null">
+        state_en,
+      </if>
+      <if test="cityZh != null">
+        city_zh,
+      </if>
+      <if test="cityEn != null">
+        city_en,
+      </if>
+      <if test="portType != null">
+        port_type,
+      </if>
+      <if test="region != null">
+        region,
+      </if>
+      <if test="area != null">
+        area,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="notes != null">
+        notes,
+      </if>
+      <if test="coscoCode != null">
+        cosco_code,
+      </if>
+      <if test="ooclCode != null">
+        oocl_code,
+      </if>
+      <if test="emcCode != null">
+        emc_code,
+      </if>
+      <if test="mskCode != null">
+        msk_code,
+      </if>
+      <if test="mccCode != null">
+        mcc_code,
+      </if>
+      <if test="oneCode != null">
+        one_code,
+      </if>
+      <if test="mscCode != null">
+        msc_code,
+      </if>
+      <if test="zimCode != null">
+        zim_code,
+      </if>
+      <if test="hmmCode != null">
+        hmm_code,
+      </if>
+      <if test="cmaCode != null">
+        cma_code,
+      </if>
+      <if test="cncCode != null">
+        cnc_code,
+      </if>
+      <if test="hplCode != null">
+        hpl_code,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updater != null">
+        updater,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="deleted != null">
+        deleted,
+      </if>
+      <if test="tenantId != null">
+        tenant_id,
+      </if>
+      <if test="deletedBy != null">
+        deleted_by,
+      </if>
+      <if test="deletedTime != null">
+        deleted_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="portNameEn != null">
+        #{portNameEn,jdbcType=VARCHAR},
+      </if>
+      <if test="portNameZh != null">
+        #{portNameZh,jdbcType=VARCHAR},
+      </if>
+      <if test="portCode != null">
+        #{portCode,jdbcType=VARCHAR},
+      </if>
+      <if test="countryNameEn != null">
+        #{countryNameEn,jdbcType=VARCHAR},
+      </if>
+      <if test="countryNameZh != null">
+        #{countryNameZh,jdbcType=VARCHAR},
+      </if>
+      <if test="countryCode != null">
+        #{countryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceZh != null">
+        #{provinceZh,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceEn != null">
+        #{provinceEn,jdbcType=VARCHAR},
+      </if>
+      <if test="stateZh != null">
+        #{stateZh,jdbcType=VARCHAR},
+      </if>
+      <if test="stateEn != null">
+        #{stateEn,jdbcType=VARCHAR},
+      </if>
+      <if test="cityZh != null">
+        #{cityZh,jdbcType=VARCHAR},
+      </if>
+      <if test="cityEn != null">
+        #{cityEn,jdbcType=VARCHAR},
+      </if>
+      <if test="portType != null">
+        #{portType,jdbcType=INTEGER},
+      </if>
+      <if test="region != null">
+        #{region,jdbcType=BIGINT},
+      </if>
+      <if test="area != null">
+        #{area,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="notes != null">
+        #{notes,jdbcType=VARCHAR},
+      </if>
+      <if test="coscoCode != null">
+        #{coscoCode,jdbcType=VARCHAR},
+      </if>
+      <if test="ooclCode != null">
+        #{ooclCode,jdbcType=VARCHAR},
+      </if>
+      <if test="emcCode != null">
+        #{emcCode,jdbcType=VARCHAR},
+      </if>
+      <if test="mskCode != null">
+        #{mskCode,jdbcType=VARCHAR},
+      </if>
+      <if test="mccCode != null">
+        #{mccCode,jdbcType=VARCHAR},
+      </if>
+      <if test="oneCode != null">
+        #{oneCode,jdbcType=VARCHAR},
+      </if>
+      <if test="mscCode != null">
+        #{mscCode,jdbcType=VARCHAR},
+      </if>
+      <if test="zimCode != null">
+        #{zimCode,jdbcType=VARCHAR},
+      </if>
+      <if test="hmmCode != null">
+        #{hmmCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cmaCode != null">
+        #{cmaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cncCode != null">
+        #{cncCode,jdbcType=VARCHAR},
+      </if>
+      <if test="hplCode != null">
+        #{hplCode,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updater != null">
+        #{updater,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        #{deleted,jdbcType=BIT},
+      </if>
+      <if test="tenantId != null">
+        #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="deletedBy != null">
+        #{deletedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="deletedTime != null">
+        #{deletedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.djk.core.model.BasePortExample" resultType="java.lang.Long">
+    select count(*) from base_port
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update base_port
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.portNameEn != null">
+        port_name_en = #{record.portNameEn,jdbcType=VARCHAR},
+      </if>
+      <if test="record.portNameZh != null">
+        port_name_zh = #{record.portNameZh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.portCode != null">
+        port_code = #{record.portCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.countryNameEn != null">
+        country_name_en = #{record.countryNameEn,jdbcType=VARCHAR},
+      </if>
+      <if test="record.countryNameZh != null">
+        country_name_zh = #{record.countryNameZh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.countryCode != null">
+        country_code = #{record.countryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.provinceZh != null">
+        province_zh = #{record.provinceZh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.provinceEn != null">
+        province_en = #{record.provinceEn,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stateZh != null">
+        state_zh = #{record.stateZh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stateEn != null">
+        state_en = #{record.stateEn,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cityZh != null">
+        city_zh = #{record.cityZh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cityEn != null">
+        city_en = #{record.cityEn,jdbcType=VARCHAR},
+      </if>
+      <if test="record.portType != null">
+        port_type = #{record.portType,jdbcType=INTEGER},
+      </if>
+      <if test="record.region != null">
+        region = #{record.region,jdbcType=BIGINT},
+      </if>
+      <if test="record.area != null">
+        area = #{record.area,jdbcType=BIGINT},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=TINYINT},
+      </if>
+      <if test="record.notes != null">
+        notes = #{record.notes,jdbcType=VARCHAR},
+      </if>
+      <if test="record.coscoCode != null">
+        cosco_code = #{record.coscoCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.ooclCode != null">
+        oocl_code = #{record.ooclCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.emcCode != null">
+        emc_code = #{record.emcCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mskCode != null">
+        msk_code = #{record.mskCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mccCode != null">
+        mcc_code = #{record.mccCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.oneCode != null">
+        one_code = #{record.oneCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mscCode != null">
+        msc_code = #{record.mscCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.zimCode != null">
+        zim_code = #{record.zimCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hmmCode != null">
+        hmm_code = #{record.hmmCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cmaCode != null">
+        cma_code = #{record.cmaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cncCode != null">
+        cnc_code = #{record.cncCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hplCode != null">
+        hpl_code = #{record.hplCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.creator != null">
+        creator = #{record.creator,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updater != null">
+        updater = #{record.updater,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.deleted != null">
+        deleted = #{record.deleted,jdbcType=BIT},
+      </if>
+      <if test="record.tenantId != null">
+        tenant_id = #{record.tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="record.deletedBy != null">
+        deleted_by = #{record.deletedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="record.deletedTime != null">
+        deleted_time = #{record.deletedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update base_port
+    set id = #{record.id,jdbcType=BIGINT},
+      port_name_en = #{record.portNameEn,jdbcType=VARCHAR},
+      port_name_zh = #{record.portNameZh,jdbcType=VARCHAR},
+      port_code = #{record.portCode,jdbcType=VARCHAR},
+      country_name_en = #{record.countryNameEn,jdbcType=VARCHAR},
+      country_name_zh = #{record.countryNameZh,jdbcType=VARCHAR},
+      country_code = #{record.countryCode,jdbcType=VARCHAR},
+      province_zh = #{record.provinceZh,jdbcType=VARCHAR},
+      province_en = #{record.provinceEn,jdbcType=VARCHAR},
+      state_zh = #{record.stateZh,jdbcType=VARCHAR},
+      state_en = #{record.stateEn,jdbcType=VARCHAR},
+      city_zh = #{record.cityZh,jdbcType=VARCHAR},
+      city_en = #{record.cityEn,jdbcType=VARCHAR},
+      port_type = #{record.portType,jdbcType=INTEGER},
+      region = #{record.region,jdbcType=BIGINT},
+      area = #{record.area,jdbcType=BIGINT},
+      status = #{record.status,jdbcType=TINYINT},
+      notes = #{record.notes,jdbcType=VARCHAR},
+      cosco_code = #{record.coscoCode,jdbcType=VARCHAR},
+      oocl_code = #{record.ooclCode,jdbcType=VARCHAR},
+      emc_code = #{record.emcCode,jdbcType=VARCHAR},
+      msk_code = #{record.mskCode,jdbcType=VARCHAR},
+      mcc_code = #{record.mccCode,jdbcType=VARCHAR},
+      one_code = #{record.oneCode,jdbcType=VARCHAR},
+      msc_code = #{record.mscCode,jdbcType=VARCHAR},
+      zim_code = #{record.zimCode,jdbcType=VARCHAR},
+      hmm_code = #{record.hmmCode,jdbcType=VARCHAR},
+      cma_code = #{record.cmaCode,jdbcType=VARCHAR},
+      cnc_code = #{record.cncCode,jdbcType=VARCHAR},
+      hpl_code = #{record.hplCode,jdbcType=VARCHAR},
+      creator = #{record.creator,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      updater = #{record.updater,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      deleted = #{record.deleted,jdbcType=BIT},
+      tenant_id = #{record.tenantId,jdbcType=BIGINT},
+      deleted_by = #{record.deletedBy,jdbcType=VARCHAR},
+      deleted_time = #{record.deletedTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.djk.core.model.BasePort">
+    update base_port
+    <set>
+      <if test="portNameEn != null">
+        port_name_en = #{portNameEn,jdbcType=VARCHAR},
+      </if>
+      <if test="portNameZh != null">
+        port_name_zh = #{portNameZh,jdbcType=VARCHAR},
+      </if>
+      <if test="portCode != null">
+        port_code = #{portCode,jdbcType=VARCHAR},
+      </if>
+      <if test="countryNameEn != null">
+        country_name_en = #{countryNameEn,jdbcType=VARCHAR},
+      </if>
+      <if test="countryNameZh != null">
+        country_name_zh = #{countryNameZh,jdbcType=VARCHAR},
+      </if>
+      <if test="countryCode != null">
+        country_code = #{countryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceZh != null">
+        province_zh = #{provinceZh,jdbcType=VARCHAR},
+      </if>
+      <if test="provinceEn != null">
+        province_en = #{provinceEn,jdbcType=VARCHAR},
+      </if>
+      <if test="stateZh != null">
+        state_zh = #{stateZh,jdbcType=VARCHAR},
+      </if>
+      <if test="stateEn != null">
+        state_en = #{stateEn,jdbcType=VARCHAR},
+      </if>
+      <if test="cityZh != null">
+        city_zh = #{cityZh,jdbcType=VARCHAR},
+      </if>
+      <if test="cityEn != null">
+        city_en = #{cityEn,jdbcType=VARCHAR},
+      </if>
+      <if test="portType != null">
+        port_type = #{portType,jdbcType=INTEGER},
+      </if>
+      <if test="region != null">
+        region = #{region,jdbcType=BIGINT},
+      </if>
+      <if test="area != null">
+        area = #{area,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="notes != null">
+        notes = #{notes,jdbcType=VARCHAR},
+      </if>
+      <if test="coscoCode != null">
+        cosco_code = #{coscoCode,jdbcType=VARCHAR},
+      </if>
+      <if test="ooclCode != null">
+        oocl_code = #{ooclCode,jdbcType=VARCHAR},
+      </if>
+      <if test="emcCode != null">
+        emc_code = #{emcCode,jdbcType=VARCHAR},
+      </if>
+      <if test="mskCode != null">
+        msk_code = #{mskCode,jdbcType=VARCHAR},
+      </if>
+      <if test="mccCode != null">
+        mcc_code = #{mccCode,jdbcType=VARCHAR},
+      </if>
+      <if test="oneCode != null">
+        one_code = #{oneCode,jdbcType=VARCHAR},
+      </if>
+      <if test="mscCode != null">
+        msc_code = #{mscCode,jdbcType=VARCHAR},
+      </if>
+      <if test="zimCode != null">
+        zim_code = #{zimCode,jdbcType=VARCHAR},
+      </if>
+      <if test="hmmCode != null">
+        hmm_code = #{hmmCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cmaCode != null">
+        cma_code = #{cmaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="cncCode != null">
+        cnc_code = #{cncCode,jdbcType=VARCHAR},
+      </if>
+      <if test="hplCode != null">
+        hpl_code = #{hplCode,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updater != null">
+        updater = #{updater,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+      <if test="tenantId != null">
+        tenant_id = #{tenantId,jdbcType=BIGINT},
+      </if>
+      <if test="deletedBy != null">
+        deleted_by = #{deletedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="deletedTime != null">
+        deleted_time = #{deletedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.djk.core.model.BasePort">
+    update base_port
+    set port_name_en = #{portNameEn,jdbcType=VARCHAR},
+      port_name_zh = #{portNameZh,jdbcType=VARCHAR},
+      port_code = #{portCode,jdbcType=VARCHAR},
+      country_name_en = #{countryNameEn,jdbcType=VARCHAR},
+      country_name_zh = #{countryNameZh,jdbcType=VARCHAR},
+      country_code = #{countryCode,jdbcType=VARCHAR},
+      province_zh = #{provinceZh,jdbcType=VARCHAR},
+      province_en = #{provinceEn,jdbcType=VARCHAR},
+      state_zh = #{stateZh,jdbcType=VARCHAR},
+      state_en = #{stateEn,jdbcType=VARCHAR},
+      city_zh = #{cityZh,jdbcType=VARCHAR},
+      city_en = #{cityEn,jdbcType=VARCHAR},
+      port_type = #{portType,jdbcType=INTEGER},
+      region = #{region,jdbcType=BIGINT},
+      area = #{area,jdbcType=BIGINT},
+      status = #{status,jdbcType=TINYINT},
+      notes = #{notes,jdbcType=VARCHAR},
+      cosco_code = #{coscoCode,jdbcType=VARCHAR},
+      oocl_code = #{ooclCode,jdbcType=VARCHAR},
+      emc_code = #{emcCode,jdbcType=VARCHAR},
+      msk_code = #{mskCode,jdbcType=VARCHAR},
+      mcc_code = #{mccCode,jdbcType=VARCHAR},
+      one_code = #{oneCode,jdbcType=VARCHAR},
+      msc_code = #{mscCode,jdbcType=VARCHAR},
+      zim_code = #{zimCode,jdbcType=VARCHAR},
+      hmm_code = #{hmmCode,jdbcType=VARCHAR},
+      cma_code = #{cmaCode,jdbcType=VARCHAR},
+      cnc_code = #{cncCode,jdbcType=VARCHAR},
+      hpl_code = #{hplCode,jdbcType=VARCHAR},
+      creator = #{creator,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      updater = #{updater,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      deleted = #{deleted,jdbcType=BIT},
+      tenant_id = #{tenantId,jdbcType=BIGINT},
+      deleted_by = #{deletedBy,jdbcType=VARCHAR},
+      deleted_time = #{deletedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <insert id="batchInsert">
+    <if test="items.get(0) != null">
+            insert into base_port  (id, port_name_en, port_name_zh, 
+        port_code, country_name_en, country_name_zh, 
+        country_code, province_zh, province_en, 
+        state_zh, state_en, city_zh, 
+        city_en, port_type, region, 
+        area, status, notes, 
+        cosco_code, oocl_code, emc_code, 
+        msk_code, mcc_code, one_code, 
+        msc_code, zim_code, hmm_code, 
+        cma_code, cnc_code, hpl_code, 
+        creator, create_time, updater, 
+        update_time, deleted, tenant_id, 
+        deleted_by, deleted_time)
+      values
+      <foreach collection="items" item="item" index="index" separator=",">
+      (#{item.id,jdbcType=BIGINT}, #{item.portNameEn,jdbcType=VARCHAR}, #{item.portNameZh,jdbcType=VARCHAR}, 
+        #{item.portCode,jdbcType=VARCHAR}, #{item.countryNameEn,jdbcType=VARCHAR}, #{item.countryNameZh,jdbcType=VARCHAR}, 
+        #{item.countryCode,jdbcType=VARCHAR}, #{item.provinceZh,jdbcType=VARCHAR}, #{item.provinceEn,jdbcType=VARCHAR}, 
+        #{item.stateZh,jdbcType=VARCHAR}, #{item.stateEn,jdbcType=VARCHAR}, #{item.cityZh,jdbcType=VARCHAR}, 
+        #{item.cityEn,jdbcType=VARCHAR}, #{item.portType,jdbcType=INTEGER}, #{item.region,jdbcType=BIGINT}, 
+        #{item.area,jdbcType=BIGINT}, #{item.status,jdbcType=TINYINT}, #{item.notes,jdbcType=VARCHAR}, 
+        #{item.coscoCode,jdbcType=VARCHAR}, #{item.ooclCode,jdbcType=VARCHAR}, #{item.emcCode,jdbcType=VARCHAR}, 
+        #{item.mskCode,jdbcType=VARCHAR}, #{item.mccCode,jdbcType=VARCHAR}, #{item.oneCode,jdbcType=VARCHAR}, 
+        #{item.mscCode,jdbcType=VARCHAR}, #{item.zimCode,jdbcType=VARCHAR}, #{item.hmmCode,jdbcType=VARCHAR}, 
+        #{item.cmaCode,jdbcType=VARCHAR}, #{item.cncCode,jdbcType=VARCHAR}, #{item.hplCode,jdbcType=VARCHAR}, 
+        #{item.creator,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updater,jdbcType=VARCHAR}, 
+        #{item.updateTime,jdbcType=TIMESTAMP}, #{item.deleted,jdbcType=BIT}, #{item.tenantId,jdbcType=BIGINT}, 
+        #{item.deletedBy,jdbcType=VARCHAR}, #{item.deletedTime,jdbcType=TIMESTAMP})
+      </foreach>
+    </if>
+  </insert>
+</mapper>
