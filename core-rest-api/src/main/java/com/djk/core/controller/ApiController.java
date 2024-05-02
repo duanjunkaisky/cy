@@ -53,7 +53,6 @@ public class ApiController
         long requestId = Generator.nextId();
         queryRouteVo.setStartTime(System.currentTimeMillis());
         queryRouteVo.setRequestId(requestId);
-        rocketMQTemplate.getProducer().setSendMessageWithVIPChannel(false);
         SendResult sendResult = rocketMQTemplate.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(queryRouteVo)).build());
         String msgId = sendResult.getMsgId();
         log.info("推送到消息->\n topic: " + topic + "\n 消息id: " + msgId + ",\n " + JSONObject.toJSONString(queryRouteVo));
