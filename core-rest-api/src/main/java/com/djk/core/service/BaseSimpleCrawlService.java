@@ -59,6 +59,7 @@ abstract class BaseSimpleCrawlService implements CrawlService
 
     public String getProductNumber()
     {
+        final int numLength = 6;
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyMM");
         String start = sdf.format(date);
@@ -71,7 +72,7 @@ abstract class BaseSimpleCrawlService implements CrawlService
                 redisService.set(REDIS_DATABASE + ":commons:ids:product_number", number);
             }
         }
-        return "CGP" + start + String.format("%0" + 6 + "d", number);
+        return "CGP" + start + String.format("%0" + numLength + "d", number);
     }
 
 }
