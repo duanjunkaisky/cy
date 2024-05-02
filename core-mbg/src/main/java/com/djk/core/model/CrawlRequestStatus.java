@@ -19,9 +19,6 @@ public class CrawlRequestStatus implements Serializable {
     @ApiModelProperty(value = "0:爬取中,1:爬取完成,2:爬取出错")
     private Integer status;
 
-    @ApiModelProperty(value = "爬取数量")
-    private Integer dataCount;
-
     @ApiModelProperty(value = "创建时间")
     private Date createTime;
 
@@ -73,14 +70,6 @@ public class CrawlRequestStatus implements Serializable {
         this.status = status;
     }
 
-    public Integer getDataCount() {
-        return dataCount;
-    }
-
-    public void setDataCount(Integer dataCount) {
-        this.dataCount = dataCount;
-    }
-
     public Date getCreateTime() {
         return createTime;
     }
@@ -116,7 +105,6 @@ public class CrawlRequestStatus implements Serializable {
         sb.append(", requestParams=").append(requestParams);
         sb.append(", hostCode=").append(hostCode);
         sb.append(", status=").append(status);
-        sb.append(", dataCount=").append(dataCount);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", msg=").append(msg);

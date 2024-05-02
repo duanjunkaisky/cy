@@ -7,7 +7,6 @@
     <result column="request_params" jdbcType="VARCHAR" property="requestParams" />
     <result column="host_code" jdbcType="VARCHAR" property="hostCode" />
     <result column="status" jdbcType="INTEGER" property="status" />
-    <result column="data_count" jdbcType="INTEGER" property="dataCount" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
@@ -73,7 +72,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, request_id, request_params, host_code, status, data_count, create_time, update_time
+    id, request_id, request_params, host_code, status, create_time, update_time
   </sql>
   <sql id="Blob_Column_List">
     msg
@@ -128,13 +127,11 @@
   </delete>
   <insert id="insert" parameterType="com.djk.core.model.CrawlRequestStatus">
     insert into crawl_request_status (id, request_id, request_params, 
-      host_code, status, data_count, 
-      create_time, update_time, msg
-      )
+      host_code, status, create_time, 
+      update_time, msg)
     values (#{id,jdbcType=BIGINT}, #{requestId,jdbcType=VARCHAR}, #{requestParams,jdbcType=VARCHAR}, 
-      #{hostCode,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{dataCount,jdbcType=INTEGER}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{msg,jdbcType=LONGVARCHAR}
-      )
+      #{hostCode,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{msg,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.djk.core.model.CrawlRequestStatus">
     insert into crawl_request_status
@@ -153,9 +150,6 @@
       </if>
       <if test="status != null">
         status,
-      </if>
-      <if test="dataCount != null">
-        data_count,
       </if>
       <if test="createTime != null">
         create_time,
@@ -182,9 +176,6 @@
       </if>
       <if test="status != null">
         #{status,jdbcType=INTEGER},
-      </if>
-      <if test="dataCount != null">
-        #{dataCount,jdbcType=INTEGER},
       </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
@@ -221,9 +212,6 @@
       <if test="record.status != null">
         status = #{record.status,jdbcType=INTEGER},
       </if>
-      <if test="record.dataCount != null">
-        data_count = #{record.dataCount,jdbcType=INTEGER},
-      </if>
       <if test="record.createTime != null">
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
@@ -245,7 +233,6 @@
       request_params = #{record.requestParams,jdbcType=VARCHAR},
       host_code = #{record.hostCode,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=INTEGER},
-      data_count = #{record.dataCount,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       msg = #{record.msg,jdbcType=LONGVARCHAR}
@@ -260,7 +247,6 @@
       request_params = #{record.requestParams,jdbcType=VARCHAR},
       host_code = #{record.hostCode,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=INTEGER},
-      data_count = #{record.dataCount,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
@@ -282,9 +268,6 @@
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
       </if>
-      <if test="dataCount != null">
-        data_count = #{dataCount,jdbcType=INTEGER},
-      </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -303,7 +286,6 @@
       request_params = #{requestParams,jdbcType=VARCHAR},
       host_code = #{hostCode,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
-      data_count = #{dataCount,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       msg = #{msg,jdbcType=LONGVARCHAR}
@@ -315,7 +297,6 @@
       request_params = #{requestParams,jdbcType=VARCHAR},
       host_code = #{hostCode,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
-      data_count = #{dataCount,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
@@ -323,15 +304,13 @@
   <insert id="batchInsert">
     <if test="items.get(0) != null">
             insert into crawl_request_status  (id, request_id, request_params, 
-        host_code, status, data_count, 
-        create_time, update_time, msg
-        )
+        host_code, status, create_time, 
+        update_time, msg)
       values
       <foreach collection="items" item="item" index="index" separator=",">
       (#{item.id,jdbcType=BIGINT}, #{item.requestId,jdbcType=VARCHAR}, #{item.requestParams,jdbcType=VARCHAR}, 
-        #{item.hostCode,jdbcType=VARCHAR}, #{item.status,jdbcType=INTEGER}, #{item.dataCount,jdbcType=INTEGER}, 
-        #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.msg,jdbcType=LONGVARCHAR}
-        )
+        #{item.hostCode,jdbcType=VARCHAR}, #{item.status,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, 
+        #{item.updateTime,jdbcType=TIMESTAMP}, #{item.msg,jdbcType=LONGVARCHAR})
       </foreach>
     </if>
   </insert>

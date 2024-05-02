@@ -435,66 +435,6 @@ public class CrawlRequestStatusExample {
             return (Criteria) this;
         }
 
-        public Criteria andDataCountIsNull() {
-            addCriterion("data_count is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataCountIsNotNull() {
-            addCriterion("data_count is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataCountEqualTo(Integer value) {
-            addCriterion("data_count =", value, "dataCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataCountNotEqualTo(Integer value) {
-            addCriterion("data_count <>", value, "dataCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataCountGreaterThan(Integer value) {
-            addCriterion("data_count >", value, "dataCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataCountGreaterThanOrEqualTo(Integer value) {
-            addCriterion("data_count >=", value, "dataCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataCountLessThan(Integer value) {
-            addCriterion("data_count <", value, "dataCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataCountLessThanOrEqualTo(Integer value) {
-            addCriterion("data_count <=", value, "dataCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataCountIn(List<Integer> values) {
-            addCriterion("data_count in", values, "dataCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataCountNotIn(List<Integer> values) {
-            addCriterion("data_count not in", values, "dataCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataCountBetween(Integer value1, Integer value2) {
-            addCriterion("data_count between", value1, value2, "dataCount");
-            return (Criteria) this;
-        }
-
-        public Criteria andDataCountNotBetween(Integer value1, Integer value2) {
-            addCriterion("data_count not between", value1, value2, "dataCount");
-            return (Criteria) this;
-        }
-
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;
