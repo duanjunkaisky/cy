@@ -7,6 +7,7 @@ import com.djk.core.model.BasePortExample;
 import com.djk.core.vo.QueryRouteVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -17,6 +18,9 @@ abstract class BaseSimpleCrawlService implements CrawlService
 {
     @Autowired
     BasePortMapper basePortMapper;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
     BaseShippingCompanyMapper shippingCompanyMapper;
@@ -61,9 +65,11 @@ abstract class BaseSimpleCrawlService implements CrawlService
         String yyMM = (String) redisService.get(REDIS_DATABASE + ":yyMM");
         Long number = redisService.generateIdCommon("product_number");
         if (StringUtils.isEmpty(yyMM) || !yyMM.equalsIgnoreCase(start)) {
-            redisService.set(REDIS_DATABASE + ":yyMM", start);
-            number = 1L;
-            redisService.set(REDIS_DATABASE + ":commons:ids:product_number", number);
+            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":yyMM", start);
+            if (aBoolean) {
+                number = 1L;
+                redisService.set(REDIS_DATABASE + ":commons:ids:product_number", number);
+            }
         }
         return "CGP" + start + String.format("%0" + 6 + "d", number);
     }
