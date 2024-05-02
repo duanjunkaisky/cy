@@ -39,7 +39,7 @@ public class CrawlChain
     @Autowired
     CrawlRequestStatusMapper requestStatusMapper;
 
-    @Async
+    @Async("asyncServiceExecutor")
     public void doBusiness(QueryRouteVo queryRouteVo) throws ExecutionException, InterruptedException
     {
         List<ListenableFuture<String>> futureList = new ArrayList<>();

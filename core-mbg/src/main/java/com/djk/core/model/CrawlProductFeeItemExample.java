@@ -1305,6 +1305,66 @@ public class CrawlProductFeeItemExample {
             addCriterion("deleted_time not between", value1, value2, "deletedTime");
             return (Criteria) this;
         }
+
+        public Criteria andPriceComputeTypeIsNull() {
+            addCriterion("price_compute_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeIsNotNull() {
+            addCriterion("price_compute_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeEqualTo(Integer value) {
+            addCriterion("price_compute_type =", value, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeNotEqualTo(Integer value) {
+            addCriterion("price_compute_type <>", value, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeGreaterThan(Integer value) {
+            addCriterion("price_compute_type >", value, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("price_compute_type >=", value, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeLessThan(Integer value) {
+            addCriterion("price_compute_type <", value, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("price_compute_type <=", value, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeIn(List<Integer> values) {
+            addCriterion("price_compute_type in", values, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeNotIn(List<Integer> values) {
+            addCriterion("price_compute_type not in", values, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeBetween(Integer value1, Integer value2) {
+            addCriterion("price_compute_type between", value1, value2, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("price_compute_type not between", value1, value2, "priceComputeType");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

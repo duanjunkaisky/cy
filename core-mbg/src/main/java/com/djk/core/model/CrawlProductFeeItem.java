@@ -63,6 +63,9 @@ public class CrawlProductFeeItem implements Serializable {
     @ApiModelProperty(value = "删除时间")
     private Date deletedTime;
 
+    @ApiModelProperty(value = "单价计算方式：0:有多个箱子时需要乘以个数,1:固定单价,与箱子个数无关")
+    private Integer priceComputeType;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -217,6 +220,14 @@ public class CrawlProductFeeItem implements Serializable {
         this.deletedTime = deletedTime;
     }
 
+    public Integer getPriceComputeType() {
+        return priceComputeType;
+    }
+
+    public void setPriceComputeType(Integer priceComputeType) {
+        this.priceComputeType = priceComputeType;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -242,6 +253,7 @@ public class CrawlProductFeeItem implements Serializable {
         sb.append(", tenantId=").append(tenantId);
         sb.append(", deletedBy=").append(deletedBy);
         sb.append(", deletedTime=").append(deletedTime);
+        sb.append(", priceComputeType=").append(priceComputeType);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

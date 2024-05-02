@@ -1,6 +1,7 @@
 package com.djk.core.service;
 
 import com.djk.core.mapper.BasePortMapper;
+import com.djk.core.mapper.BaseShippingCompanyMapper;
 import com.djk.core.model.BasePort;
 import com.djk.core.model.BasePortExample;
 import com.djk.core.vo.QueryRouteVo;
@@ -16,6 +17,9 @@ abstract class BaseSimpleCrawlService implements CrawlService
 {
     @Autowired
     BasePortMapper basePortMapper;
+
+    @Autowired
+    BaseShippingCompanyMapper shippingCompanyMapper;
 
     @Autowired
     RedisService redisService;

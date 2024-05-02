@@ -4,14 +4,13 @@ spring:
     username: root
     password: sc2022_~*
     druid:
-      initial-size: 5 #连接池初始化大小
+      initial-size: 10 #连接池初始化大小
+      max-active: 2000 #最大连接数
       min-idle: 10 #最小空闲连接数
-      max-active: 20 #最大连接数
-      web-stat-filter:
-        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" #不统计这些请求数据
-      stat-view-servlet: #访问监控网页的登录用户名和密码
-        login-username: druid
-        login-password: druid
+      use-unfair-lock: true
+      pool-prepared-statements: false
+      validation-query: select 1
+      test-while-idle: true
   redis:
     host: 127.0.0.1
     database: 0
@@ -28,15 +27,14 @@ rocketmq:
     topic: ASYNC_CRAWL_TOPIC
     send-message-timeout: 3000
     mqMax: 32
-  pull: false
+  pull: true
   maxCrawlTime: 1800000 #一次爬取最大30分钟
   maxCrawlCount: 3 #一台机器最多执行3个爬取请求,因为每个请求中最多可能有10个网站的爬取线程
 
-crawl:
-  target:
-    - crawlServiceFroOneImpl
-    - crawlServiceFroCmaImpl
-    - crawlServiceFroMskImpl
+executor:
+  corePoolSize: 10
+  maxPoolSize: 10
+  queueCapacity: 9999
 
 mybatis:
   mapper-locations:
@@ -44,18 +42,11 @@ mybatis:
     - classpath*:com/**/mapper/*.xml
   configuration:
     call-setters-on-nulls: true
-management: #开启SpringBoot Admin的监控
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: always
 
 feign:
   okhttp:
     enabled: true
+
 ribbon:
   ConnectTimeout: 300000 #服务请求连接超时时间（毫秒）
   ReadTimeout: 300000 #服务请求处理超时时间（毫秒）
