@@ -313,7 +313,6 @@ public class HttpUtil
             if (null != response.priorResponse() && null != response.priorResponse().priorResponse()) {
                 resp.setPrior2Headers(response.priorResponse().priorResponse().headers());
             }
-            response.close();
             return true;
         } catch (Exception e) {
             log.error(ExceptionUtil.getMessage(e));
@@ -351,7 +350,7 @@ public class HttpUtil
             } else {
                 retMap.put("response", response.newBuilder().body(ResponseBody.create(response.body().contentType(), content)).build());
             }
-            response.close();
+//            response.close();
             return true;
         } catch (Exception e) {
             log.error(ExceptionUtil.getMessage(e));
@@ -540,9 +539,20 @@ public class HttpUtil
         if (StringUtils.isEmpty(host)) {
             String currentHost = url.replaceAll("http://", "").replaceAll("https://", "").split("/")[0];
             headers.put("Host", currentHost);
+        } else if (host.equalsIgnoreCase("del")) {
+            headers.remove("Host");
         }
-        if(StringUtils.isEmpty(headers.get("user-agent")) && StringUtils.isEmpty(headers.get("User-Agent"))){
+
+        String useragent = headers.get("user-agent");
+        if (StringUtils.isEmpty(useragent)) {
+            useragent = headers.get("User-Agent");
+        }
+
+        if (StringUtils.isEmpty(useragent)) {
             headers.put("user-agent", UAS.get(random.nextInt(UAS.size())));
+        } else if ("del".equalsIgnoreCase(useragent)) {
+            headers.remove("user-agent");
+            headers.remove("User-Agent");
         }
 
         for (Map.Entry<String, String> item : headers.entrySet()) {
@@ -574,19 +584,11 @@ public class HttpUtil
     public static void main(String[] args) throws IOException
     {
 
-        String params = "{\r\n    \"from\": {\r\n        \"maerskGeoId\": \"1YCLYW8V7RZB2\",\r\n        \"maerskRkstCode\": \"CNTST\",\r\n        \"countryCode\": \"CN\",\r\n        \"maerskServiceMode\": \"CY\",\r\n        \"name\": \"Qingdao (Shandong), China\"\r\n    },\r\n    \"to\": {\r\n        \"maerskGeoId\": \"1JUKNJGWHQBNJ\",\r\n        \"maerskRkstCode\": \"NLROT\",\r\n        \"countryCode\": \"NL\",\r\n        \"maerskServiceMode\": \"CY\",\r\n        \"name\": \"Rotterdam (Zuid-Holland), Netherlands\"\r\n    },\r\n    \"containers\": [\r\n        {\r\n            \"isoCode\": \"22G1\",\r\n            \"size\": \"20\",\r\n            \"type\": \"DRY\",\r\n            \"weight\": 18000,\r\n            \"quantity\": 1,\r\n            \"isReefer\": false,\r\n            \"isNonOperatingReefer\": false,\r\n            \"isShipperOwnedContainer\": false\r\n        }\r\n    ],\r\n    \"shipmentPriceCalculationDate\": \"2024-04-25\",\r\n    \"initialWeekOffset\": 0,\r\n    \"commodity\": {\r\n        \"id\": \"004403\",\r\n        \"isDangerous\": false,\r\n        \"dangerousDetails\": []\r\n    },\r\n    \"unit\": \"KG\",\r\n    \"brandCode\": \"MAEU\",\r\n    \"customerCode\": \"40602906639\",\r\n    \"loadAFLS\": false,\r\n    \"weekOffset\": 2\r\n}";
-        cn.hutool.json.JSONObject jsonObject = JSONUtil.parseObj(params);
-
-
+        String api = "https://api.maersk.com.cn/synergy/reference-data/geography/locations?cityName=SHANGHAI&pageSize=30&sort=cityName&type=city";
         Map<String, String> header = new HashMap<>();
-        header.put("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJPK0FZTDdiY083WlNLL2NjdFRjOHFrSStIemc9IiwiYWxnIjoiUlMyNTYifQ.eyJhdF9oYXNoIjoiWmo5QjFqN2o5dXRkOEpZQUlRRUVuQSIsInN1YiI6ImFuYW5zaGkiLCJmaXJzdG5hbWUiOiJhbmFuIiwiYXVkaXRUcmFja2luZ0lkIjoiZDNhZDcwN2QtMzM0Mi00Njg5LTg0NGYtNDI1ZTc0MmVhNzBiLTExODEyNDgxMyIsInJvbGVzIjpbIkNvbnRyYWN0UmF0ZSIsIkRvY3VtZW50YXRpb24iLCJCb29raW5nIiwiV0JPTEFwcHJvdmVyIiwiSW52b2ljZXMiLCJQYXltZW50cyIsIkJhc2ljQ3VzdG9tZXIiXSwiaXNzIjoiaHR0cHM6Ly9pYW0ubWFlcnNrLmNvbS9hY20vb2F1dGgyL21hdSIsInRva2VuTmFtZSI6ImlkX3Rva2VuIiwib2ZmaWNlIjoiTmFuamluZyAtIENOIiwibGFzdG5hbWUiOiJzaGkiLCJhdWQiOiJiY2EwMDEiLCJhY3IiOiIwIiwiY2FycmllciI6Ik1BRVUiLCJhenAiOiJiY2EwMDEiLCJhdXRoX3RpbWUiOjE3MTM5MjkyNDksInVzZXJVdWlkIjoiMDI4NTIxNGEtMjMxMy00NWI1LWEwM2EtODUzYTgyYzExZjNhIiwicmVhbG0iOiIvbWF1IiwicGVyc29uaWQiOiI0MDYwNTEzNDMzNSIsImV4cCI6MTcxMzk2MjYwOSwidG9rZW5UeXBlIjoiSldUVG9rZW4iLCJpYXQiOjE3MTM5NTU0MDksImN1c3RvbWVyX2NvZGUiOiI0MDYwMjkwNjYzOSIsImVtYWlsIjoic2hpYW5AaGlnaHdheWxvZ2lzdGljcy5jb20uY24iLCJ1c2VybmFtZSI6ImFuYW5zaGkifQ.eq40lFuyii-vbaMKfhaMcU7-b4_DTWa1Dn94jaaDHPUlg0cC_MLpzWr58LMFY1YCeBRZ1R9WgYnA8Af6Osphz1rgYXE2zxsmeAAL7HLsre8L_ZNtjFdu9QP1S93qXgRNdIg3EajwZvcIJlwpY6KX5CU4tdvXnVM2x-ZRozmj99tis-yOUyLujIYHp2qgQvXXQZtCVO1djaTGLnToJHmfqilUvaBz2RdeS_iumoywsn527WlCrS6Np6rqV_S8t4VL2kFSwrAc2AU34b2vf2W93yVa6NE8-pqGacsXGnDuJT1tuAJPAukSEyDs-jC0SwzBs8-QCQ4u4Fs0vsR57DLRUulvrasw0yAp8JJQYOAOsBh9J-haZ0qnntqFk2HgXyKejyQ8mEkA72gmUDbVGTm0FWv0k8ixRcJ1ZY_mZE5AUo8gqgfpD0BheP_QqU6Q5tWhgRFzyakVN77zFEsUo3q7wW2YBCUu82yGVH-Vf1o75UUv_tee_PCCZWeuegdv0gVa");
-        header.put("Akamai-Bm-Telemetry", "a=6E2FB47A19E9EC6D1693DE3DBB75F6ED&&&e=QURBMkYzN0MzQ0VFQjU5QTY1NDI5MDY3NDBCMTU0RDF+WUFBUXBaN0MzWTA4b3V1T0FRQUFjWFJxRHhmc0ZiaExKVjRaaXdpbUl6Mkc2RkpWTHpOL05vZGVtRi94WXl6OFBJOXhXZ1pqZ2UxMHBaNUU1eUg5cytvNFlTVG9vMkhURXhwc3llOENhdXNNWFVRRXpJWk5paUVQWlNJYlFtMlo1Z3BUSCtsaGgrVWc0WDdUZ2tIRGozOC9KVFhGbjM3R1ZMdkk4S2h6eVpJaXJBSVR3bGdROHBiV0JINVRjT1NPaWM2cTh2U2ZNUVNOSlRjazdSMjNKU2dlNlN2Q0l1ZWtFU0RmTHd4WVJDZFo1SHZzUEpUZ0d4aFNxNWRJMUIzYXpPeG1vTkFMWkVja0tONm5ucUFXZU4rbkoyc1VHRVhKeGhvRTB3eGdyRlBLRzNBNkZHMDU0NnFkVG1wUjBoQW9UYkQ4bTRZN0JPNlFHdURMckx4UG54RzBJM0JnWkVsSUVzQnRpYUpFK28zdUttQnlhb1dhUnV1c1VPYnRBSGxQM0ROMXh0OEViV01CN0NGazFyMjNPNTlRZ1ZqeTV3a1N5eUdFeS9NVm9lb0ZLTzllVi9OVmhUQnRseXJzNlFEdzczMkpzOHhmY3lUMkJ3T1pMZz09fjQ1MzYzODZ+NDQwNDgwNg==&&&sensor_data=Mjs0NTM2Mzg2OzQ0MDQ4MDY7NTAsMiwwLDIsNCw3MztqTUZaaipUOVN7L3B3JDI2ZTM5PSklXT9ANkkzeFM4Ym1YVnN4VldxRjp5WCxwb3ZFJkBWSCAqbnFoemBoPjR4eWJaeTV9RTNBaUw+cEhlfX58OWt2NDBsSzlKc1YwcjpfV1sgPC1kVD9AdmhHKkhyeW1Ca1NtbillWmxKUi5dfUdORWg7JGVQQjw2Xm5WfVFGUS5QTS9DT2RndSk9enhPdWJlN2EoYV5OUkVKfXFCeCUuaUQ1YT1FMj8wNUVvRUBXWW09SGAgLktgS186OzdHfWVucHJxLTxabTZ0WFMoO3QkZ25PSjk6Q0p2U3J1eVBwVGB1fTY6K0NJIXNrVFVzZm1fNX1TPU5PaHhgfWVvQ2o/UUJCSmJDJCNLeUVBW0I1Q0thMzVXdiUvTm92Uj0zLVUqYGEqTmNMbUdgMmxqRSRMPGo3Q0lvejtDZWFoTkM5OH1vNzVNRnozczhqczAqfkk1a0xbZXg4Uk5PQkxyRmJ8JH4qIVZ7M1kuaDtLWzBOaTZ+LkpkLU56NURSRFk9a08pPmB2WTcjdnxqMUZvMTstKHB8JEh3QXs2dGs2ND1jXU9dLSNvOzNAWiRuKWFYUXN7OT02TFNTeUMmLDFkZDZscn5ZIV9bYUB1b2ZIVmEyYUZ+VXhxTmlRdXo5YFptQzJEQlY3aipqSEMsdEorLj8xZSQjT3hTfmgzYzNhPlRCTlpzTWtbUlI/O3FmSH47Rzh1dFNuL3lPN3BWc01Yc1lXYyNdOzF4IXN7VVFaeXwqSS46VjBXQXduPjdbZ1VmaEtuMXdIIEdPbE42M3IjfjgvJD4wOGtgNlk8NDZtNHwhRGliczFQSl0tZVtaTmcoK01LdChBcDpOIC0mNkBoSjdDZ2VWbTorQ0tKbFtDaCVWLEJhI3Nxa049IXltRVcoPkZlUSl5KFA8Si5Ve2tdTiY2L1krcjlvVU9GcjFrRHMhLl8zODA6RWFkLjJFOEJxdltZQztfOiNvT2x4YCQyKzd+JV5jXkQgUGV7MUNAbntjaFhgNmVRME1hL2kkUWc6fWJxITJXS19OYzt2bTZEdnQ7TjRiPT5jMURCYUl2S2NWZE4wQE9he1ZrQ1B6fTFzLX08JWNjXXF5Q3BdRlI8JD1pSkNTTHs6dD5oKmFYd2VPITh7bzt2NDlgYyYyLn1nLFdERlFkJVQvUjZbNTkpUjVTKk1qb3I9UUMpQFBzTT9FSDV+RGIrTTVqWWtoMk5hKjhnNlZsd0NSezBPNG9STCY+TEJmfm1HcVUyZS9dOk0oVENEMlVnO08qOWwmOTwsSk5DP0VIcj5peFh9cS9WLWY2SiZzLT9fayk9ZCFGRE0lZnhySGRFKntWOkRLbTtLPy5mcndHcyhnNGwvWThBWi56KDJfOiNhWj09dmApVz4hYUJ+YipLNl5FYERoOD52PXtES3tZQygzbGtWN29bYmEmTF1xRmJHfGQ9fkh5alo5eDJLNG9UOUYxPmpdKENTb1piR2M0WUJ1Km9UIEtdTFFRaiR2TVNtJUdlTE8jfilzIHdpe2V6ZFJIeGZUbiY5KnVTZj9HSVZxZiZsamApWEc/SWV8Pn1DZFF6QmJDajUmLnRbTzI5MGMjX0wjWFg8Mz4wXygsdVQ/JEA9dVRlZlRXflp9Q0dBWUJAfSZ4c04odiZbI2lKWFBQMDogXmoldnhWKnh6KjhbYXQjNGYzVDNCbyZBeGtfKjd+ZTFoOHN2JGlAQjdVbio6aF58IyRgMFNlLkh0UWJaZlpsW2A4ayBAcFdjVnohYShYZ3xbbHB4NjgqT3d1JSU5M0Q9PHdkQTh1Yjh8M1AhL2d4U05QQi1Ea1EsPDJEPzhzIHJzKShDXkk3ZXA6XStUdTc7YmZXTVgzdlBldDVsR2cgeSl6emFQL0A7UytXOGZLRzlMWldWb0Q7aHt8SVV+P1NYaGBQd00+NExkPVdOQk92aW1gd3hqUk1bUH5wYyg8Y2kqQUV7NWorQkdGaXkkdjg5OEV1W0ZqJDxhVSpNajBjajAxJmBYOzJjS2Ioe1lGcV1yRkZSeldoVHozYCtffVlnKS9ne0hST01UNGJdLWU2VnA9TilAZVszRVs8YD9VPlB8KzZ2TDwqPWBLTW1JQSxYM2dvI31oWXg1XTFrakVZfT5mJWNJZ3UhOnhHRzxFe3M1cDtEMHsvciM5aj8uYUFpP1FoU21fZkYqdWdlV10+OzxaZiByZGNGaTV3UnklYnQuJjg8LkVjQiRKbGppc1slRXo+Vll2eHpiNyNbUzVQYTVBTz0+VjVCPkI8XV9yIUc5I0dgKSlHa0t4a11VMnoqcz1iZ15OfmhaU1J2ZyRyei5iKFB6T3tHKmJqRTxxPmpPckI7TnVKNSgyOVNgb2MgM2IxcHN6SWhUOkUvLSFGZEhUalRaN2t6KUFCbzhbaW5jYXAsKiFYZzlobFtlaWlNPndOYWhOfih4KHhwai97Z11RL2x8MWpIQ2pucWw8fnhqMFAwTS5XOyxFY3tERlpyaUl+aCAza0ksIzR2aDtHQkh6NT9SN31aNkpxM08pMWhndVA9YXNFWU88WWV2IT8oOyNkfH0+dyQoT1R5OyUxJjJANX5GcFIzM0FSY0w2TU1gPilIfnBKa31Lez1tdW43R2lWJE9uZVIoK09gdzpOWnJaTHJJNjNLPEpkPkteckBedyNxPm0hU2JWX3lQJDlyIWlmNFhbZHlqJkcmVzhqQV0xfXVbTyx7c0EhMVh8TF10dWc6Ryp6RTJIaFo7LVJCUS8zKTNGQkIla09qdmVmT0RodHBWJjBjJnFIZHJaPiFLfVVXbXt9Un1nPzg+OHt+KFpVcFIxPGxrfmMkcDpEVnxfbEZSRHhbeTx+VzVROlYqMUcobXczYDQqbXxNNU4qWDdXZU9BUl4kUCxUJTRdeGBdIGtJdE5vNyVxI2F0VUYpb3V3RXcrP0RCKWomMWklMTpGQzlAbEwwJnF7LHR5eUYrTmNeW3E1ez82ZFc5fW5BRSZqbiM/QHAocmNhbDB9aFZSYiw2PyxGIFhbKkszdEZpaj1CUCZNL2cqLH1sJEBocC89JTRNZS9yY0k9Ym5AZ2xDYj84ciFHP1RkOTV2dG9gTywlJEJfcFJ+cWw/LX1ZcEs1fk4rKUsmdTAsfExtanxeXyY0dytVXWRXIVVCNz8yOHhpc0ViJVt8YXVsQ0grfnRrUS43b3VrOyFZN286LktIUmFaYnNud1NZb0lpQT01WGEycGNeKiEhS0BdYWVmUjcwSTs2WiZpXSZ+Ok5iYEhQcFNqM1NjUjcpQEdWO05sMWAjUyl0XUZON2orPCNUKHFPTEZYYCU5MyVFb0lbX2dsUjUmcEFIOTJfbEY1bGhLMikpaD43YzVtKzlgKm45KzxTcjUkTGQ6SlV5RUx1LGoheUNYbms/UWJ9T0pUMyQxT3hFWlcuQFJfQnF7JnhfIDBlcUlEQDVYLmYoX35yIWZHTXctLSFSZVpTbnxbQX16aUIzOisgVUpDVG1OLTZMPmEhJSE8USV1bzZKK0dXIFA5US1bdXUzUSxPNGU5UWxzJlc+VVU2LGwlcT5OMnhiVmRsVy9fKXkrMFA6MztTbyk0OTJ4K1JNRX4pbGdLQ2R8bXBNOyZkKDBNbVd6az1VaE5wXXQ8cEI5d10reVQuRmh8PzR+MU1yTDVuXip8O3c3PXBsfElWIXZxdG53XmBtKHk0Ln1vSSsmSlJMV01IL0ZgKiNDayEoX103WDNaWHUvIG5sOS0jM24mN2lsbTwgeDxrZy1RPCA4VTtAIVRLLlJTIHZRWm5DMiFwQ1R7X3RDa2ZpNEJhdFZPc0QrYDwsfnwle31aKG50JW47MzZzVSouaW9ySD1iPmllO1NidjVnOGchJk4mT2Q4SWRTUz9hZDZKfDlpViVaWikgWXBDL0JrUFlvc2pKNVAwWEtPPEAzK2ArWCY1RnBPNDQle0A8Xj96PEE4bWxmfm86QS57KFtNXXVjOlROfVNdcnJYUX4lezZML0hTI0ttRCskdz9CTzkjSDFzWWIvbUZscV8vWj08I0MxIF5ENFlUSVlzOCAxeE5eVUM=");
-        header.put("Consumer-Key", "4d3yfgADGPhccLLfl1w1QhefwCdhzcFj");
-        header.put("Content-Type", "application/json");
-        header.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36:");
-
-        HttpResp httpResp = HttpUtil.postBody("https://api.maersk.com/productoffer/v2/productoffers", header, jsonObject.toString());
-        String bodyJson = httpResp.getBodyJson();
+        header.put("Consumer-Key", "Q09VmiYvj4ifBOa72Z0ekxkq9tLZCVYI");
+        HttpResp resp = HttpUtil.get(api, header);
+        String bodyJson = resp.getBodyJson();
         System.out.println(bodyJson);
 
 

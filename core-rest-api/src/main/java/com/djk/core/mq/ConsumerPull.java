@@ -52,6 +52,9 @@ public class ConsumerPull implements CommandLineRunner
     @Value("${rocketmq.maxCrawlCount}")
     private int maxCrawlCount;
 
+    @Value("${rocketmq.pull}")
+    private boolean isPull;
+
     @Autowired
     CrawlChain crawlChain;
 
@@ -78,61 +81,63 @@ public class ConsumerPull implements CommandLineRunner
             @Override
             public void doPullTask(MessageQueue mq, PullTaskContext context)
             {
-                // 5.从上下文中获取MQPullConsumer对象，此处其实就是DefaultMQPullConsumer。
-                MQPullConsumer consumer = context.getPullConsumer();
-                try {
-                    // 6.获取该消费组的该队列的消费进度
-                    long offset = consumer.fetchConsumeOffset(mq, false);
-                    if (offset < 0) {
-                        offset = 0;
-                    }
-                    // 7.拉取消息，pull()方法在DefaultMQPullConsumer有具体介绍
-                    PullResult pullResult = consumer.pull(mq, "*", offset, mqMax);
-                    switch (pullResult.getPullStatus()) {
-                        case FOUND:
-                            for (int i = 0; i < pullResult.getMsgFoundList().size(); i++) {
-                                for (String key : currentJobs.keySet()) {
-                                    QueryRouteVo job = currentJobs.get(key);
-                                    if ((new Date()).getTime() - job.getStartTime() > maxCrawlTime) {
-                                        log.info("爬取超过[" + maxCrawlTime / 1000 + "秒] -> \n" + JSONObject.toJSONString(job));
-                                        currentJobs.remove(key);
-                                        break;
-                                    }
-                                }
-                                synchronized (currentJobs) {
-                                    if (currentJobs.keySet().size() < maxCrawlCount) {
-                                        MessageExt message = pullResult.getMsgFoundList().get(i);
-                                        QueryRouteVo queryRouteVo = JSON.parseObject(message.getBody(), QueryRouteVo.class);
-
-                                        CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
-                                        crawlRequestStatusExample.createCriteria().andRequestIdEqualTo(String.valueOf(queryRouteVo.getRequestId()));
-                                        List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
-                                        if (null == crawlRequestStatuses || crawlRequestStatuses.isEmpty()) {
-                                            log.info("消费消息,开始爬取: \n " + JSONObject.toJSONString(queryRouteVo));
-                                            currentJobs.put(String.valueOf(queryRouteVo.getRequestId()), queryRouteVo);
-                                            crawlChain.doBusiness(queryRouteVo);
+                if (isPull) {
+                    // 5.从上下文中获取MQPullConsumer对象，此处其实就是DefaultMQPullConsumer。
+                    MQPullConsumer consumer = context.getPullConsumer();
+                    try {
+                        // 6.获取该消费组的该队列的消费进度
+                        long offset = consumer.fetchConsumeOffset(mq, false);
+                        if (offset < 0) {
+                            offset = 0;
+                        }
+                        // 7.拉取消息，pull()方法在DefaultMQPullConsumer有具体介绍
+                        PullResult pullResult = consumer.pull(mq, "*", offset, mqMax);
+                        switch (pullResult.getPullStatus()) {
+                            case FOUND:
+                                for (int i = 0; i < pullResult.getMsgFoundList().size(); i++) {
+                                    for (String key : currentJobs.keySet()) {
+                                        QueryRouteVo job = currentJobs.get(key);
+                                        if ((new Date()).getTime() - job.getStartTime() > maxCrawlTime) {
+                                            log.info("爬取超过[" + maxCrawlTime / 1000 + "秒] -> \n" + JSONObject.toJSONString(job));
+                                            currentJobs.remove(key);
+                                            break;
                                         }
-                                    } else {
-                                        i--;
-                                        Thread.sleep(10);
+                                    }
+                                    synchronized (currentJobs) {
+                                        if (currentJobs.keySet().size() < maxCrawlCount) {
+                                            MessageExt message = pullResult.getMsgFoundList().get(i);
+                                            QueryRouteVo queryRouteVo = JSON.parseObject(message.getBody(), QueryRouteVo.class);
+
+                                            CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
+                                            crawlRequestStatusExample.createCriteria().andRequestIdEqualTo(String.valueOf(queryRouteVo.getRequestId()));
+                                            List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
+                                            if (null == crawlRequestStatuses || crawlRequestStatuses.isEmpty()) {
+                                                log.info("消费消息,开始爬取: \n " + JSONObject.toJSONString(queryRouteVo));
+                                                currentJobs.put(String.valueOf(queryRouteVo.getRequestId()), queryRouteVo);
+                                                crawlChain.doBusiness(queryRouteVo);
+                                            }
+                                        } else {
+                                            i--;
+                                            Thread.sleep(10);
+                                        }
                                     }
                                 }
-                            }
-                            break;
-                        case NO_NEW_MSG:
-                            Thread.sleep(10);
-                            break;
-                        default:
-                            break;
+                                break;
+                            case NO_NEW_MSG:
+                                Thread.sleep(10);
+                                break;
+                            default:
+                                break;
+                        }
+                        // 8.更新消费组该队列消费进度
+                        consumer.updateConsumeOffset(mq, pullResult.getNextBeginOffset());
+                        // 9.设置下次拉取消息时间间隔，单位毫秒
+                        context.setPullNextDelayTimeMillis(10);
+                    } catch (Exception e) {
+                        log.error("拉去消息异常");
+                        log.error(ExceptionUtil.getMessage(e));
+                        log.error(ExceptionUtil.stacktraceToString(e));
                     }
-                    // 8.更新消费组该队列消费进度
-                    consumer.updateConsumeOffset(mq, pullResult.getNextBeginOffset());
-                    // 9.设置下次拉取消息时间间隔，单位毫秒
-                    context.setPullNextDelayTimeMillis(10);
-                } catch (Exception e) {
-                    log.error("拉去消息异常");
-                    log.error(ExceptionUtil.getMessage(e));
-                    log.error(ExceptionUtil.stacktraceToString(e));
                 }
             }
         });

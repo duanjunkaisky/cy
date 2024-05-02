@@ -74,7 +74,7 @@ public class CrawlChain
         implNameList.forEach(item -> {
             log.debug(item + "爬取完成!");
             CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
-            crawlRequestStatusExample.createCriteria().andRequestIdEqualTo(String.valueOf(queryRouteVo.getRequestId())).andHostCodeEqualTo(getHostCode(item));
+            crawlRequestStatusExample.createCriteria().andRequestIdEqualTo(String.valueOf(queryRouteVo.getRequestId())).andHostCodeEqualTo(getHostCode(item)).andStatusEqualTo(Constant.CRAWL_STATUS.RUNNING.ordinal());
             CrawlRequestStatus requestStatus = new CrawlRequestStatus();
             requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
             requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);

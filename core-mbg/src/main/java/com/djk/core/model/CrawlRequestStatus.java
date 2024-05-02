@@ -19,9 +19,6 @@ public class CrawlRequestStatus implements Serializable {
     @ApiModelProperty(value = "0:爬取中,1:爬取完成,2:爬取出错")
     private Integer status;
 
-    @ApiModelProperty(value = "出错信息")
-    private String msg;
-
     @ApiModelProperty(value = "爬取数量")
     private Integer dataCount;
 
@@ -30,6 +27,9 @@ public class CrawlRequestStatus implements Serializable {
 
     @ApiModelProperty(value = "最后更新时间")
     private Date updateTime;
+
+    @ApiModelProperty(value = "出错信息")
+    private String msg;
 
     private static final long serialVersionUID = 1L;
 
@@ -73,14 +73,6 @@ public class CrawlRequestStatus implements Serializable {
         this.status = status;
     }
 
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
     public Integer getDataCount() {
         return dataCount;
     }
@@ -105,6 +97,14 @@ public class CrawlRequestStatus implements Serializable {
         this.updateTime = updateTime;
     }
 
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -116,10 +116,10 @@ public class CrawlRequestStatus implements Serializable {
         sb.append(", requestParams=").append(requestParams);
         sb.append(", hostCode=").append(hostCode);
         sb.append(", status=").append(status);
-        sb.append(", msg=").append(msg);
         sb.append(", dataCount=").append(dataCount);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
+        sb.append(", msg=").append(msg);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

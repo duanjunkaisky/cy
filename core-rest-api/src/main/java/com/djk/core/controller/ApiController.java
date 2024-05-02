@@ -3,6 +3,7 @@ package com.djk.core.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.djk.core.api.CommonResult;
 import com.djk.core.mapper.CrawlMetadataWebsiteConfigMapper;
+import com.djk.core.service.CrawlServiceFroMskImpl;
 import com.djk.core.service.Generator;
 import com.djk.core.vo.QueryRouteVo;
 import io.swagger.annotations.Api;
@@ -38,6 +39,9 @@ public class ApiController
     @Autowired
     CrawlMetadataWebsiteConfigMapper metadataWebsiteConfigMapper;
 
+    @Autowired
+    CrawlServiceFroMskImpl crawlServiceFroMsk;
+
     /**
      * @param queryRouteVo
      * @return {@link CommonResult}
@@ -57,6 +61,14 @@ public class ApiController
         retObj.put("requestId", requestId);
         retObj.put("useage", "客户端可通过该requestId适时获取爬取进度等信息");
         return CommonResult.success(retObj, "操作成功");
+    }
+
+    @RequestMapping(value = "/productNumber", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult productNumber()
+    {
+        String productNumber = crawlServiceFroMsk.getProductNumber();
+        return CommonResult.success(productNumber, "操作成功");
     }
 
 }
