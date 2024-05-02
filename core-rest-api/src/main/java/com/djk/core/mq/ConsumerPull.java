@@ -18,6 +18,7 @@ import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -153,4 +154,14 @@ public class ConsumerPull implements CommandLineRunner
     {
         consumeMessage();
     }
+
+    /**
+     * 每天12点触发
+     */
+    @Scheduled(cron = "0 0 12 * * ?")
+    public void delRequestStatus()
+    {
+
+    }
+
 }
