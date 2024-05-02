@@ -3,6 +3,7 @@ package com.djk.core.mq;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.djk.core.dao.CustomDao;
 import com.djk.core.mapper.CrawlRequestStatusMapper;
 import com.djk.core.model.CrawlRequestStatus;
 import com.djk.core.model.CrawlRequestStatusExample;
@@ -58,6 +59,9 @@ public class ConsumerPull implements CommandLineRunner
 
     @Autowired
     CrawlChain crawlChain;
+
+    @Autowired
+    CustomDao customDao;
 
     @Autowired
     CrawlRequestStatusMapper requestStatusMapper;
@@ -158,10 +162,13 @@ public class ConsumerPull implements CommandLineRunner
     /**
      * 每天12点触发
      */
-    @Scheduled(cron = "0 0 12 * * ?")
+    @Scheduled(cron = "0 0 23 * * ?")
     public void delRequestStatus()
     {
-
+        //删除5天前的
+        log.info("清除crawl_request_status 5天前的数据");
+        String delSql = "delete from crawl_request_status where ( UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(create_time) ) / (60*60)  > (24*5)";
+        customDao.executeSql(delSql);
     }
 
 }

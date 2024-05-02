@@ -53,5 +53,5 @@ ribbon:
 
 logging:
   level:
-    root: debug
+    root: info
     framework: error
