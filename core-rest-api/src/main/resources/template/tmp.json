@@ -1,16 +1,38 @@
-{
-  "Price": {
-    "Amount": 25.0,
+[
+  {
+    "Charge": {
+      "ChargeCode": "DA055",
+      "ChargeName": "SPOTON Cancellation Fee"
+    },
+    "Amount": 750,
+    "Currency": {
+      "Code": "CNY",
+      "Name": "Yuan Renminbi"
+    },
+    "LevelOfCalculation": "Cargo"
+  },
+  {
+    "Charge": {
+      "ChargeCode": "DA056",
+      "ChargeName": "SPOTON Amendment Fee"
+    },
+    "Amount": 50,
     "Currency": {
       "Code": "USD",
       "Name": "US Dollar"
-    }
+    },
+    "LevelOfCalculation": "Cargo"
   },
-  "ChargeName": "Export Declaration Surcharge",
-  "PaymentMethod": "P",
-  "FixedByThePricer": false,
-  "ChargeCode": "CUS16",
-  "CommentOnChargeRule": null,
-  "ConvertedRate": 25.0,
-  "IsUnSubscribedVas": false
-}
+  {
+    "Charge": {
+      "ChargeCode": "DA054",
+      "ChargeName": "SPOTON No Show Fee"
+    },
+    "Amount": 1500,
+    "Currency": {
+      "Code": "CNY",
+      "Name": "Yuan Renminbi"
+    },
+    "LevelOfCalculation": "Cargo"
+  }
+]

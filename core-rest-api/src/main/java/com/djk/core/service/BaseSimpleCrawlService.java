@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 @Slf4j
@@ -142,11 +143,12 @@ abstract class BaseSimpleCrawlService implements CrawlService
 
     public void insertData(QueryRouteVo queryRouteVo, String hostCode, List<CrawlProductInfo> productInfoList, List<CrawlProductContainer> productContainerList, List<CrawlProductFeeItem> productFeeItemList)
     {
-        log.info(queryRouteVo.getSpotId() + hostCode + " -爬取有效数据数量: " + productInfoList.size());
+        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " -爬取有效数据数量: " + productInfoList.size());
         if (!productInfoList.isEmpty()) {
-            String spotId = productInfoList.get(0).getSpotId();
+            CrawlProductInfo productInfo = productInfoList.get(0);
+            String spotId = productInfo.getSpotId();
             CrawlProductInfoExample crawlProductInfoExample = new CrawlProductInfoExample();
-            crawlProductInfoExample.createCriteria().andSpotIdEqualTo(spotId);
+            crawlProductInfoExample.createCriteria().andSpotIdEqualTo(spotId).andShippingCompanyIdEqualTo(productInfo.getShippingCompanyId());
             Map<String, CrawlProductInfo> productNumberPerInfoMap = new HashMap<>(10);
             List<CrawlProductInfo> productInfos = productInfoMapper.selectByExample(crawlProductInfoExample);
             for (CrawlProductInfo info : productInfos) {
@@ -155,20 +157,31 @@ abstract class BaseSimpleCrawlService implements CrawlService
             }
             productInfoMapper.deleteByExample(crawlProductInfoExample);
 
-            CrawlProductContainerExample crawlProductContainerExample = new CrawlProductContainerExample();
-            crawlProductContainerExample.createCriteria().andSpotIdEqualTo(spotId);
-            productContainerMapper.deleteByExample(crawlProductContainerExample);
+            List<Long> productIds = null;
+            if (null != productInfos && !productInfos.isEmpty()) {
+                productIds = productInfos.stream().map(item -> item.getId()).collect(Collectors.toList());
+            }
 
-            CrawlProductFeeItemExample crawlProductFeeItemExample = new CrawlProductFeeItemExample();
-            crawlProductFeeItemExample.createCriteria().andSpotIdEqualTo(spotId);
-            productFeeItemMapper.deleteByExample(crawlProductFeeItemExample);
+            if (null != productIds && !productIds.isEmpty()) {
+                CrawlProductContainerExample crawlProductContainerExample = new CrawlProductContainerExample();
+                CrawlProductContainerExample.Criteria criteria = crawlProductContainerExample.createCriteria();
+                criteria.andSpotIdEqualTo(spotId);
+                criteria.andProductIdIn(productIds);
+                productContainerMapper.deleteByExample(crawlProductContainerExample);
+
+                CrawlProductFeeItemExample crawlProductFeeItemExample = new CrawlProductFeeItemExample();
+                CrawlProductFeeItemExample.Criteria criteria1 = crawlProductFeeItemExample.createCriteria();
+                criteria1.andSpotIdEqualTo(spotId);
+                criteria1.andProductIdIn(productIds);
+                productFeeItemMapper.deleteByExample(crawlProductFeeItemExample);
+            }
 
             //相同的航线，productNumber不变
             for (CrawlProductInfo info : productInfoList) {
                 String key = info.getDeparturePortEn() + info.getDestinationPortEn() + info.getShippingCompanyId() + info.getEstimatedDepartureDate() + info.getVoyageNumber();
-                CrawlProductInfo productInfo = productNumberPerInfoMap.get(key);
-                if (null != productInfo) {
-                    info.setProductNumber(productInfo.getProductNumber());
+                CrawlProductInfo existInfo = productNumberPerInfoMap.get(key);
+                if (null != existInfo) {
+                    info.setProductNumber(existInfo.getProductNumber());
                 } else {
                     info.setProductNumber(getProductNumber());
                 }
@@ -177,7 +190,7 @@ abstract class BaseSimpleCrawlService implements CrawlService
             productContainerMapper.batchInsert(productContainerList);
             productFeeItemMapper.batchInsert(productFeeItemList);
 
-            log.info(queryRouteVo.getSpotId() + hostCode + " -入库完成");
+            log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 入库完成");
         }
     }
 
@@ -198,4 +211,8 @@ abstract class BaseSimpleCrawlService implements CrawlService
         return spotId + " - " + hostCode + " - ";
     }
 
+    public static void main(String[] args)
+    {
+        System.out.println(new Date(1715061600000L));
+    }
 }

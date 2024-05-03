@@ -1,0 +1,205 @@
+{
+  "ChargeDetails": [
+    {
+      "SizeType": "40ST",
+      "OceanFreight": {
+        "Price": {
+          "Amount": 4060.0,
+          "Currency": {
+            "Code": "USD",
+            "Name": null
+          }
+        },
+        "ChargeName": null,
+        "PaymentMethod": null,
+        "FixedByThePricer": false,
+        "ChargeCode": null,
+        "CommentOnChargeRule": null,
+        "ConvertedRate": 0.0,
+        "IsUnSubscribedVas": false
+      },
+      "CollectCharges": {
+        "Amount": 262.0,
+        "Currency": {
+          "Code": "USD",
+          "Name": "US Dollar"
+        }
+      },
+      "PrepaidCharges": {
+        "Amount": 133.0,
+        "Currency": {
+          "Code": "USD",
+          "Name": "US Dollar"
+        }
+      },
+      "FreightCharges": {
+        "Amount": 0.0,
+        "Currency": {
+          "Code": "USD",
+          "Name": "US Dollar"
+        }
+      },
+      "OceanFreightDetails": [
+        "Bunker surcharge NOS",
+        "Ocean Carrier-Intl Ship \u0026 port Facility Security"
+      ],
+      "CollectChargeDetails": [
+        {
+          "Price": {
+            "Amount": 245.0,
+            "Currency": {
+              "Code": "EUR",
+              "Name": "euro"
+            }
+          },
+          "ChargeName": "Terminal handl. ch  destination",
+          "PaymentMethod": "C",
+          "FixedByThePricer": false,
+          "ChargeCode": "THC34",
+          "CommentOnChargeRule": null,
+          "ConvertedRate": 262.0,
+          "IsUnSubscribedVas": false
+        }
+      ],
+      "PrepaidChargeDetails": [
+        {
+          "Price": {
+            "Amount": 30.0,
+            "Currency": {
+              "Code": "CNY",
+              "Name": "Yuan Renminbi"
+            }
+          },
+          "ChargeName": "Sealing service export",
+          "PaymentMethod": "P",
+          "FixedByThePricer": false,
+          "ChargeCode": "SEA06",
+          "CommentOnChargeRule": null,
+          "ConvertedRate": 4.0,
+          "IsUnSubscribedVas": false
+        },
+        {
+          "Price": {
+            "Amount": 935.0,
+            "Currency": {
+              "Code": "CNY",
+              "Name": "Yuan Renminbi"
+            }
+          },
+          "ChargeName": "Terminal handl ch origin",
+          "PaymentMethod": "P",
+          "FixedByThePricer": false,
+          "ChargeCode": "THC58",
+          "CommentOnChargeRule": null,
+          "ConvertedRate": 129.0,
+          "IsUnSubscribedVas": false
+        }
+      ],
+      "FreightChargeDetails": [],
+      "OceanFreightChargeDetails": [
+        {
+          "Price": {
+            "Amount": 720.0,
+            "Currency": {
+              "Code": "USD",
+              "Name": "US Dollar"
+            }
+          },
+          "ChargeName": "Bunker surcharge NOS",
+          "PaymentMethod": null,
+          "FixedByThePricer": true,
+          "ChargeCode": "BAF03",
+          "CommentOnChargeRule": null,
+          "ConvertedRate": 720.0,
+          "IsUnSubscribedVas": false
+        },
+        {
+          "Price": {
+            "Amount": 14.0,
+            "Currency": {
+              "Code": "USD",
+              "Name": "US Dollar"
+            }
+          },
+          "ChargeName": "Ocean Carrier-Intl Ship \u0026 port Facility Security",
+          "PaymentMethod": null,
+          "FixedByThePricer": true,
+          "ChargeCode": "ISS01",
+          "CommentOnChargeRule": null,
+          "ConvertedRate": 14.0,
+          "IsUnSubscribedVas": false
+        }
+      ],
+      "TotalCharge": {
+        "Amount": 4455.0,
+        "Currency": {
+          "Code": "USD",
+          "Name": null
+        }
+      }
+    }
+  ],
+  "BlChargeDetail": {
+    "SizeType": null,
+    "OceanFreight": null,
+    "CollectCharges": {
+      "Amount": 0.0,
+      "Currency": {
+        "Code": "USD",
+        "Name": "US Dollar"
+      }
+    },
+    "PrepaidCharges": {
+      "Amount": 25.0,
+      "Currency": {
+        "Code": "USD",
+        "Name": "US Dollar"
+      }
+    },
+    "FreightCharges": {
+      "Amount": 0.0,
+      "Currency": {
+        "Code": "USD",
+        "Name": "US Dollar"
+      }
+    },
+    "OceanFreightDetails": [],
+    "CollectChargeDetails": [],
+    "PrepaidChargeDetails": [
+      {
+        "Price": {
+          "Amount": 25.0,
+          "Currency": {
+            "Code": "USD",
+            "Name": "US Dollar"
+          }
+        },
+        "ChargeName": "Export Declaration Surcharge",
+        "PaymentMethod": "P",
+        "FixedByThePricer": false,
+        "ChargeCode": "CUS16",
+        "CommentOnChargeRule": null,
+        "ConvertedRate": 25.0,
+        "IsUnSubscribedVas": false
+      }
+    ],
+    "FreightChargeDetails": [],
+    "OceanFreightChargeDetails": [],
+    "TotalCharge": {
+      "Amount": 25.0,
+      "Currency": {
+        "Code": "USD",
+        "Name": "US Dollar"
+      }
+    }
+  },
+  "AdditionalInformation": [],
+  "AllocationResponse": {
+    "HasBadResponse": false,
+    "HasAllocation": true,
+    "NoOfContainersAvailable": null,
+    "IsPartialAllocation": false
+  },
+  "AllocationBadRequest": false,
+  "TierPerVolume": null
+}
