@@ -52,13 +52,14 @@ public class ApiController
     {
         long requestId = Generator.nextId();
         queryRouteVo.setStartTime(System.currentTimeMillis());
-        queryRouteVo.setRequestId(requestId);
+        queryRouteVo.setSpotId(crawlServiceFroMsk.createSpotId(queryRouteVo.getDeparturePortEn(), queryRouteVo.getDestinationPortEn()));
         SendResult sendResult = rocketMQTemplate.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(queryRouteVo)).build());
         String msgId = sendResult.getMsgId();
         log.info("推送到消息->\n topic: " + topic + "\n 消息id: " + msgId + ",\n " + JSONObject.toJSONString(queryRouteVo));
         JSONObject retObj = new JSONObject();
         retObj.put("requestId", requestId);
         retObj.put("useage", "客户端可通过该requestId适时获取爬取进度等信息");
+        retObj.put("sql", "客户端可通过该requestId适时获取爬取进度等信息");
         return CommonResult.success(retObj, "操作成功");
     }
 

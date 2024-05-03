@@ -22,7 +22,7 @@ public class QueryRouteVo
      */
     private String destinationPortEn;
 
-    private long requestId;
+    private String spotId;
 
     private long startTime;
 }

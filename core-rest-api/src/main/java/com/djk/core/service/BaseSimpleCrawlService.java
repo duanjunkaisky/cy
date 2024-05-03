@@ -132,16 +132,15 @@ abstract class BaseSimpleCrawlService implements CrawlService
         throw new RuntimeException("箱型解析出错");
     }
 
-    public String createSpotId(CrawlProductInfo productInfo)
+    public String createSpotId(String departurePortEn, String destinationPortEn)
     {
-        String spotIdStr = productInfo.getDeparturePortEn()
-                + productInfo.getDestinationPortEn()
-                + productInfo.getShippingCompanyId();
+        String spotIdStr = departurePortEn + destinationPortEn;
         return DigestUtils.md5DigestAsHex(spotIdStr.getBytes());
     }
 
     public void insertData(QueryRouteVo queryRouteVo, String hostCode, List<CrawlProductInfo> productInfoList, List<CrawlProductContainer> productContainerList, List<CrawlProductFeeItem> productFeeItemList)
     {
+        log.info(queryRouteVo.getSpotId() + hostCode + " -爬取有效数据数量: " + productInfoList.size());
         if (!productInfoList.isEmpty()) {
             String spotId = productInfoList.get(0).getSpotId();
             CrawlProductInfoExample crawlProductInfoExample = new CrawlProductInfoExample();
@@ -160,13 +159,13 @@ abstract class BaseSimpleCrawlService implements CrawlService
             productContainerMapper.batchInsert(productContainerList);
             productFeeItemMapper.batchInsert(productFeeItemList);
 
-            log.info(queryRouteVo.getRequestId() + hostCode + " -入库完成");
+            log.info(queryRouteVo.getSpotId() + hostCode + " -入库完成");
         }
     }
 
-    public String getLogPrefix(long requestId, String hostCode)
+    public String getLogPrefix(String spotId, String hostCode)
     {
-        return requestId + " - " + hostCode + " - ";
+        return spotId + " - " + hostCode + " - ";
     }
 
 }

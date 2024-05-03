@@ -49,8 +49,9 @@ public class CrawlChain
                 CrawlService crawlService = (CrawlService) SpringUtil.getBean(beanName);
                 try {
                     CrawlRequestStatus requestStatus = new CrawlRequestStatus();
-                    requestStatus.setRequestId(String.valueOf(queryRouteVo.getRequestId()));
+                    requestStatus.setSpotId(String.valueOf(queryRouteVo.getSpotId()));
                     requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
+                    requestStatus.setStartTime(queryRouteVo.getStartTime());
                     requestStatus.setFromProt(queryRouteVo.getDeparturePortEn());
                     requestStatus.setToPort(queryRouteVo.getDestinationPortEn());
                     requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
@@ -62,7 +63,7 @@ public class CrawlChain
                     log.error(ExceptionUtil.getMessage(e));
                     log.error(ExceptionUtil.stacktraceToString(e));
                     CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
-                    crawlRequestStatusExample.createCriteria().andRequestIdEqualTo(String.valueOf(queryRouteVo.getRequestId())).andHostCodeEqualTo(hostCode);
+                    crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(hostCode);
                     CrawlRequestStatus requestStatus = new CrawlRequestStatus();
                     requestStatus.setStatus(Constant.CRAWL_STATUS.ERROR.ordinal());
                     requestStatus.setMsg(ExceptionUtil.stacktraceToString(e));
@@ -74,16 +75,16 @@ public class CrawlChain
         ListenableFuture<List<String>> listListenableFuture = Futures.allAsList(Lists.newArrayList(futureList));
         List<String> implNameList = listListenableFuture.get();
         implNameList.forEach(item -> {
-            log.info("---> " + queryRouteVo.getRequestId() + " - " + getHostCode(item) + " 爬取完成!");
+            log.info("---> " + queryRouteVo.getSpotId() + " - " + getHostCode(item) + " 爬取完成!");
             CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
-            crawlRequestStatusExample.createCriteria().andRequestIdEqualTo(String.valueOf(queryRouteVo.getRequestId())).andHostCodeEqualTo(getHostCode(item)).andStatusEqualTo(Constant.CRAWL_STATUS.RUNNING.ordinal());
+            crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(getHostCode(item)).andStatusEqualTo(Constant.CRAWL_STATUS.RUNNING.ordinal());
             CrawlRequestStatus requestStatus = new CrawlRequestStatus();
             requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
             requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
         });
-        ConsumerPull.currentJobs.remove(String.valueOf(queryRouteVo.getRequestId()));
+        ConsumerPull.currentJobs.remove(String.valueOf(queryRouteVo.getSpotId()));
 
-        log.info("---> " + queryRouteVo.getRequestId() + " - 本次请求爬取结束!");
+        log.info("---> " + queryRouteVo.getSpotId() + " - 本次请求爬取结束!");
     }
 
     public static String getHostCode(String beanName)

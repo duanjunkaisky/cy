@@ -3,8 +3,9 @@
 <mapper namespace="com.djk.core.mapper.CrawlRequestStatusMapper">
   <resultMap id="BaseResultMap" type="com.djk.core.model.CrawlRequestStatus">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="request_id" jdbcType="VARCHAR" property="requestId" />
+    <result column="spot_id" jdbcType="VARCHAR" property="spotId" />
     <result column="request_params" jdbcType="VARCHAR" property="requestParams" />
+    <result column="start_time" jdbcType="BIGINT" property="startTime" />
     <result column="from_prot" jdbcType="VARCHAR" property="fromProt" />
     <result column="to_port" jdbcType="VARCHAR" property="toPort" />
     <result column="host_code" jdbcType="VARCHAR" property="hostCode" />
@@ -74,7 +75,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, request_id, request_params, from_prot, to_port, host_code, status, create_time, 
+    id, spot_id, request_params, start_time, from_prot, to_port, host_code, status, create_time, 
     update_time
   </sql>
   <sql id="Blob_Column_List">
@@ -129,14 +130,14 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.djk.core.model.CrawlRequestStatus">
-    insert into crawl_request_status (id, request_id, request_params, 
-      from_prot, to_port, host_code, 
-      status, create_time, update_time, 
-      msg)
-    values (#{id,jdbcType=BIGINT}, #{requestId,jdbcType=VARCHAR}, #{requestParams,jdbcType=VARCHAR}, 
-      #{fromProt,jdbcType=VARCHAR}, #{toPort,jdbcType=VARCHAR}, #{hostCode,jdbcType=VARCHAR}, 
-      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{msg,jdbcType=LONGVARCHAR})
+    insert into crawl_request_status (id, spot_id, request_params, 
+      start_time, from_prot, to_port, 
+      host_code, status, create_time, 
+      update_time, msg)
+    values (#{id,jdbcType=BIGINT}, #{spotId,jdbcType=VARCHAR}, #{requestParams,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=BIGINT}, #{fromProt,jdbcType=VARCHAR}, #{toPort,jdbcType=VARCHAR}, 
+      #{hostCode,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{msg,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.djk.core.model.CrawlRequestStatus">
     insert into crawl_request_status
@@ -144,11 +145,14 @@
       <if test="id != null">
         id,
       </if>
-      <if test="requestId != null">
-        request_id,
+      <if test="spotId != null">
+        spot_id,
       </if>
       <if test="requestParams != null">
         request_params,
+      </if>
+      <if test="startTime != null">
+        start_time,
       </if>
       <if test="fromProt != null">
         from_prot,
@@ -176,11 +180,14 @@
       <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="requestId != null">
-        #{requestId,jdbcType=VARCHAR},
+      <if test="spotId != null">
+        #{spotId,jdbcType=VARCHAR},
       </if>
       <if test="requestParams != null">
         #{requestParams,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=BIGINT},
       </if>
       <if test="fromProt != null">
         #{fromProt,jdbcType=VARCHAR},
@@ -217,11 +224,14 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.requestId != null">
-        request_id = #{record.requestId,jdbcType=VARCHAR},
+      <if test="record.spotId != null">
+        spot_id = #{record.spotId,jdbcType=VARCHAR},
       </if>
       <if test="record.requestParams != null">
         request_params = #{record.requestParams,jdbcType=VARCHAR},
+      </if>
+      <if test="record.startTime != null">
+        start_time = #{record.startTime,jdbcType=BIGINT},
       </if>
       <if test="record.fromProt != null">
         from_prot = #{record.fromProt,jdbcType=VARCHAR},
@@ -252,8 +262,9 @@
   <update id="updateByExampleWithBLOBs" parameterType="map">
     update crawl_request_status
     set id = #{record.id,jdbcType=BIGINT},
-      request_id = #{record.requestId,jdbcType=VARCHAR},
+      spot_id = #{record.spotId,jdbcType=VARCHAR},
       request_params = #{record.requestParams,jdbcType=VARCHAR},
+      start_time = #{record.startTime,jdbcType=BIGINT},
       from_prot = #{record.fromProt,jdbcType=VARCHAR},
       to_port = #{record.toPort,jdbcType=VARCHAR},
       host_code = #{record.hostCode,jdbcType=VARCHAR},
@@ -268,8 +279,9 @@
   <update id="updateByExample" parameterType="map">
     update crawl_request_status
     set id = #{record.id,jdbcType=BIGINT},
-      request_id = #{record.requestId,jdbcType=VARCHAR},
+      spot_id = #{record.spotId,jdbcType=VARCHAR},
       request_params = #{record.requestParams,jdbcType=VARCHAR},
+      start_time = #{record.startTime,jdbcType=BIGINT},
       from_prot = #{record.fromProt,jdbcType=VARCHAR},
       to_port = #{record.toPort,jdbcType=VARCHAR},
       host_code = #{record.hostCode,jdbcType=VARCHAR},
@@ -283,11 +295,14 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.djk.core.model.CrawlRequestStatus">
     update crawl_request_status
     <set>
-      <if test="requestId != null">
-        request_id = #{requestId,jdbcType=VARCHAR},
+      <if test="spotId != null">
+        spot_id = #{spotId,jdbcType=VARCHAR},
       </if>
       <if test="requestParams != null">
         request_params = #{requestParams,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=BIGINT},
       </if>
       <if test="fromProt != null">
         from_prot = #{fromProt,jdbcType=VARCHAR},
@@ -315,8 +330,9 @@
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.djk.core.model.CrawlRequestStatus">
     update crawl_request_status
-    set request_id = #{requestId,jdbcType=VARCHAR},
+    set spot_id = #{spotId,jdbcType=VARCHAR},
       request_params = #{requestParams,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=BIGINT},
       from_prot = #{fromProt,jdbcType=VARCHAR},
       to_port = #{toPort,jdbcType=VARCHAR},
       host_code = #{hostCode,jdbcType=VARCHAR},
@@ -328,8 +344,9 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.djk.core.model.CrawlRequestStatus">
     update crawl_request_status
-    set request_id = #{requestId,jdbcType=VARCHAR},
+    set spot_id = #{spotId,jdbcType=VARCHAR},
       request_params = #{requestParams,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=BIGINT},
       from_prot = #{fromProt,jdbcType=VARCHAR},
       to_port = #{toPort,jdbcType=VARCHAR},
       host_code = #{hostCode,jdbcType=VARCHAR},
@@ -340,16 +357,16 @@
   </update>
   <insert id="batchInsert">
     <if test="items.get(0) != null">
-            insert into crawl_request_status  (id, request_id, request_params, 
-        from_prot, to_port, host_code, 
-        status, create_time, update_time, 
-        msg)
+            insert into crawl_request_status  (id, spot_id, request_params, 
+        start_time, from_prot, to_port, 
+        host_code, status, create_time, 
+        update_time, msg)
       values
       <foreach collection="items" item="item" index="index" separator=",">
-      (#{item.id,jdbcType=BIGINT}, #{item.requestId,jdbcType=VARCHAR}, #{item.requestParams,jdbcType=VARCHAR}, 
-        #{item.fromProt,jdbcType=VARCHAR}, #{item.toPort,jdbcType=VARCHAR}, #{item.hostCode,jdbcType=VARCHAR}, 
-        #{item.status,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP}, 
-        #{item.msg,jdbcType=LONGVARCHAR})
+      (#{item.id,jdbcType=BIGINT}, #{item.spotId,jdbcType=VARCHAR}, #{item.requestParams,jdbcType=VARCHAR}, 
+        #{item.startTime,jdbcType=BIGINT}, #{item.fromProt,jdbcType=VARCHAR}, #{item.toPort,jdbcType=VARCHAR}, 
+        #{item.hostCode,jdbcType=VARCHAR}, #{item.status,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, 
+        #{item.updateTime,jdbcType=TIMESTAMP}, #{item.msg,jdbcType=LONGVARCHAR})
       </foreach>
     </if>
   </insert>

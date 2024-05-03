@@ -165,73 +165,73 @@ public class CrawlRequestStatusExample {
             return (Criteria) this;
         }
 
-        public Criteria andRequestIdIsNull() {
-            addCriterion("request_id is null");
+        public Criteria andSpotIdIsNull() {
+            addCriterion("spot_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andRequestIdIsNotNull() {
-            addCriterion("request_id is not null");
+        public Criteria andSpotIdIsNotNull() {
+            addCriterion("spot_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andRequestIdEqualTo(String value) {
-            addCriterion("request_id =", value, "requestId");
+        public Criteria andSpotIdEqualTo(String value) {
+            addCriterion("spot_id =", value, "spotId");
             return (Criteria) this;
         }
 
-        public Criteria andRequestIdNotEqualTo(String value) {
-            addCriterion("request_id <>", value, "requestId");
+        public Criteria andSpotIdNotEqualTo(String value) {
+            addCriterion("spot_id <>", value, "spotId");
             return (Criteria) this;
         }
 
-        public Criteria andRequestIdGreaterThan(String value) {
-            addCriterion("request_id >", value, "requestId");
+        public Criteria andSpotIdGreaterThan(String value) {
+            addCriterion("spot_id >", value, "spotId");
             return (Criteria) this;
         }
 
-        public Criteria andRequestIdGreaterThanOrEqualTo(String value) {
-            addCriterion("request_id >=", value, "requestId");
+        public Criteria andSpotIdGreaterThanOrEqualTo(String value) {
+            addCriterion("spot_id >=", value, "spotId");
             return (Criteria) this;
         }
 
-        public Criteria andRequestIdLessThan(String value) {
-            addCriterion("request_id <", value, "requestId");
+        public Criteria andSpotIdLessThan(String value) {
+            addCriterion("spot_id <", value, "spotId");
             return (Criteria) this;
         }
 
-        public Criteria andRequestIdLessThanOrEqualTo(String value) {
-            addCriterion("request_id <=", value, "requestId");
+        public Criteria andSpotIdLessThanOrEqualTo(String value) {
+            addCriterion("spot_id <=", value, "spotId");
             return (Criteria) this;
         }
 
-        public Criteria andRequestIdLike(String value) {
-            addCriterion("request_id like", value, "requestId");
+        public Criteria andSpotIdLike(String value) {
+            addCriterion("spot_id like", value, "spotId");
             return (Criteria) this;
         }
 
-        public Criteria andRequestIdNotLike(String value) {
-            addCriterion("request_id not like", value, "requestId");
+        public Criteria andSpotIdNotLike(String value) {
+            addCriterion("spot_id not like", value, "spotId");
             return (Criteria) this;
         }
 
-        public Criteria andRequestIdIn(List<String> values) {
-            addCriterion("request_id in", values, "requestId");
+        public Criteria andSpotIdIn(List<String> values) {
+            addCriterion("spot_id in", values, "spotId");
             return (Criteria) this;
         }
 
-        public Criteria andRequestIdNotIn(List<String> values) {
-            addCriterion("request_id not in", values, "requestId");
+        public Criteria andSpotIdNotIn(List<String> values) {
+            addCriterion("spot_id not in", values, "spotId");
             return (Criteria) this;
         }
 
-        public Criteria andRequestIdBetween(String value1, String value2) {
-            addCriterion("request_id between", value1, value2, "requestId");
+        public Criteria andSpotIdBetween(String value1, String value2) {
+            addCriterion("spot_id between", value1, value2, "spotId");
             return (Criteria) this;
         }
 
-        public Criteria andRequestIdNotBetween(String value1, String value2) {
-            addCriterion("request_id not between", value1, value2, "requestId");
+        public Criteria andSpotIdNotBetween(String value1, String value2) {
+            addCriterion("spot_id not between", value1, value2, "spotId");
             return (Criteria) this;
         }
 
@@ -302,6 +302,66 @@ public class CrawlRequestStatusExample {
 
         public Criteria andRequestParamsNotBetween(String value1, String value2) {
             addCriterion("request_params not between", value1, value2, "requestParams");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeIsNull() {
+            addCriterion("start_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeIsNotNull() {
+            addCriterion("start_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeEqualTo(Long value) {
+            addCriterion("start_time =", value, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeNotEqualTo(Long value) {
+            addCriterion("start_time <>", value, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeGreaterThan(Long value) {
+            addCriterion("start_time >", value, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("start_time >=", value, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeLessThan(Long value) {
+            addCriterion("start_time <", value, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeLessThanOrEqualTo(Long value) {
+            addCriterion("start_time <=", value, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeIn(List<Long> values) {
+            addCriterion("start_time in", values, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeNotIn(List<Long> values) {
+            addCriterion("start_time not in", values, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeBetween(Long value1, Long value2) {
+            addCriterion("start_time between", value1, value2, "startTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andStartTimeNotBetween(Long value1, Long value2) {
+            addCriterion("start_time not between", value1, value2, "startTime");
             return (Criteria) this;
         }
 

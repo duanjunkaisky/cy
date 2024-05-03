@@ -8,10 +8,13 @@ public class CrawlRequestStatus implements Serializable {
     private Long id;
 
     @ApiModelProperty(value = "请求标识")
-    private String requestId;
+    private String spotId;
 
     @ApiModelProperty(value = "请求组装参数，也可用来唯一标识")
     private String requestParams;
+
+    @ApiModelProperty(value = "开始时间")
+    private Long startTime;
 
     @ApiModelProperty(value = "出发港口代码")
     private String fromProt;
@@ -44,12 +47,12 @@ public class CrawlRequestStatus implements Serializable {
         this.id = id;
     }
 
-    public String getRequestId() {
-        return requestId;
+    public String getSpotId() {
+        return spotId;
     }
 
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
+    public void setSpotId(String spotId) {
+        this.spotId = spotId;
     }
 
     public String getRequestParams() {
@@ -58,6 +61,14 @@ public class CrawlRequestStatus implements Serializable {
 
     public void setRequestParams(String requestParams) {
         this.requestParams = requestParams;
+    }
+
+    public Long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Long startTime) {
+        this.startTime = startTime;
     }
 
     public String getFromProt() {
@@ -123,8 +134,9 @@ public class CrawlRequestStatus implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", requestId=").append(requestId);
+        sb.append(", spotId=").append(spotId);
         sb.append(", requestParams=").append(requestParams);
+        sb.append(", startTime=").append(startTime);
         sb.append(", fromProt=").append(fromProt);
         sb.append(", toPort=").append(toPort);
         sb.append(", hostCode=").append(hostCode);

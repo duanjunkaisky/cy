@@ -5,3 +5,4 @@
     msk_code = msk网站前端可查的英文名，比如 岳阳->YUE YANG   上海->SHANGHAI
     每个网站的code不太一样,岳阳在msk的查询输入必须有空格，但是在one查询输入不能用空格,需要录入时注意
 2、船司表 要配置，比如 en_abbreviation = MSK
+3、需要给爬虫服务的时间做一个同步，不能时区不同

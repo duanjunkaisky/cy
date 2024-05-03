@@ -6,6 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.djk.core.config.Constant;
 import com.djk.core.dao.CustomDao;
 import com.djk.core.mapper.CrawlRequestStatusMapper;
+import com.djk.core.model.CrawlRequestStatus;
+import com.djk.core.model.CrawlRequestStatusExample;
 import com.djk.core.service.CrawlChain;
 import com.djk.core.vo.QueryRouteVo;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 
 /**
@@ -105,8 +108,8 @@ public class ConsumerPull implements CommandLineRunner
                                         if ((new Date()).getTime() - job.getStartTime() > maxCrawlTime) {
                                             String errorMsg = "爬取超过[" + maxCrawlTime / 1000 + "秒] -> \n" + JSONObject.toJSONString(job);
                                             log.error(errorMsg);
-                                            long requestId = job.getRequestId();
-                                            customDao.executeSql("update crawl_request_status set status = " + Constant.CRAWL_STATUS.ERROR.ordinal() + ", msg = '" + errorMsg + "' where request_id = " + requestId);
+                                            String spotId = job.getSpotId();
+                                            customDao.executeSql("update crawl_request_status set status = " + Constant.CRAWL_STATUS.ERROR.ordinal() + ", msg = '" + errorMsg + "' where spot_id = " + spotId);
                                             currentJobs.remove(key);
                                             break;
                                         }
@@ -116,14 +119,32 @@ public class ConsumerPull implements CommandLineRunner
                                             MessageExt message = pullResult.getMsgFoundList().get(i);
                                             QueryRouteVo queryRouteVo = JSON.parseObject(message.getBody(), QueryRouteVo.class);
 
-                                            String sql = "select request_id from crawl_request_status where (request_id = '" + queryRouteVo.getRequestId() + "' or (from_prot = '" + queryRouteVo.getDeparturePortEn() + "' and to_port = '" + queryRouteVo.getDestinationPortEn() + "')) and status = 0";
-                                            List<LinkedHashMap<String, Object>> linkedHashMaps = customDao.queryBySql(sql);
-                                            if (null == linkedHashMaps || linkedHashMaps.isEmpty()) {
-                                                log.info(queryRouteVo.getRequestId() + " - 消费消息,开始爬取: \n " + JSONObject.toJSONString(queryRouteVo));
-                                                currentJobs.put(String.valueOf(queryRouteVo.getRequestId()), queryRouteVo);
+                                            CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
+                                            crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId());
+                                            List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
+
+                                            boolean canCrawl = false;
+                                            if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
+                                                Long startTime = crawlRequestStatuses.get(0).getStartTime();
+                                                List<CrawlRequestStatus> mergeList = crawlRequestStatuses.stream()
+                                                        .filter(item -> item.getStatus() == Constant.CRAWL_STATUS.RUNNING.ordinal())
+                                                        .collect(Collectors.toList());
+                                                long offsetTime = System.currentTimeMillis() - startTime;
+                                                if ((null == mergeList || mergeList.isEmpty()) && offsetTime > 1000 * 60) {
+                                                    canCrawl = true;
+                                                }
+                                            } else {
+                                                canCrawl = true;
+                                            }
+
+                                            if (canCrawl) {
+                                                customDao.executeSql("delete from crawl_request_status where spot_id ='" + queryRouteVo.getSpotId() + "'");
+
+                                                log.info(queryRouteVo.getSpotId() + " - 消费消息,开始爬取: \n " + JSONObject.toJSONString(queryRouteVo));
+                                                currentJobs.put(String.valueOf(queryRouteVo.getSpotId()), queryRouteVo);
                                                 crawlChain.doBusiness(queryRouteVo);
                                             } else {
-                                                log.info(queryRouteVo.getRequestId() + " - 拉取消息: 已经存在正在爬取de请求，忽略该请求\n" + JSONObject.toJSONString(queryRouteVo));
+                                                log.info(queryRouteVo.getSpotId() + " - 拉取消息: 已经存在正在爬取的请求，忽略该请求\n" + JSONObject.toJSONString(queryRouteVo));
                                             }
                                         } else {
                                             i--;
