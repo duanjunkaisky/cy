@@ -14,7 +14,9 @@ import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Slf4j
@@ -145,6 +147,12 @@ abstract class BaseSimpleCrawlService implements CrawlService
             String spotId = productInfoList.get(0).getSpotId();
             CrawlProductInfoExample crawlProductInfoExample = new CrawlProductInfoExample();
             crawlProductInfoExample.createCriteria().andSpotIdEqualTo(spotId);
+            Map<String, CrawlProductInfo> productNumberPerInfoMap = new HashMap<>(10);
+            List<CrawlProductInfo> productInfos = productInfoMapper.selectByExample(crawlProductInfoExample);
+            for (CrawlProductInfo info : productInfos) {
+                String key = info.getDeparturePortEn() + info.getDestinationPortEn() + info.getShippingCompanyId() + info.getEstimatedDepartureDate() + info.getVoyageNumber();
+                productNumberPerInfoMap.put(key, info);
+            }
             productInfoMapper.deleteByExample(crawlProductInfoExample);
 
             CrawlProductContainerExample crawlProductContainerExample = new CrawlProductContainerExample();
@@ -155,12 +163,34 @@ abstract class BaseSimpleCrawlService implements CrawlService
             crawlProductFeeItemExample.createCriteria().andSpotIdEqualTo(spotId);
             productFeeItemMapper.deleteByExample(crawlProductFeeItemExample);
 
+            //相同的航线，productNumber不变
+            for (CrawlProductInfo info : productInfoList) {
+                String key = info.getDeparturePortEn() + info.getDestinationPortEn() + info.getShippingCompanyId() + info.getEstimatedDepartureDate() + info.getVoyageNumber();
+                CrawlProductInfo productInfo = productNumberPerInfoMap.get(key);
+                if (null != productInfo) {
+                    info.setProductNumber(productInfo.getProductNumber());
+                } else {
+                    info.setProductNumber(getProductNumber());
+                }
+            }
             productInfoMapper.batchInsert(productInfoList);
             productContainerMapper.batchInsert(productContainerList);
             productFeeItemMapper.batchInsert(productFeeItemList);
 
             log.info(queryRouteVo.getSpotId() + hostCode + " -入库完成");
         }
+    }
+
+    public int parseCurrentCy(String currency)
+    {
+        if ("USD".equalsIgnoreCase(currency)) {
+            return 2;
+        } else if ("CNY".equalsIgnoreCase(currency)) {
+            return 1;
+        } else if ("EUR".equalsIgnoreCase(currency)) {
+            return 3;
+        }
+        throw new RuntimeException("解析币种出错, 不在 USD、CNY、EUR之内");
     }
 
     public String getLogPrefix(String spotId, String hostCode)

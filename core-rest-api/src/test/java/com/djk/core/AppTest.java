@@ -4,6 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import java.util.Date;
+
 /**
  * Unit test for simple App.
  */
@@ -15,6 +17,8 @@ public class AppTest
     @Test
     public void shouldAnswerWithTrue()
     {
-        assertTrue( true );
+        long t = 1715216400000L;
+        Date date = new Date(t);
+        System.out.println(date);
     }
 }

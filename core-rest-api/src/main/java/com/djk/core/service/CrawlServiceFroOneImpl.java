@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -70,7 +71,6 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
 
         BaseShippingCompany baseShippingCompany = getShipCompany(hostCode);
 
-
         Map<String, CrawlProductInfo> existMap = new HashMap<>();
         List<CrawlProductInfo> productInfoList = new ArrayList<>();
         List<CrawlProductContainer> productContainerList = new ArrayList<>();
@@ -119,7 +119,6 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         insertData(queryRouteVo, hostCode, productInfoList, productContainerList, productFeeItemList);
     }
 
-
     private void parseData(BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<CrawlProductInfo> productInfoList, List<CrawlProductContainer> productContainerList, List<CrawlProductFeeItem> productFeeItemList, Map<String, CrawlProductInfo> existMap) throws ParseException
     {
         int containerType = computeContainerType(container.getContainerCode());
@@ -158,7 +157,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 productInfo.setDistance(freightInfo.getString("duration"));
                 productInfo.setCargoType("G");
                 productInfo.setProductType("P");
-                productInfo.setWaiverOfContainerInstructions(getFreeMsg(departureStart.getString("departureLoc"), departureEnd.getString("arrivalLoc"), departureEnd.getString("arrivalDateEstimated"), container, freightInfo.getString("spotRateOfferingId")));
+                productInfo.setWaiverOfContainerInstructions("无说明");
                 productInfo.setDeficitFreightInstructions("无说明");
                 productInfo.setReviewStatus(3);
                 productInfo.setStatus((byte) 0);
@@ -177,13 +176,11 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                         + productInfo.getVoyageNumber();
                 if (!existMap.containsKey(existKey)) {
                     productInfo.setId(Generator.nextId());
-                    productInfo.setProductNumber(getProductNumber());
                     productInfoList.add(productInfo);
                     existMap.put(existKey, productInfo);
                 } else {
                     CrawlProductInfo existProduct = existMap.get(existKey);
                     productInfo.setId(existProduct.getId());
-                    productInfo.setProductNumber(existProduct.getProductNumber());
                 }
 
                 CrawlProductContainer productContainer = new CrawlProductContainer();
@@ -231,6 +228,8 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                     productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
                 }
 
+                getFreeFee(productFeeItemList, productFeeItem, departureStart.getString("departureLoc"), departureEnd.getString("arrivalLoc"), departureEnd.getString("arrivalDateEstimated"), container, freightInfo.getString("spotRateOfferingId"));
+
             }
         }
 
@@ -245,16 +244,11 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
             productFeeItem.setFeeCostType(2);
         } else if ("FREIGHT".equalsIgnoreCase(chargeTarget)) {
             //基本海运费
-            productFeeItem.setFeeCostType(3);
+            productFeeItem.setFeeCostType(6);
         }
         String currency = surcharge.getString("chargeCurrency");
-        if ("USD".equalsIgnoreCase(currency)) {
-            productFeeItem.setFeeCurrency(2);
-        } else if ("CNY".equalsIgnoreCase(currency)) {
-            productFeeItem.setFeeCurrency(1);
-        } else if ("EUR".equalsIgnoreCase(currency)) {
-            productFeeItem.setFeeCurrency(3);
-        }
+        int cy = parseCurrentCy(currency);
+        productFeeItem.setFeeCurrency(cy);
 
         String chargeCode = surcharge.getString("chargeCode");
         if ("DOC".equalsIgnoreCase(chargeCode)) {
@@ -268,10 +262,9 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         productFeeItem.setFeeEnName(surcharge.getString("chargeName"));
     }
 
-
     private Map<String, String> getHeader()
     {
-        JSONObject tokenBean = getToken("one", tokenIndex);
+        JSONObject tokenBean = getToken(this.getHostCode().toLowerCase(), tokenIndex);
         Map<String, String> header = new HashMap<>(3);
         header.put("Authorization", tokenBean.getString("authorization"));
         header.put("Host", "del");
@@ -318,7 +311,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
      *
      * @return
      */
-    public String getFreeMsg(String fromCode, String toCode, String arriveTime, ContainerDist containerDist, String spotRateOfferingId)
+    public String getFreeFee(List<CrawlProductFeeItem> productFeeItemList, CrawlProductFeeItem productFeeItem, String fromCode, String toCode, String arriveTime, ContainerDist containerDist, String spotRateOfferingId)
     {
         String jsonParam = "{" +
                 "    \"originUNLocationCode\": \"" + fromCode + "\",\n" +
@@ -343,11 +336,19 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
             JSONObject jsonObject = JSONObject.parseObject(bodyJson);
             JSONObject origin = jsonObject.getJSONObject("origin");
             String ftDys1 = origin.getJSONObject("demurrage").getString("ftDys");
+            String ftDys1Price = origin.getJSONObject("demurrage").getJSONArray("additionalAmount").getJSONObject(0).getString("pricePerUnit");
+            String currentCy1 = origin.getJSONObject("demurrage").getJSONArray("additionalAmount").getJSONObject(0).getString("currency");
             String ftDys2 = origin.getJSONObject("detention").getString("ftDys");
+            String ftDys2Price = origin.getJSONObject("detention").getJSONArray("additionalAmount").getJSONObject(0).getString("pricePerUnit");
+            String currentCy2 = origin.getJSONObject("detention").getJSONArray("additionalAmount").getJSONObject(0).getString("currency");
 
             JSONObject destination = jsonObject.getJSONObject("destination");
             String ftDys3 = destination.getJSONObject("demurrage").getString("ftDys");
+            String ftDys3Price = destination.getJSONObject("demurrage").getJSONArray("additionalAmount").getJSONObject(0).getString("pricePerUnit");
+            String currentCy3 = destination.getJSONObject("demurrage").getJSONArray("additionalAmount").getJSONObject(0).getString("currency");
             String ftDys4 = destination.getJSONObject("detention").getString("ftDys");
+            String ftDys4Price = destination.getJSONObject("detention").getJSONArray("additionalAmount").getJSONObject(0).getString("pricePerUnit");
+            String currentCy4 = destination.getJSONObject("detention").getJSONArray("additionalAmount").getJSONObject(0).getString("currency");
 
             String msg = "ONE QUOTE 免箱期信息\n" +
                     "始发地\n" +
@@ -355,6 +356,57 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                     "目的地\n" +
                     "滞期费 " + ftDys3 + "天\n" +
                     "滞期费 " + ftDys4 + "天";
+            productFeeItem.setPriceComputeType(0);
+            productFeeItem.setFeeCostType(5);
+
+            productFeeItem.setPrice(new BigDecimal(0));
+            productFeeItem.setFeeCnName("origin demurrage (1-" + ftDys1 + ")");
+            productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
+            productFeeItem.setFeeCurrency(parseCurrentCy(currentCy1));
+            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+
+            productFeeItem.setPrice(new BigDecimal(ftDys1Price));
+            productFeeItem.setFeeCnName("origin demurrage (" + ftDys1 + "+)");
+            productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
+            productFeeItem.setFeeCurrency(parseCurrentCy(currentCy1));
+            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+
+            productFeeItem.setPrice(new BigDecimal(0));
+            productFeeItem.setFeeCnName("origin detention (1-" + ftDys2 + ")");
+            productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
+            productFeeItem.setFeeCurrency(parseCurrentCy(currentCy2));
+            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+
+            productFeeItem.setPrice(new BigDecimal(ftDys2Price));
+            productFeeItem.setFeeCnName("origin detention (" + ftDys2 + "+)");
+            productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
+            productFeeItem.setFeeCurrency(parseCurrentCy(currentCy2));
+            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+
+            productFeeItem.setPrice(new BigDecimal(0));
+            productFeeItem.setFeeCnName("destination demurrage (1-" + ftDys3 + ")");
+            productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
+            productFeeItem.setFeeCurrency(parseCurrentCy(currentCy3));
+            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+
+            productFeeItem.setPrice(new BigDecimal(ftDys3Price));
+            productFeeItem.setFeeCnName("destination demurrage (" + ftDys3 + "+)");
+            productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
+            productFeeItem.setFeeCurrency(parseCurrentCy(currentCy3));
+            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+
+            productFeeItem.setPrice(new BigDecimal(0));
+            productFeeItem.setFeeCnName("destination detention (1-" + ftDys4 + ")");
+            productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
+            productFeeItem.setFeeCurrency(parseCurrentCy(currentCy4));
+            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+
+            productFeeItem.setPrice(new BigDecimal(ftDys4Price));
+            productFeeItem.setFeeCnName("destination detention (" + ftDys4 + "+)");
+            productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
+            productFeeItem.setFeeCurrency(parseCurrentCy(currentCy4));
+            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+
             return msg;
         } catch (Exception e) {
             log.error("查询标准免费期信息出错");

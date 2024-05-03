@@ -3,6 +3,7 @@ package com.djk.core.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.djk.core.api.CommonResult;
 import com.djk.core.mapper.CrawlMetadataWebsiteConfigMapper;
+import com.djk.core.service.CrawlServiceFroCmaImpl;
 import com.djk.core.service.CrawlServiceFroMskImpl;
 import com.djk.core.service.Generator;
 import com.djk.core.vo.QueryRouteVo;
@@ -40,7 +41,7 @@ public class ApiController
     CrawlMetadataWebsiteConfigMapper metadataWebsiteConfigMapper;
 
     @Autowired
-    CrawlServiceFroMskImpl crawlServiceFroMsk;
+    CrawlServiceFroCmaImpl crawlService;
 
     /**
      * @param queryRouteVo
@@ -52,7 +53,7 @@ public class ApiController
     {
         long requestId = Generator.nextId();
         queryRouteVo.setStartTime(System.currentTimeMillis());
-        queryRouteVo.setSpotId(crawlServiceFroMsk.createSpotId(queryRouteVo.getDeparturePortEn(), queryRouteVo.getDestinationPortEn()));
+        queryRouteVo.setSpotId(crawlService.createSpotId(queryRouteVo.getDeparturePortEn(), queryRouteVo.getDestinationPortEn()));
         SendResult sendResult = rocketMQTemplate.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(queryRouteVo)).build());
         String msgId = sendResult.getMsgId();
         log.info("推送到消息->\n topic: " + topic + "\n 消息id: " + msgId + ",\n " + JSONObject.toJSONString(queryRouteVo));
@@ -67,8 +68,19 @@ public class ApiController
     @ResponseBody
     public CommonResult productNumber()
     {
-        String productNumber = crawlServiceFroMsk.getProductNumber();
+        String productNumber = crawlService.getProductNumber();
         return CommonResult.success(productNumber, "操作成功");
+    }
+
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult test()
+    {
+        QueryRouteVo queryRouteVo = new QueryRouteVo();
+        queryRouteVo.setDeparturePortEn("SHANGHAI");
+        queryRouteVo.setDestinationPortEn("ROTTERDAM");
+        crawlService.queryData(queryRouteVo, "cma");
+        return CommonResult.success("操作成功");
     }
 
 }

@@ -213,7 +213,7 @@
   "AdditionalInformation": [],
   "AllocationResponse": {
     "HasBadResponse": false,
-    "HasAllocation": false,
+    "HasAllocation": true,
     "NoOfContainersAvailable": null,
     "IsPartialAllocation": false
   },

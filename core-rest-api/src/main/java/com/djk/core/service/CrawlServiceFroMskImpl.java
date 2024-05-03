@@ -75,7 +75,6 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
         BaseShippingCompany baseShippingCompany = getShipCompany(hostCode);
 
-
         Map<String, CrawlProductInfo> existMap = new HashMap<>();
         List<CrawlProductInfo> productInfoList = new ArrayList<>();
         List<CrawlProductContainer> productContainerList = new ArrayList<>();
@@ -221,13 +220,11 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                         + productInfo.getVoyageNumber();
                 if (!existMap.containsKey(existKey)) {
                     productInfo.setId(Generator.nextId());
-                    productInfo.setProductNumber(getProductNumber());
                     productInfoList.add(productInfo);
                     existMap.put(existKey, productInfo);
                 } else {
                     CrawlProductInfo existProduct = existMap.get(existKey);
                     productInfo.setId(existProduct.getId());
-                    productInfo.setProductNumber(existProduct.getProductNumber());
                 }
 
                 CrawlProductContainer productContainer = new CrawlProductContainer();
@@ -273,13 +270,10 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 for (Object pf : penaltyFees) {
                     JSONObject penaltyFee = (JSONObject) pf;
                     String currency = penaltyFee.getString("currency");
-                    if ("USD".equalsIgnoreCase(currency)) {
-                        productFeeItem.setFeeCurrency(2);
-                    } else if ("CNY".equalsIgnoreCase(currency)) {
-                        productFeeItem.setFeeCurrency(1);
-                    } else if ("EUR".equalsIgnoreCase(currency)) {
-                        productFeeItem.setFeeCurrency(3);
-                    }
+
+                    int cy = parseCurrentCy(currency);
+                    productFeeItem.setFeeCurrency(cy);
+
                     productFeeItem.setPriceComputeType(1);
                     productFeeItem.setFeeCostType(3);
 
@@ -315,13 +309,8 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                         String startDayOfCharge = cpa.getString("startDayOfCharge");
                         String endDayOfCharge = cpa.getString("endDayOfCharge");
 
-                        if ("USD".equalsIgnoreCase(currencyOfCharge)) {
-                            productFeeItem.setFeeCurrency(2);
-                        } else if ("CNY".equalsIgnoreCase(currencyOfCharge)) {
-                            productFeeItem.setFeeCurrency(1);
-                        } else if ("EUR".equalsIgnoreCase(currencyOfCharge)) {
-                            productFeeItem.setFeeCurrency(3);
-                        }
+                        int cy = parseCurrentCy(currencyOfCharge);
+                        productFeeItem.setFeeCurrency(cy);
 
                         productFeeItem.setPrice(new BigDecimal(chargePerDiem));
                         productFeeItem.setFeeCnName(chargeType + " " + freetimeStartEvent + "(" + startDayOfCharge + (StringUtils.isEmpty(endDayOfCharge) ? "+" : ("-" + endDayOfCharge)) + ")");
@@ -342,17 +331,14 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         } else if ("Destination".equalsIgnoreCase(ratetypecode)) {
             productFeeItem.setFeeCostType(2);
         } else if ("Freight".equalsIgnoreCase(ratetypecode)) {
-            //运费
-            productFeeItem.setFeeCostType(3);
+            //基础运费
+            productFeeItem.setFeeCostType(6);
         }
         String currency = surcharge.getString("currency");
-        if ("USD".equalsIgnoreCase(currency)) {
-            productFeeItem.setFeeCurrency(2);
-        } else if ("CNY".equalsIgnoreCase(currency)) {
-            productFeeItem.setFeeCurrency(1);
-        } else if ("EUR".equalsIgnoreCase(currency)) {
-            productFeeItem.setFeeCurrency(3);
-        }
+
+        int cy = parseCurrentCy(currency);
+        productFeeItem.setFeeCurrency(cy);
+
         String ratebasis = surcharge.getString("ratebasis");
         if ("PER_DOC".equalsIgnoreCase(ratebasis)) {
             productFeeItem.setPriceComputeType(1);
