@@ -130,6 +130,7 @@ public class ConsumerPull implements CommandLineRunner
                                                         .filter(item -> item.getStatus() == Constant.CRAWL_STATUS.RUNNING.ordinal())
                                                         .collect(Collectors.toList());
                                                 long offsetTime = System.currentTimeMillis() - startTime;
+                                                //相同的爬取请求前后2次需要间隔1分钟
                                                 if ((null == mergeList || mergeList.isEmpty()) && offsetTime > 1000 * 60) {
                                                     canCrawl = true;
                                                 }
