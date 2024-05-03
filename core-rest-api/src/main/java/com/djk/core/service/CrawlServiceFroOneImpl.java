@@ -129,8 +129,10 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         for (Object o : offers) {
             JSONObject item = (JSONObject) o;
             JSONArray freightInfos = item.getJSONArray("freightInfos");
-            if (null != freightInfos && !freightInfos.isEmpty()) {
-//            if (null != freightInfos && !freightInfos.isEmpty() && !freightInfos.getJSONObject(0).getString("status").equalsIgnoreCase("Sold Out")) {
+//            if (null != freightInfos && !freightInfos.isEmpty()) {
+            //排除售罄
+            if (null != freightInfos && !freightInfos.isEmpty()
+                    && !freightInfos.getJSONObject(0).getString("status").equalsIgnoreCase("Sold Out")) {
                 JSONObject freightInfo = freightInfos.getJSONObject(0);
                 JSONArray departures = freightInfo.getJSONArray("departures");
                 JSONObject departureStart = departures.getJSONObject(0);
