@@ -16,7 +16,6 @@ import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -68,11 +67,11 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     public void queryData(QueryRouteVo queryRouteVo, String hostCode)
     {
         this.setHostCode(hostCode);
-        log.info(queryRouteVo.getRequestId() + hostCode + " -开始爬取数据");
+        log.info(getLogPrefix(queryRouteVo.getRequestId(), hostCode) + " - 开始爬取数据");
         BasePort fromPort = getFromPort(queryRouteVo);
         BasePort toPort = getToPort(queryRouteVo);
-        JSONObject portInfoFrom = getPortInfo(fromPort.getMskCode(), fromPort.getCountryCode());
-        JSONObject portInfoTo = getPortInfo(toPort.getMskCode(), toPort.getCountryCode());
+        JSONObject portInfoFrom = getPortInfo(queryRouteVo, fromPort.getMskCode(), fromPort.getCountryCode());
+        JSONObject portInfoTo = getPortInfo(queryRouteVo, toPort.getMskCode(), toPort.getCountryCode());
 
         BaseShippingCompany baseShippingCompany = getShipCompany(hostCode);
 
@@ -118,7 +117,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     fillData.put("weekOffset", (page - 1) * WEEK_STEP);
                     String jsonParam = FreeMakerUtil.createByTemplate("mskQuery.ftl", fillData);
 
-                    log.info(queryRouteVo.getRequestId() + hostCode + " -第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
+                    log.info(getLogPrefix(queryRouteVo.getRequestId(), hostCode) + " - 第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
                     HttpResp resp = HttpUtil.postBody("https://api.maersk.com/productoffer/v2/productoffers", header, jsonParam);
                     Response response = resp.getResponse();
@@ -126,17 +125,17 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     if (response.code() != 200) {
                         if (response.code() == 403) {
                             sensorData = null;
-                            log.info(queryRouteVo.getRequestId() + hostCode + " -第" + reqCount + "次发起请求返回403");
+                            log.info(getLogPrefix(queryRouteVo.getRequestId(), hostCode) + " - 第" + reqCount + "次发起请求返回403");
                         } else if (response.code() == 401) {
                             tokenIndex++;
-                            log.info(queryRouteVo.getRequestId() + hostCode + " -第" + reqCount + "次发起请求返回401");
+                            log.info(getLogPrefix(queryRouteVo.getRequestId(), hostCode) + " - 第" + reqCount + "次发起请求返回401");
                         }
                         continue;
                     }
 
                     JSONObject retObj = JSONObject.parseObject(bodyJson);
                     hasMore = retObj.getBoolean("loadMore");
-                    log.info(queryRouteVo.getRequestId() + hostCode + " -第" + reqCount + "次发起请求返回成功, hasMore: " + hasMore);
+                    log.info(getLogPrefix(queryRouteVo.getRequestId(), hostCode) + " - 第" + reqCount + "次发起请求返回成功, hasMore: " + hasMore);
                     page++;
 
                     //开始处理入库
@@ -144,7 +143,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     parseData(baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap);
                     reqCount = 0;
                 } catch (Exception e) {
-                    log.info(queryRouteVo.getRequestId() + hostCode + " -第" + reqCount + "次发起请求出错");
+                    log.info(getLogPrefix(queryRouteVo.getRequestId(), hostCode) + " - 第" + reqCount + "次发起请求出错");
                     log.error(ExceptionUtil.getMessage(e));
                     log.error(ExceptionUtil.stacktraceToString(e));
                 }
@@ -383,7 +382,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
             userAgent = retObj.getString("ua");
             sensorData = retObj.getString("sensorData");
             sensorData = Base64.getEncoder().encodeToString(sensorData.getBytes());
-            log.info(queryRouteVo.getRequestId() + this.getHostCode() + " -获取sensorData:\n" + sensorData);
+            log.info(getLogPrefix(queryRouteVo.getRequestId(), this.getHostCode()) + " - 获取sensorData:\n" + sensorData);
         }
         String str = tokenBean.getString("akamai-bm-telemetry");
         String start = str.split("sensor_data=")[0];
@@ -398,7 +397,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         return header;
     }
 
-    public JSONObject getPortInfo(String portCodeEn, String countryCode)
+    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode)
     {
         String api = "https://api.maersk.com.cn/synergy/reference-data/geography/locations?cityName=" + portCodeEn + "&pageSize=30&sort=cityName&type=city";
         Map<String, String> header = new HashMap<>(3);
@@ -417,11 +416,11 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 }
             }
         } catch (Exception e) {
-            log.error("查询" + this.getHostCode() + "港口代码出错,\n" + api + "\n" + JSONObject.toJSONString(header));
+            log.error(getLogPrefix(queryRouteVo.getRequestId(), this.getHostCode()) + " - 查询港口代码出错,\n" + api + "\n" + JSONObject.toJSONString(header));
             log.error(ExceptionUtil.getMessage(e));
             log.error(ExceptionUtil.stacktraceToString(e));
         }
-        throw new RuntimeException(this.getHostCode() + "网站未查询到港口代码信息: " + portCodeEn + ", 请检查base_port的" + this.getHostCode() + "_code信息");
+        throw new RuntimeException(getLogPrefix(queryRouteVo.getRequestId(), this.getHostCode()) + " - 网站未查询到港口代码信息: " + portCodeEn + ", 请检查base_port的" + this.getHostCode() + "_code信息");
     }
 
 }

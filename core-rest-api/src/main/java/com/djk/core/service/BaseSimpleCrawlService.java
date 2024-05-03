@@ -164,4 +164,9 @@ abstract class BaseSimpleCrawlService implements CrawlService
         }
     }
 
+    public String getLogPrefix(long requestId, String hostCode)
+    {
+        return requestId + " - " + hostCode + " - ";
+    }
+
 }

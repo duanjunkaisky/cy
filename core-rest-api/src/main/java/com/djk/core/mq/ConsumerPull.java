@@ -119,11 +119,11 @@ public class ConsumerPull implements CommandLineRunner
                                             String sql = "select request_id from crawl_request_status where (request_id = '" + queryRouteVo.getRequestId() + "' or (from_prot = '" + queryRouteVo.getDeparturePortEn() + "' and to_port = '" + queryRouteVo.getDestinationPortEn() + "')) and status = 0";
                                             List<LinkedHashMap<String, Object>> linkedHashMaps = customDao.queryBySql(sql);
                                             if (null == linkedHashMaps || linkedHashMaps.isEmpty()) {
-                                                log.info("消费消息,开始爬取: \n " + JSONObject.toJSONString(queryRouteVo));
+                                                log.info(queryRouteVo.getRequestId() + " - 消费消息,开始爬取: \n " + JSONObject.toJSONString(queryRouteVo));
                                                 currentJobs.put(String.valueOf(queryRouteVo.getRequestId()), queryRouteVo);
                                                 crawlChain.doBusiness(queryRouteVo);
                                             } else {
-                                                log.info("拉取消息: 已经存在正在爬取de请求，忽略该请求\n" + JSONObject.toJSONString(queryRouteVo));
+                                                log.info(queryRouteVo.getRequestId() + " - 拉取消息: 已经存在正在爬取de请求，忽略该请求\n" + JSONObject.toJSONString(queryRouteVo));
                                             }
                                         } else {
                                             i--;

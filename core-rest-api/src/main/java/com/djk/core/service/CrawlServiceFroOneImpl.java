@@ -17,7 +17,6 @@ import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.DigestUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -63,11 +62,11 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
     public void queryData(QueryRouteVo queryRouteVo, String hostCode)
     {
         this.setHostCode(hostCode);
-        log.info(queryRouteVo.getRequestId() + hostCode + " -开始爬取数据");
+        log.info(getLogPrefix(queryRouteVo.getRequestId(), hostCode) + " - 开始爬取数据");
         BasePort fromPort = getFromPort(queryRouteVo);
         BasePort toPort = getToPort(queryRouteVo);
-        JSONObject portInfoFrom = getPortInfo(fromPort.getOneCode(), fromPort.getCountryCode());
-        JSONObject portInfoTo = getPortInfo(toPort.getOneCode(), toPort.getCountryCode());
+        JSONObject portInfoFrom = getPortInfo(queryRouteVo, fromPort.getOneCode(), fromPort.getCountryCode());
+        JSONObject portInfoTo = getPortInfo(queryRouteVo, toPort.getOneCode(), toPort.getCountryCode());
 
         BaseShippingCompany baseShippingCompany = getShipCompany(hostCode);
 
@@ -89,7 +88,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                     fillData.put("containerCode", container.getContainerCode());
                     String jsonParam = FreeMakerUtil.createByTemplate("oneQuery.ftl", fillData);
 
-                    log.info(queryRouteVo.getRequestId() + hostCode + " -第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
+                    log.info(getLogPrefix(queryRouteVo.getRequestId(), hostCode) + " - 第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
                     HttpResp resp = HttpUtil.postBody("https://ecomm.one-line.com/api/v1/quotation/schedules/vessel-dates", header, jsonParam);
                     Response response = resp.getResponse();
@@ -97,11 +96,11 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                     JSONObject retObj = JSONObject.parseObject(bodyJson);
                     if (response.code() != 200 && response.code() != 201) {
                         tokenIndex++;
-                        log.info(queryRouteVo.getRequestId() + hostCode + " -第" + reqCount + "次发起请求返回401");
+                        log.info(getLogPrefix(queryRouteVo.getRequestId(), hostCode) + " - 第" + reqCount + "次发起请求返回401");
                         continue;
                     }
                     //code == 201成功
-                    log.info(queryRouteVo.getRequestId() + hostCode + " -第" + reqCount + "次发起请求返回成功");
+                    log.info(getLogPrefix(queryRouteVo.getRequestId(), hostCode) + " - 第" + reqCount + "次发起请求返回成功");
 
                     //开始处理入库
                     JSONArray offers = retObj.getJSONArray("data");
@@ -109,7 +108,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                     reqCount = 0;
                     break;
                 } catch (Exception e) {
-                    log.info(queryRouteVo.getRequestId() + hostCode + " -第" + reqCount + "次发起请求出错");
+                    log.info(getLogPrefix(queryRouteVo.getRequestId(), hostCode) + " - 第" + reqCount + "次发起请求出错");
                     log.error(ExceptionUtil.getMessage(e));
                     log.error(ExceptionUtil.stacktraceToString(e));
                 }
@@ -283,7 +282,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         return header;
     }
 
-    public JSONObject getPortInfo(String portCodeEn, String countryCode)
+    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode)
     {
         String api = "https://ecomm.one-line.com/api/v1/quotation/locations?location=" + portCodeEn + "&orgDest=origin";
         Map<String, String> header = getHeader();
@@ -299,11 +298,11 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 }
             }
         } catch (Exception e) {
-            log.error("查询" + this.getHostCode() + "港口代码出错,\n" + api + "\n" + JSONObject.toJSONString(header));
+            log.error(getLogPrefix(queryRouteVo.getRequestId(), this.getHostCode()) + " - 查询港口代码出错,\n" + api + "\n" + JSONObject.toJSONString(header));
             log.error(ExceptionUtil.getMessage(e));
             log.error(ExceptionUtil.stacktraceToString(e));
         }
-        throw new RuntimeException(this.getHostCode() + "网站未查询到港口代码信息: " + portCodeEn + ", 请检查base_port的" + this.getHostCode() + "_code信息");
+        throw new RuntimeException(getLogPrefix(queryRouteVo.getRequestId(), this.getHostCode()) + " - 网站未查询到港口代码信息: " + portCodeEn + ", 请检查base_port的" + this.getHostCode() + "_code信息");
     }
 
     private boolean checkDisplayedName(String displayedName, String portCodeEn)

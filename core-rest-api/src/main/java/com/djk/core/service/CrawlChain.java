@@ -74,7 +74,7 @@ public class CrawlChain
         ListenableFuture<List<String>> listListenableFuture = Futures.allAsList(Lists.newArrayList(futureList));
         List<String> implNameList = listListenableFuture.get();
         implNameList.forEach(item -> {
-            log.info("---> " + queryRouteVo.getRequestId() + "-" + getHostCode(item) + " 爬取完成!");
+            log.info("---> " + queryRouteVo.getRequestId() + " - " + getHostCode(item) + " 爬取完成!");
             CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
             crawlRequestStatusExample.createCriteria().andRequestIdEqualTo(String.valueOf(queryRouteVo.getRequestId())).andHostCodeEqualTo(getHostCode(item)).andStatusEqualTo(Constant.CRAWL_STATUS.RUNNING.ordinal());
             CrawlRequestStatus requestStatus = new CrawlRequestStatus();
@@ -83,7 +83,7 @@ public class CrawlChain
         });
         ConsumerPull.currentJobs.remove(String.valueOf(queryRouteVo.getRequestId()));
 
-        log.info("---> " + queryRouteVo.getRequestId() + "本地请求爬取结束!");
+        log.info("---> " + queryRouteVo.getRequestId() + " - 本地请求爬取结束!");
     }
 
     public static String getHostCode(String beanName)
