@@ -6,6 +6,8 @@ package com.djk.core.config;
  */
 public class Constant
 {
+    public static final int MAX_REQ_COUNT = 3;
+
     /**
      * 爬取状态
      */

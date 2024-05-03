@@ -584,10 +584,12 @@ public class HttpUtil
     public static void main(String[] args) throws IOException
     {
 
-        String api = "https://api.maersk.com.cn/synergy/reference-data/geography/locations?cityName=SHANGHAI&pageSize=30&sort=cityName&type=city";
+        String api = "https://ecomm.one-line.com/api/v1/quotation/schedules/vessel-dates";
         Map<String, String> header = new HashMap<>();
-        header.put("Consumer-Key", "Q09VmiYvj4ifBOa72Z0ekxkq9tLZCVYI");
-        HttpResp resp = HttpUtil.get(api, header);
+        header.put("Authorization", "Bearer Ra4b2DGF6k5UiN1OZ5NE8GQ8_z0u2S7wZlw7NUvNSYyc3CzrIJEasS3i3zUzH5lp");
+        header.put("user-Agent", "del");
+        header.put("Host", "del");
+        HttpResp resp = HttpUtil.postBody(api, header, "{\"isSoc\":false,\"destinationLocationType\":\"CY\",\"serviceScopeCode\":\"AEW\",\"originLoc\":\"CNSHA\",\"reeferType\":\"\",\"destinationLoc\":\"NLRTM\",\"commodityCode\":\"000000\",\"containers\":[{\"cargoType\":\"DR\",\"quantity\":1,\"isError\":false,\"isFocus\":false,\"equipmentONECntrTpSz\":\"D2\",\"equipmentIsoCode\":\"22G1\",\"equipmentName\":\"DRY 20\",\"equipmentSize\":\"20\",\"commodityGroups\":[{\"commodityGroup\":\"FAK\"}]}],\"commodityGroups\":[],\"originLocationType\":\"CY\"}");
         String bodyJson = resp.getBodyJson();
         System.out.println(bodyJson);
 

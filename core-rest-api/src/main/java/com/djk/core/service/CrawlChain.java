@@ -34,7 +34,7 @@ public class CrawlChain
 {
     private List<String> target;
 
-    public static ListeningExecutorService EXECUTOR_SERVICE = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(3));
+    public static ListeningExecutorService EXECUTOR_SERVICE = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
 
     @Autowired
     CrawlRequestStatusMapper requestStatusMapper;
@@ -55,7 +55,7 @@ public class CrawlChain
                     requestStatus.setHostCode(hostCode);
                     requestStatusMapper.insertSelective(requestStatus);
 
-                    crawlService.queryData(queryRouteVo);
+                    crawlService.queryData(queryRouteVo, hostCode);
                 } catch (Exception e) {
                     log.error(ExceptionUtil.getMessage(e));
                     log.error(ExceptionUtil.stacktraceToString(e));
@@ -72,7 +72,7 @@ public class CrawlChain
         ListenableFuture<List<String>> listListenableFuture = Futures.allAsList(Lists.newArrayList(futureList));
         List<String> implNameList = listListenableFuture.get();
         implNameList.forEach(item -> {
-            log.info(item + "爬取完成!");
+            log.info("---> " + queryRouteVo.getRequestId() + "-" + getHostCode(item) + " 爬取完成!");
             CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
             crawlRequestStatusExample.createCriteria().andRequestIdEqualTo(String.valueOf(queryRouteVo.getRequestId())).andHostCodeEqualTo(getHostCode(item)).andStatusEqualTo(Constant.CRAWL_STATUS.RUNNING.ordinal());
             CrawlRequestStatus requestStatus = new CrawlRequestStatus();
@@ -80,6 +80,8 @@ public class CrawlChain
             requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
         });
         ConsumerPull.currentJobs.remove(String.valueOf(queryRouteVo.getRequestId()));
+
+        log.info("---> " + queryRouteVo.getRequestId() + "本地请求爬取结束!");
     }
 
     public static String getHostCode(String beanName)

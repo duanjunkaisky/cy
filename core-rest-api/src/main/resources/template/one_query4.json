@@ -1,0 +1,29 @@
+{
+  "originLoc": "CNSHA",
+  "originLocationType": "CY",
+  "destinationLoc": "ARBUE",
+  "destinationLocationType": "CY",
+  "containers": [
+    {
+      "sortIndex": 1,
+      "cargoType": "DR",
+      "equipmentIsoCode": "22G1",
+      "equipmentName": "DRY 20",
+      "quantity": 2,
+      "equipmentSize": "20",
+      "equipmentONECntrTpSz": "D2",
+      "isFocus": false,
+      "isError": false,
+      "commodityGroups": [
+        {
+          "commodityGroup": "FAK"
+        }
+      ]
+    }
+  ],
+  "commodityCode": "000000",
+  "reeferType": "",
+  "isSoc": false,
+  "commodityGroups": [],
+  "serviceScopeCode": "LEW"
+}

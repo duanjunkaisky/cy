@@ -15,10 +15,9 @@ public class CrawlServiceFroCmaImpl implements CrawlService
 {
     @SneakyThrows
     @Override
-    public String queryData(QueryRouteVo queryRouteVo)
+    public void queryData(QueryRouteVo queryRouteVo, String hostCode)
     {
         System.out.println("cma");
         TimeUnit.SECONDS.sleep(20L);
-        return null;
     }
 }
