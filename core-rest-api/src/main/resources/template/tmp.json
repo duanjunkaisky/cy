@@ -1,6 +1,16 @@
 {
-  "__RequestVerificationToken": "jqRRwe70eHRPG3BTxK6hlxsxW7kxryqD3Ywea3dpB9zApNewiyHuZzIIJw86SVVnGF_BVkuQHcyQBey6GAhy4icESE9jcJhWatMDMDWg-14bKLhjEKYIz8ckcvV55T08MkShS3i9SPhXVMS8i-4dLg2",
-  "Cookie": "__RequestVerificationToken=KTyMLU_0XSNdU8tWF2TVeDW2XlllO6IXGNwAUZlXNjllxjh1V8DgiihTUkL581YLGrT6LpqQmQHWfp3XsBsHyAEDgB8ChVb5ciCNDgwemoQ1;.AspnetCookie=CfDJ8NzI0_dX-PFOtO9XOiohLVdoMbxKLMzjXNau_lbvOmMJkXpAKsDNMP3JQn3ypPHgCgR_QrcZyTDCXKTPtUL1BbyhrimaZyP3-Jg9qHLc3JPzCcpkzYpdN63ycogWA9uo8j3bCzTKiiNJ1pw2BxUN11gUwirYAWnD1C6g3RGJVpIj1H8NLU-vnhr1GgRoj7RHEvR_ToLLYA-PvWHIrPN8rm44mzqFuAtyqWuIaKhzHSu_tD9MaUErv-2xtF8c2pJBNcxNhOhc_ZDQj4Kek-EyvG9KOOt8p7zigJPPw_WSoQ44v-KUGvWD2nHUKMFNyniwgD5kJ5K1a-4_mjSQOjBHqUS9nR7W9HH3xiSK5ZQCV4tp-Jnc8ZDs1itFmT8UJBCG6E4ZFZpM9a7TAIwzixifMgoWUjkPyV1M0OznVXK-QMnu;",
-  "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-  "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8"
+  "Price": {
+    "Amount": 25.0,
+    "Currency": {
+      "Code": "USD",
+      "Name": "US Dollar"
+    }
+  },
+  "ChargeName": "Export Declaration Surcharge",
+  "PaymentMethod": "P",
+  "FixedByThePricer": false,
+  "ChargeCode": "CUS16",
+  "CommentOnChargeRule": null,
+  "ConvertedRate": 25.0,
+  "IsUnSubscribedVas": false
 }
