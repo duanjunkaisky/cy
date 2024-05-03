@@ -3,10 +3,9 @@ package com.djk.core.mq;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.djk.core.config.Constant;
 import com.djk.core.dao.CustomDao;
 import com.djk.core.mapper.CrawlRequestStatusMapper;
-import com.djk.core.model.CrawlRequestStatus;
-import com.djk.core.model.CrawlRequestStatusExample;
 import com.djk.core.service.CrawlChain;
 import com.djk.core.vo.QueryRouteVo;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +22,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -103,7 +103,10 @@ public class ConsumerPull implements CommandLineRunner
                                     for (String key : currentJobs.keySet()) {
                                         QueryRouteVo job = currentJobs.get(key);
                                         if ((new Date()).getTime() - job.getStartTime() > maxCrawlTime) {
-                                            log.info("爬取超过[" + maxCrawlTime / 1000 + "秒] -> \n" + JSONObject.toJSONString(job));
+                                            String errorMsg = "爬取超过[" + maxCrawlTime / 1000 + "秒] -> \n" + JSONObject.toJSONString(job);
+                                            log.error(errorMsg);
+                                            long requestId = job.getRequestId();
+                                            customDao.executeSql("update crawl_request_status set status = " + Constant.CRAWL_STATUS.ERROR.ordinal() + ", msg = '" + errorMsg + "' where request_id = " + requestId);
                                             currentJobs.remove(key);
                                             break;
                                         }
@@ -113,17 +116,18 @@ public class ConsumerPull implements CommandLineRunner
                                             MessageExt message = pullResult.getMsgFoundList().get(i);
                                             QueryRouteVo queryRouteVo = JSON.parseObject(message.getBody(), QueryRouteVo.class);
 
-                                            CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
-                                            crawlRequestStatusExample.createCriteria().andRequestIdEqualTo(String.valueOf(queryRouteVo.getRequestId()));
-                                            List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
-                                            if (null == crawlRequestStatuses || crawlRequestStatuses.isEmpty()) {
+                                            String sql = "select request_id from crawl_request_status where (request_id = '" + queryRouteVo.getRequestId() + "' or (from_prot = '" + queryRouteVo.getDeparturePortEn() + "' and to_port = '" + queryRouteVo.getDestinationPortEn() + "')) and status = 0";
+                                            List<LinkedHashMap<String, Object>> linkedHashMaps = customDao.queryBySql(sql);
+                                            if (null == linkedHashMaps || linkedHashMaps.isEmpty()) {
                                                 log.info("消费消息,开始爬取: \n " + JSONObject.toJSONString(queryRouteVo));
                                                 currentJobs.put(String.valueOf(queryRouteVo.getRequestId()), queryRouteVo);
                                                 crawlChain.doBusiness(queryRouteVo);
+                                            } else {
+                                                log.info("拉取消息: 已经存在正在爬取de请求，忽略该请求\n" + JSONObject.toJSONString(queryRouteVo));
                                             }
                                         } else {
                                             i--;
-                                            Thread.sleep(10);
+                                            Thread.sleep(500L);
                                         }
                                     }
                                 }

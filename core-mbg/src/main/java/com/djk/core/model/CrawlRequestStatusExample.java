@@ -305,6 +305,146 @@ public class CrawlRequestStatusExample {
             return (Criteria) this;
         }
 
+        public Criteria andFromProtIsNull() {
+            addCriterion("from_prot is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromProtIsNotNull() {
+            addCriterion("from_prot is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromProtEqualTo(String value) {
+            addCriterion("from_prot =", value, "fromProt");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromProtNotEqualTo(String value) {
+            addCriterion("from_prot <>", value, "fromProt");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromProtGreaterThan(String value) {
+            addCriterion("from_prot >", value, "fromProt");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromProtGreaterThanOrEqualTo(String value) {
+            addCriterion("from_prot >=", value, "fromProt");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromProtLessThan(String value) {
+            addCriterion("from_prot <", value, "fromProt");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromProtLessThanOrEqualTo(String value) {
+            addCriterion("from_prot <=", value, "fromProt");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromProtLike(String value) {
+            addCriterion("from_prot like", value, "fromProt");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromProtNotLike(String value) {
+            addCriterion("from_prot not like", value, "fromProt");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromProtIn(List<String> values) {
+            addCriterion("from_prot in", values, "fromProt");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromProtNotIn(List<String> values) {
+            addCriterion("from_prot not in", values, "fromProt");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromProtBetween(String value1, String value2) {
+            addCriterion("from_prot between", value1, value2, "fromProt");
+            return (Criteria) this;
+        }
+
+        public Criteria andFromProtNotBetween(String value1, String value2) {
+            addCriterion("from_prot not between", value1, value2, "fromProt");
+            return (Criteria) this;
+        }
+
+        public Criteria andToPortIsNull() {
+            addCriterion("to_port is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andToPortIsNotNull() {
+            addCriterion("to_port is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andToPortEqualTo(String value) {
+            addCriterion("to_port =", value, "toPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andToPortNotEqualTo(String value) {
+            addCriterion("to_port <>", value, "toPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andToPortGreaterThan(String value) {
+            addCriterion("to_port >", value, "toPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andToPortGreaterThanOrEqualTo(String value) {
+            addCriterion("to_port >=", value, "toPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andToPortLessThan(String value) {
+            addCriterion("to_port <", value, "toPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andToPortLessThanOrEqualTo(String value) {
+            addCriterion("to_port <=", value, "toPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andToPortLike(String value) {
+            addCriterion("to_port like", value, "toPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andToPortNotLike(String value) {
+            addCriterion("to_port not like", value, "toPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andToPortIn(List<String> values) {
+            addCriterion("to_port in", values, "toPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andToPortNotIn(List<String> values) {
+            addCriterion("to_port not in", values, "toPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andToPortBetween(String value1, String value2) {
+            addCriterion("to_port between", value1, value2, "toPort");
+            return (Criteria) this;
+        }
+
+        public Criteria andToPortNotBetween(String value1, String value2) {
+            addCriterion("to_port not between", value1, value2, "toPort");
+            return (Criteria) this;
+        }
+
         public Criteria andHostCodeIsNull() {
             addCriterion("host_code is null");
             return (Criteria) this;

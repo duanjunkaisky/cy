@@ -169,11 +169,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 productInfo.setDeleted(false);
                 productInfo.setTenantId(0L);
 
-                String spotIdStr = productInfo.getDeparturePortEn()
-                        + productInfo.getDestinationPortEn()
-                        + productInfo.getShippingCompanyId();
-                String spotId = DigestUtils.md5DigestAsHex(spotIdStr.getBytes());
-                productInfo.setSpotId(spotId);
+                productInfo.setSpotId(createSpotId(productInfo));
 
                 String existKey = productInfo.getDeparturePortEn()
                         + productInfo.getDestinationPortEn()

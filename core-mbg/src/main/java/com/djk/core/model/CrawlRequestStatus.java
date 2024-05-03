@@ -13,6 +13,12 @@ public class CrawlRequestStatus implements Serializable {
     @ApiModelProperty(value = "请求组装参数，也可用来唯一标识")
     private String requestParams;
 
+    @ApiModelProperty(value = "出发港口代码")
+    private String fromProt;
+
+    @ApiModelProperty(value = "到达港口代码")
+    private String toPort;
+
     @ApiModelProperty(value = "网站简码")
     private String hostCode;
 
@@ -52,6 +58,22 @@ public class CrawlRequestStatus implements Serializable {
 
     public void setRequestParams(String requestParams) {
         this.requestParams = requestParams;
+    }
+
+    public String getFromProt() {
+        return fromProt;
+    }
+
+    public void setFromProt(String fromProt) {
+        this.fromProt = fromProt;
+    }
+
+    public String getToPort() {
+        return toPort;
+    }
+
+    public void setToPort(String toPort) {
+        this.toPort = toPort;
     }
 
     public String getHostCode() {
@@ -103,6 +125,8 @@ public class CrawlRequestStatus implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", requestId=").append(requestId);
         sb.append(", requestParams=").append(requestParams);
+        sb.append(", fromProt=").append(fromProt);
+        sb.append(", toPort=").append(toPort);
         sb.append(", hostCode=").append(hostCode);
         sb.append(", status=").append(status);
         sb.append(", createTime=").append(createTime);

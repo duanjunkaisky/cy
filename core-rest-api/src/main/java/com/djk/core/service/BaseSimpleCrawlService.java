@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -129,6 +130,14 @@ abstract class BaseSimpleCrawlService implements CrawlService
             return 3;
         }
         throw new RuntimeException("箱型解析出错");
+    }
+
+    public String createSpotId(CrawlProductInfo productInfo)
+    {
+        String spotIdStr = productInfo.getDeparturePortEn()
+                + productInfo.getDestinationPortEn()
+                + productInfo.getShippingCompanyId();
+        return DigestUtils.md5DigestAsHex(spotIdStr.getBytes());
     }
 
     public void insertData(QueryRouteVo queryRouteVo, String hostCode, List<CrawlProductInfo> productInfoList, List<CrawlProductContainer> productContainerList, List<CrawlProductFeeItem> productFeeItemList)

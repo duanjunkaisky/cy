@@ -51,6 +51,8 @@ public class CrawlChain
                     CrawlRequestStatus requestStatus = new CrawlRequestStatus();
                     requestStatus.setRequestId(String.valueOf(queryRouteVo.getRequestId()));
                     requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
+                    requestStatus.setFromProt(queryRouteVo.getDeparturePortEn());
+                    requestStatus.setToPort(queryRouteVo.getDestinationPortEn());
                     requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
                     requestStatus.setHostCode(hostCode);
                     requestStatusMapper.insertSelective(requestStatus);
