@@ -96,7 +96,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                     JSONObject retObj = JSONObject.parseObject(bodyJson);
                     if (response.code() != 200 && response.code() != 201) {
                         tokenIndex++;
-                        log.info(getLogPrefix(queryRouteVo.getRequestId(), hostCode) + " - 第" + reqCount + "次发起请求返回401");
+                        log.info(getLogPrefix(queryRouteVo.getRequestId(), hostCode) + " - 第" + reqCount + "次发起请求返回失败\n" + bodyJson);
                         continue;
                     }
                     //code == 201成功
