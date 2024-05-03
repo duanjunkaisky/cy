@@ -83,7 +83,7 @@ public class CrawlChain
         });
         ConsumerPull.currentJobs.remove(String.valueOf(queryRouteVo.getRequestId()));
 
-        log.info("---> " + queryRouteVo.getRequestId() + " - 本地请求爬取结束!");
+        log.info("---> " + queryRouteVo.getRequestId() + " - 本次请求爬取结束!");
     }
 
     public static String getHostCode(String beanName)
