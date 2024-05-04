@@ -141,7 +141,7 @@ abstract class BaseSimpleCrawlService implements CrawlService
         return DigestUtils.md5DigestAsHex(spotIdStr.getBytes());
     }
 
-    public void insertData(QueryRouteVo queryRouteVo, String hostCode, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList)
+    public String insertData(QueryRouteVo queryRouteVo, String hostCode, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList)
     {
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " -爬取有效数据数量: " + productInfoList.size());
         if (!productInfoList.isEmpty()) {
@@ -192,6 +192,8 @@ abstract class BaseSimpleCrawlService implements CrawlService
 
             log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 入库完成");
         }
+
+        return String.valueOf(productInfoList.size());
     }
 
     public int parseCurrentCy(String currency)

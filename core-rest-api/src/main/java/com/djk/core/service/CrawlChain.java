@@ -58,7 +58,7 @@ public class CrawlChain
                     requestStatus.setHostCode(hostCode);
                     requestStatusMapper.insertSelective(requestStatus);
 
-                    crawlService.queryData(queryRouteVo, hostCode);
+                    return hostCode + " -> " + crawlService.queryData(queryRouteVo, hostCode);
                 } catch (Exception e) {
                     log.error(ExceptionUtil.getMessage(e));
                     log.error(ExceptionUtil.stacktraceToString(e));
@@ -69,15 +69,16 @@ public class CrawlChain
                     requestStatus.setMsg(ExceptionUtil.stacktraceToString(e));
                     requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
                 }
-                return beanName;
+                return hostCode + " -> 0";
             }));
         }
         ListenableFuture<List<String>> listListenableFuture = Futures.allAsList(Lists.newArrayList(futureList));
         List<String> implNameList = listListenableFuture.get();
         implNameList.forEach(item -> {
-            log.info("---> " + queryRouteVo.getSpotId() + " - " + getHostCode(item) + " 爬取完成!");
+            String[] split = item.split("->");
+            log.info("---> " + queryRouteVo.getSpotId() + " - " + " 爬取完成 " + item);
             CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
-            crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(getHostCode(item)).andStatusEqualTo(Constant.CRAWL_STATUS.RUNNING.ordinal());
+            crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(getHostCode(split[0])).andStatusEqualTo(Constant.CRAWL_STATUS.RUNNING.ordinal());
             CrawlRequestStatus requestStatus = new CrawlRequestStatus();
             requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
             requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);

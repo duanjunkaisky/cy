@@ -64,7 +64,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
     @Override
     @Transactional
-    public void queryData(QueryRouteVo queryRouteVo, String hostCode)
+    public String queryData(QueryRouteVo queryRouteVo, String hostCode)
     {
         this.setHostCode(hostCode);
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据");
@@ -146,7 +146,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
             reqCount = 0;
         }
 
-        insertData(queryRouteVo, hostCode, productInfoList, productContainerList, productFeeItemList);
+        return insertData(queryRouteVo, hostCode, productInfoList, productContainerList, productFeeItemList);
     }
 
     private void parseData(BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap) throws ParseException

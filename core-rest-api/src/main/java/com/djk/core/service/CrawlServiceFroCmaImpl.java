@@ -63,7 +63,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
 
     @Override
     @Transactional
-    public void queryData(QueryRouteVo queryRouteVo, String hostCode)
+    public String queryData(QueryRouteVo queryRouteVo, String hostCode)
     {
         this.setHostCode(hostCode);
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据");
@@ -148,7 +148,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
             reqCount = 0;
         }
 
-        insertData(queryRouteVo, hostCode, productInfoList, productContainerList, productFeeItemList);
+        return insertData(queryRouteVo, hostCode, productInfoList, productContainerList, productFeeItemList);
     }
 
 

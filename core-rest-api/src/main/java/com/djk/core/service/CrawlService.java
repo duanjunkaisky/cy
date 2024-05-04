@@ -18,8 +18,8 @@ public interface CrawlService
      *
      * @param queryRouteVo
      * @param hostCode
-     * @return
+     * @return xxx
      * @throws InterruptedException
      */
-    void queryData(QueryRouteVo queryRouteVo, String hostCode) throws InterruptedException;
+    String queryData(QueryRouteVo queryRouteVo, String hostCode) throws InterruptedException;
 }
