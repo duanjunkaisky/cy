@@ -84,7 +84,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                     fillData.put("fromPortCode", portInfoFrom.getString("locationCode"));
                     fillData.put("toPortCode", portInfoTo.getString("locationCode"));
                     fillData.put("containerCode", container.getContainerCode());
-                    String jsonParam = FreeMakerUtil.createByTemplate("oneQuery.ftl", fillData);
+                    String jsonParam = FreeMakerUtil.createByTemplate("real_oneQuery.ftl", fillData);
 
                     log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 

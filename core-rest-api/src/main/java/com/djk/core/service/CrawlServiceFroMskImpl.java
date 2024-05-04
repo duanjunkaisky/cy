@@ -114,7 +114,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
                     fillData.put("queryDate", format.format(queryTime));
                     fillData.put("weekOffset", (page - 1) * WEEK_STEP);
-                    String jsonParam = FreeMakerUtil.createByTemplate("mskQuery.ftl", fillData);
+                    String jsonParam = FreeMakerUtil.createByTemplate("real_mskQuery.ftl", fillData);
 
                     log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 

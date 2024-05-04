@@ -96,7 +96,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
                     fillData.put("toPortCode", portInfoTo.getString("portCode"));
                     fillData.put("containerCode", container.getContainerCode());
                     fillData.put("queryDate", format.format(queryTime));
-                    String jsonParam = FreeMakerUtil.createByTemplate("cmaQuery.ftl", fillData);
+                    String jsonParam = FreeMakerUtil.createByTemplate("real_cmaQuery.ftl", fillData);
 
                     log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
