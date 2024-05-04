@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CrawlProductContainerExample {
+public class ProductFeeItemExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public CrawlProductContainerExample() {
+    public ProductFeeItemExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -226,6 +226,206 @@ public class CrawlProductContainerExample {
             return (Criteria) this;
         }
 
+        public Criteria andFeeCnNameIsNull() {
+            addCriterion("fee_cn_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCnNameIsNotNull() {
+            addCriterion("fee_cn_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCnNameEqualTo(String value) {
+            addCriterion("fee_cn_name =", value, "feeCnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCnNameNotEqualTo(String value) {
+            addCriterion("fee_cn_name <>", value, "feeCnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCnNameGreaterThan(String value) {
+            addCriterion("fee_cn_name >", value, "feeCnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCnNameGreaterThanOrEqualTo(String value) {
+            addCriterion("fee_cn_name >=", value, "feeCnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCnNameLessThan(String value) {
+            addCriterion("fee_cn_name <", value, "feeCnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCnNameLessThanOrEqualTo(String value) {
+            addCriterion("fee_cn_name <=", value, "feeCnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCnNameLike(String value) {
+            addCriterion("fee_cn_name like", value, "feeCnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCnNameNotLike(String value) {
+            addCriterion("fee_cn_name not like", value, "feeCnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCnNameIn(List<String> values) {
+            addCriterion("fee_cn_name in", values, "feeCnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCnNameNotIn(List<String> values) {
+            addCriterion("fee_cn_name not in", values, "feeCnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCnNameBetween(String value1, String value2) {
+            addCriterion("fee_cn_name between", value1, value2, "feeCnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCnNameNotBetween(String value1, String value2) {
+            addCriterion("fee_cn_name not between", value1, value2, "feeCnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeEnNameIsNull() {
+            addCriterion("fee_en_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeEnNameIsNotNull() {
+            addCriterion("fee_en_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeEnNameEqualTo(String value) {
+            addCriterion("fee_en_name =", value, "feeEnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeEnNameNotEqualTo(String value) {
+            addCriterion("fee_en_name <>", value, "feeEnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeEnNameGreaterThan(String value) {
+            addCriterion("fee_en_name >", value, "feeEnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeEnNameGreaterThanOrEqualTo(String value) {
+            addCriterion("fee_en_name >=", value, "feeEnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeEnNameLessThan(String value) {
+            addCriterion("fee_en_name <", value, "feeEnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeEnNameLessThanOrEqualTo(String value) {
+            addCriterion("fee_en_name <=", value, "feeEnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeEnNameLike(String value) {
+            addCriterion("fee_en_name like", value, "feeEnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeEnNameNotLike(String value) {
+            addCriterion("fee_en_name not like", value, "feeEnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeEnNameIn(List<String> values) {
+            addCriterion("fee_en_name in", values, "feeEnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeEnNameNotIn(List<String> values) {
+            addCriterion("fee_en_name not in", values, "feeEnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeEnNameBetween(String value1, String value2) {
+            addCriterion("fee_en_name between", value1, value2, "feeEnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeEnNameNotBetween(String value1, String value2) {
+            addCriterion("fee_en_name not between", value1, value2, "feeEnName");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeUnitIsNull() {
+            addCriterion("fee_unit is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeUnitIsNotNull() {
+            addCriterion("fee_unit is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeUnitEqualTo(Integer value) {
+            addCriterion("fee_unit =", value, "feeUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeUnitNotEqualTo(Integer value) {
+            addCriterion("fee_unit <>", value, "feeUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeUnitGreaterThan(Integer value) {
+            addCriterion("fee_unit >", value, "feeUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeUnitGreaterThanOrEqualTo(Integer value) {
+            addCriterion("fee_unit >=", value, "feeUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeUnitLessThan(Integer value) {
+            addCriterion("fee_unit <", value, "feeUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeUnitLessThanOrEqualTo(Integer value) {
+            addCriterion("fee_unit <=", value, "feeUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeUnitIn(List<Integer> values) {
+            addCriterion("fee_unit in", values, "feeUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeUnitNotIn(List<Integer> values) {
+            addCriterion("fee_unit not in", values, "feeUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeUnitBetween(Integer value1, Integer value2) {
+            addCriterion("fee_unit between", value1, value2, "feeUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeUnitNotBetween(Integer value1, Integer value2) {
+            addCriterion("fee_unit not between", value1, value2, "feeUnit");
+            return (Criteria) this;
+        }
+
         public Criteria andContainerTypeIsNull() {
             addCriterion("container_type is null");
             return (Criteria) this;
@@ -286,183 +486,243 @@ public class CrawlProductContainerExample {
             return (Criteria) this;
         }
 
-        public Criteria andSellingPriceIsNull() {
-            addCriterion("selling_price is null");
+        public Criteria andFeeSourceIsNull() {
+            addCriterion("fee_source is null");
             return (Criteria) this;
         }
 
-        public Criteria andSellingPriceIsNotNull() {
-            addCriterion("selling_price is not null");
+        public Criteria andFeeSourceIsNotNull() {
+            addCriterion("fee_source is not null");
             return (Criteria) this;
         }
 
-        public Criteria andSellingPriceEqualTo(BigDecimal value) {
-            addCriterion("selling_price =", value, "sellingPrice");
+        public Criteria andFeeSourceEqualTo(Integer value) {
+            addCriterion("fee_source =", value, "feeSource");
             return (Criteria) this;
         }
 
-        public Criteria andSellingPriceNotEqualTo(BigDecimal value) {
-            addCriterion("selling_price <>", value, "sellingPrice");
+        public Criteria andFeeSourceNotEqualTo(Integer value) {
+            addCriterion("fee_source <>", value, "feeSource");
             return (Criteria) this;
         }
 
-        public Criteria andSellingPriceGreaterThan(BigDecimal value) {
-            addCriterion("selling_price >", value, "sellingPrice");
+        public Criteria andFeeSourceGreaterThan(Integer value) {
+            addCriterion("fee_source >", value, "feeSource");
             return (Criteria) this;
         }
 
-        public Criteria andSellingPriceGreaterThanOrEqualTo(BigDecimal value) {
-            addCriterion("selling_price >=", value, "sellingPrice");
+        public Criteria andFeeSourceGreaterThanOrEqualTo(Integer value) {
+            addCriterion("fee_source >=", value, "feeSource");
             return (Criteria) this;
         }
 
-        public Criteria andSellingPriceLessThan(BigDecimal value) {
-            addCriterion("selling_price <", value, "sellingPrice");
+        public Criteria andFeeSourceLessThan(Integer value) {
+            addCriterion("fee_source <", value, "feeSource");
             return (Criteria) this;
         }
 
-        public Criteria andSellingPriceLessThanOrEqualTo(BigDecimal value) {
-            addCriterion("selling_price <=", value, "sellingPrice");
+        public Criteria andFeeSourceLessThanOrEqualTo(Integer value) {
+            addCriterion("fee_source <=", value, "feeSource");
             return (Criteria) this;
         }
 
-        public Criteria andSellingPriceIn(List<BigDecimal> values) {
-            addCriterion("selling_price in", values, "sellingPrice");
+        public Criteria andFeeSourceIn(List<Integer> values) {
+            addCriterion("fee_source in", values, "feeSource");
             return (Criteria) this;
         }
 
-        public Criteria andSellingPriceNotIn(List<BigDecimal> values) {
-            addCriterion("selling_price not in", values, "sellingPrice");
+        public Criteria andFeeSourceNotIn(List<Integer> values) {
+            addCriterion("fee_source not in", values, "feeSource");
             return (Criteria) this;
         }
 
-        public Criteria andSellingPriceBetween(BigDecimal value1, BigDecimal value2) {
-            addCriterion("selling_price between", value1, value2, "sellingPrice");
+        public Criteria andFeeSourceBetween(Integer value1, Integer value2) {
+            addCriterion("fee_source between", value1, value2, "feeSource");
             return (Criteria) this;
         }
 
-        public Criteria andSellingPriceNotBetween(BigDecimal value1, BigDecimal value2) {
-            addCriterion("selling_price not between", value1, value2, "sellingPrice");
+        public Criteria andFeeSourceNotBetween(Integer value1, Integer value2) {
+            addCriterion("fee_source not between", value1, value2, "feeSource");
             return (Criteria) this;
         }
 
-        public Criteria andCostIsNull() {
-            addCriterion("cost is null");
+        public Criteria andFeeCostTypeIsNull() {
+            addCriterion("fee_cost_type is null");
             return (Criteria) this;
         }
 
-        public Criteria andCostIsNotNull() {
-            addCriterion("cost is not null");
+        public Criteria andFeeCostTypeIsNotNull() {
+            addCriterion("fee_cost_type is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCostEqualTo(BigDecimal value) {
-            addCriterion("cost =", value, "cost");
+        public Criteria andFeeCostTypeEqualTo(Integer value) {
+            addCriterion("fee_cost_type =", value, "feeCostType");
             return (Criteria) this;
         }
 
-        public Criteria andCostNotEqualTo(BigDecimal value) {
-            addCriterion("cost <>", value, "cost");
+        public Criteria andFeeCostTypeNotEqualTo(Integer value) {
+            addCriterion("fee_cost_type <>", value, "feeCostType");
             return (Criteria) this;
         }
 
-        public Criteria andCostGreaterThan(BigDecimal value) {
-            addCriterion("cost >", value, "cost");
+        public Criteria andFeeCostTypeGreaterThan(Integer value) {
+            addCriterion("fee_cost_type >", value, "feeCostType");
             return (Criteria) this;
         }
 
-        public Criteria andCostGreaterThanOrEqualTo(BigDecimal value) {
-            addCriterion("cost >=", value, "cost");
+        public Criteria andFeeCostTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("fee_cost_type >=", value, "feeCostType");
             return (Criteria) this;
         }
 
-        public Criteria andCostLessThan(BigDecimal value) {
-            addCriterion("cost <", value, "cost");
+        public Criteria andFeeCostTypeLessThan(Integer value) {
+            addCriterion("fee_cost_type <", value, "feeCostType");
             return (Criteria) this;
         }
 
-        public Criteria andCostLessThanOrEqualTo(BigDecimal value) {
-            addCriterion("cost <=", value, "cost");
+        public Criteria andFeeCostTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("fee_cost_type <=", value, "feeCostType");
             return (Criteria) this;
         }
 
-        public Criteria andCostIn(List<BigDecimal> values) {
-            addCriterion("cost in", values, "cost");
+        public Criteria andFeeCostTypeIn(List<Integer> values) {
+            addCriterion("fee_cost_type in", values, "feeCostType");
             return (Criteria) this;
         }
 
-        public Criteria andCostNotIn(List<BigDecimal> values) {
-            addCriterion("cost not in", values, "cost");
+        public Criteria andFeeCostTypeNotIn(List<Integer> values) {
+            addCriterion("fee_cost_type not in", values, "feeCostType");
             return (Criteria) this;
         }
 
-        public Criteria andCostBetween(BigDecimal value1, BigDecimal value2) {
-            addCriterion("cost between", value1, value2, "cost");
+        public Criteria andFeeCostTypeBetween(Integer value1, Integer value2) {
+            addCriterion("fee_cost_type between", value1, value2, "feeCostType");
             return (Criteria) this;
         }
 
-        public Criteria andCostNotBetween(BigDecimal value1, BigDecimal value2) {
-            addCriterion("cost not between", value1, value2, "cost");
+        public Criteria andFeeCostTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("fee_cost_type not between", value1, value2, "feeCostType");
             return (Criteria) this;
         }
 
-        public Criteria andSellOutIsNull() {
-            addCriterion("sell_out is null");
+        public Criteria andFeeCurrencyIsNull() {
+            addCriterion("fee_currency is null");
             return (Criteria) this;
         }
 
-        public Criteria andSellOutIsNotNull() {
-            addCriterion("sell_out is not null");
+        public Criteria andFeeCurrencyIsNotNull() {
+            addCriterion("fee_currency is not null");
             return (Criteria) this;
         }
 
-        public Criteria andSellOutEqualTo(Boolean value) {
-            addCriterion("sell_out =", value, "sellOut");
+        public Criteria andFeeCurrencyEqualTo(Integer value) {
+            addCriterion("fee_currency =", value, "feeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andSellOutNotEqualTo(Boolean value) {
-            addCriterion("sell_out <>", value, "sellOut");
+        public Criteria andFeeCurrencyNotEqualTo(Integer value) {
+            addCriterion("fee_currency <>", value, "feeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andSellOutGreaterThan(Boolean value) {
-            addCriterion("sell_out >", value, "sellOut");
+        public Criteria andFeeCurrencyGreaterThan(Integer value) {
+            addCriterion("fee_currency >", value, "feeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andSellOutGreaterThanOrEqualTo(Boolean value) {
-            addCriterion("sell_out >=", value, "sellOut");
+        public Criteria andFeeCurrencyGreaterThanOrEqualTo(Integer value) {
+            addCriterion("fee_currency >=", value, "feeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andSellOutLessThan(Boolean value) {
-            addCriterion("sell_out <", value, "sellOut");
+        public Criteria andFeeCurrencyLessThan(Integer value) {
+            addCriterion("fee_currency <", value, "feeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andSellOutLessThanOrEqualTo(Boolean value) {
-            addCriterion("sell_out <=", value, "sellOut");
+        public Criteria andFeeCurrencyLessThanOrEqualTo(Integer value) {
+            addCriterion("fee_currency <=", value, "feeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andSellOutIn(List<Boolean> values) {
-            addCriterion("sell_out in", values, "sellOut");
+        public Criteria andFeeCurrencyIn(List<Integer> values) {
+            addCriterion("fee_currency in", values, "feeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andSellOutNotIn(List<Boolean> values) {
-            addCriterion("sell_out not in", values, "sellOut");
+        public Criteria andFeeCurrencyNotIn(List<Integer> values) {
+            addCriterion("fee_currency not in", values, "feeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andSellOutBetween(Boolean value1, Boolean value2) {
-            addCriterion("sell_out between", value1, value2, "sellOut");
+        public Criteria andFeeCurrencyBetween(Integer value1, Integer value2) {
+            addCriterion("fee_currency between", value1, value2, "feeCurrency");
             return (Criteria) this;
         }
 
-        public Criteria andSellOutNotBetween(Boolean value1, Boolean value2) {
-            addCriterion("sell_out not between", value1, value2, "sellOut");
+        public Criteria andFeeCurrencyNotBetween(Integer value1, Integer value2) {
+            addCriterion("fee_currency not between", value1, value2, "feeCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceIsNull() {
+            addCriterion("price is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceIsNotNull() {
+            addCriterion("price is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceEqualTo(BigDecimal value) {
+            addCriterion("price =", value, "price");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceNotEqualTo(BigDecimal value) {
+            addCriterion("price <>", value, "price");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceGreaterThan(BigDecimal value) {
+            addCriterion("price >", value, "price");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("price >=", value, "price");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceLessThan(BigDecimal value) {
+            addCriterion("price <", value, "price");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("price <=", value, "price");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceIn(List<BigDecimal> values) {
+            addCriterion("price in", values, "price");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceNotIn(List<BigDecimal> values) {
+            addCriterion("price not in", values, "price");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("price between", value1, value2, "price");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("price not between", value1, value2, "price");
             return (Criteria) this;
         }
 
@@ -1043,6 +1303,66 @@ public class CrawlProductContainerExample {
 
         public Criteria andDeletedTimeNotBetween(Date value1, Date value2) {
             addCriterion("deleted_time not between", value1, value2, "deletedTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeIsNull() {
+            addCriterion("price_compute_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeIsNotNull() {
+            addCriterion("price_compute_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeEqualTo(Integer value) {
+            addCriterion("price_compute_type =", value, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeNotEqualTo(Integer value) {
+            addCriterion("price_compute_type <>", value, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeGreaterThan(Integer value) {
+            addCriterion("price_compute_type >", value, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("price_compute_type >=", value, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeLessThan(Integer value) {
+            addCriterion("price_compute_type <", value, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("price_compute_type <=", value, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeIn(List<Integer> values) {
+            addCriterion("price_compute_type in", values, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeNotIn(List<Integer> values) {
+            addCriterion("price_compute_type not in", values, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeBetween(Integer value1, Integer value2) {
+            addCriterion("price_compute_type between", value1, value2, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andPriceComputeTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("price_compute_type not between", value1, value2, "priceComputeType");
             return (Criteria) this;
         }
     }

@@ -46,13 +46,13 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     CrawlMetadataWebsiteConfigMapper crawlMetadataWebsiteConfigMapper;
 
     @Autowired
-    CrawlProductInfoMapper productInfoMapper;
+    ProductInfoMapper productInfoMapper;
 
     @Autowired
-    CrawlProductContainerMapper productContainerMapper;
+    ProductContainerMapper productContainerMapper;
 
     @Autowired
-    CrawlProductFeeItemMapper productFeeItemMapper;
+    ProductFeeItemMapper productFeeItemMapper;
 
     public static List<ContainerDist> containerList = new ArrayList<>(3);
 
@@ -75,10 +75,10 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
         BaseShippingCompany baseShippingCompany = getShipCompany(hostCode);
 
-        Map<String, CrawlProductInfo> existMap = new HashMap<>();
-        List<CrawlProductInfo> productInfoList = new ArrayList<>();
-        List<CrawlProductContainer> productContainerList = new ArrayList<>();
-        List<CrawlProductFeeItem> productFeeItemList = new ArrayList<>();
+        Map<String, ProductInfo> existMap = new HashMap<>();
+        List<ProductInfo> productInfoList = new ArrayList<>();
+        List<ProductContainer> productContainerList = new ArrayList<>();
+        List<ProductFeeItem> productFeeItemList = new ArrayList<>();
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Calendar instance = Calendar.getInstance();
@@ -122,13 +122,9 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     Response response = resp.getResponse();
                     String bodyJson = resp.getBodyJson();
                     if (response.code() != 200) {
-                        if (response.code() == 403) {
-                            sensorData = null;
-                            log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求返回403");
-                        } else if (response.code() == 401) {
-                            tokenIndex++;
-                            log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求返回401");
-                        }
+                        sensorData = null;
+                        tokenIndex++;
+                        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求失败");
                         continue;
                     }
 
@@ -153,7 +149,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         insertData(queryRouteVo, hostCode, productInfoList, productContainerList, productFeeItemList);
     }
 
-    private void parseData(BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<CrawlProductInfo> productInfoList, List<CrawlProductContainer> productContainerList, List<CrawlProductFeeItem> productFeeItemList, Map<String, CrawlProductInfo> existMap) throws ParseException
+    private void parseData(BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap) throws ParseException
     {
         int containerType = computeContainerType(container.getContainerCode());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -168,7 +164,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 JSONObject fromLocation = routeScheduleFull.getJSONObject("fromLocation");
                 JSONObject toLocation = routeScheduleFull.getJSONObject("toLocation");
                 JSONArray scheduleDetails = routeScheduleFull.getJSONArray("scheduleDetails");
-                CrawlProductInfo productInfo = new CrawlProductInfo();
+                ProductInfo productInfo = new ProductInfo();
                 productInfo.setDeparturePortZh(fromPort.getPortNameZh());
                 productInfo.setDeparturePortEn(fromPort.getPortCode());
                 productInfo.setDestinationPortZh(toPort.getPortNameZh());
@@ -223,11 +219,11 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     productInfoList.add(productInfo);
                     existMap.put(existKey, productInfo);
                 } else {
-                    CrawlProductInfo existProduct = existMap.get(existKey);
+                    ProductInfo existProduct = existMap.get(existKey);
                     productInfo.setId(existProduct.getId());
                 }
 
-                CrawlProductContainer productContainer = new CrawlProductContainer();
+                ProductContainer productContainer = new ProductContainer();
                 productContainer.setContainerType(containerType);
                 productContainer.setProductId(productInfo.getId());
                 productContainer.setSpotId(productInfo.getSpotId());
@@ -239,7 +235,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 productContainer.setTenantId(0L);
                 productContainerList.add(productContainer);
 
-                CrawlProductFeeItem productFeeItem = new CrawlProductFeeItem();
+                ProductFeeItem productFeeItem = new ProductFeeItem();
                 productFeeItem.setContainerType(productContainer.getContainerType());
                 productFeeItem.setSpotId(productInfo.getSpotId());
                 productFeeItem.setProductId(productInfo.getId());
@@ -256,13 +252,13 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     JSONObject jsonObject = (JSONObject) ppc;
                     JSONObject bas = jsonObject.getJSONObject("bas");
                     confirmValue(productFeeItem, bas);
-                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
                     JSONArray surcharges = jsonObject.getJSONArray("surcharges_per_container");
                     for (Object sc : surcharges) {
                         JSONObject surcharge = (JSONObject) sc;
                         confirmValue(productFeeItem, surcharge);
-                        productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+                        productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                     }
                 }
 
@@ -283,7 +279,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                         productFeeItem.setPrice(charge.getBigDecimal("chargeFee"));
                         productFeeItem.setFeeCnName(charge.getString("displayName"));
                         productFeeItem.setFeeEnName(charge.getString("displayName"));
-                        productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+                        productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                     }
                 }
 
@@ -299,7 +295,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     productFeeItem.setPrice(new BigDecimal(0));
                     productFeeItem.setFeeCnName(chargeType + " " + freetimeStartEvent + "(1-" + importDnDCondition.getString("freetimeGrantInDays") + ")");
                     productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
-                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
                     JSONArray chargePerDiemAfterFreetime = importDnDCondition.getJSONArray("chargePerDiemAfterFreetime");
                     for (Object cdaf : chargePerDiemAfterFreetime) {
@@ -315,7 +311,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                         productFeeItem.setPrice(new BigDecimal(chargePerDiem));
                         productFeeItem.setFeeCnName(chargeType + " " + freetimeStartEvent + "(" + startDayOfCharge + (StringUtils.isEmpty(endDayOfCharge) ? "+" : ("-" + endDayOfCharge)) + ")");
                         productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
-                        productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+                        productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                     }
                 }
             }
@@ -323,7 +319,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
     }
 
-    private void confirmValue(CrawlProductFeeItem productFeeItem, JSONObject surcharge)
+    private void confirmValue(ProductFeeItem productFeeItem, JSONObject surcharge)
     {
         String ratetypecode = surcharge.getString("ratetypecode");
         if ("Origin".equalsIgnoreCase(ratetypecode)) {

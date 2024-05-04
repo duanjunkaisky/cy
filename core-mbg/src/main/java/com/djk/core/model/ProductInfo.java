@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.Date;
 
-public class CrawlProductInfo implements Serializable {
+public class ProductInfo implements Serializable {
     @ApiModelProperty(value = "ID")
     private Long id;
 

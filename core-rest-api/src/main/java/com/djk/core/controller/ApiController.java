@@ -60,7 +60,7 @@ public class ApiController
         JSONObject retObj = new JSONObject();
         retObj.put("requestId", requestId);
         retObj.put("useage", "客户端可通过该requestId适时获取爬取进度等信息");
-        retObj.put("sql", "客户端可通过该requestId适时获取爬取进度等信息");
+        retObj.put("sql", "select p.* from product_info p where p.spot_id = '" + queryRouteVo.getSpotId() + "' and p.estimated_departure_date = '" + queryRouteVo.getDepartureDate() + "'");
         return CommonResult.success(retObj, "操作成功");
     }
 

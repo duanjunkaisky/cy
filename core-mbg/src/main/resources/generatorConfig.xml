@@ -38,9 +38,9 @@
         <javaClientGenerator type="XMLMAPPER" targetPackage="com.djk.core.mapper" targetProject="core-mbg/src/main/java"/>
         <table tableName="crawl_metadata_website_config"></table>
         <table tableName="crawl_request_status"></table>
-        <table tableName="crawl_product_info"></table>
-        <table tableName="crawl_product_container"></table>
-        <table tableName="crawl_product_fee_item"></table>
+        <table tableName="product_info"></table>
+        <table tableName="product_container"></table>
+        <table tableName="product_fee_item"></table>
         <table tableName="base_port"></table>
         <table tableName="base_shipping_company"></table>
     </context>

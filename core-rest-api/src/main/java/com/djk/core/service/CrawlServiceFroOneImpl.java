@@ -42,13 +42,13 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
     CrawlMetadataWebsiteConfigMapper crawlMetadataWebsiteConfigMapper;
 
     @Autowired
-    CrawlProductInfoMapper productInfoMapper;
+    ProductInfoMapper productInfoMapper;
 
     @Autowired
-    CrawlProductContainerMapper productContainerMapper;
+    ProductContainerMapper productContainerMapper;
 
     @Autowired
-    CrawlProductFeeItemMapper productFeeItemMapper;
+    ProductFeeItemMapper productFeeItemMapper;
 
     public static List<ContainerDist> containerList = new ArrayList<>(3);
 
@@ -71,26 +71,24 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
 
         BaseShippingCompany baseShippingCompany = getShipCompany(hostCode);
 
-        Map<String, CrawlProductInfo> existMap = new HashMap<>();
-        List<CrawlProductInfo> productInfoList = new ArrayList<>();
-        List<CrawlProductContainer> productContainerList = new ArrayList<>();
-        List<CrawlProductFeeItem> productFeeItemList = new ArrayList<>();
+        Map<String, ProductInfo> existMap = new HashMap<>();
+        List<ProductInfo> productInfoList = new ArrayList<>();
+        List<ProductContainer> productContainerList = new ArrayList<>();
+        List<ProductFeeItem> productFeeItemList = new ArrayList<>();
 
         for (ContainerDist container : containerList) {
             while (reqCount < Constant.MAX_REQ_COUNT) {
                 try {
                     reqCount++;
-                    Map<String, String> header = getHeader();
-
                     Map<String, Object> fillData = new HashMap<>(1);
                     fillData.put("fromPortCode", portInfoFrom.getString("locationCode"));
                     fillData.put("toPortCode", portInfoTo.getString("locationCode"));
                     fillData.put("containerCode", container.getContainerCode());
                     String jsonParam = FreeMakerUtil.createByTemplate("oneQuery.ftl", fillData);
 
-                    log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
+                    log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
-                    HttpResp resp = HttpUtil.postBody("https://ecomm.one-line.com/api/v1/quotation/schedules/vessel-dates", header, jsonParam);
+                    HttpResp resp = HttpUtil.postBody("https://ecomm.one-line.com/api/v1/quotation/schedules/vessel-dates", getHeader(), jsonParam);
                     Response response = resp.getResponse();
                     String bodyJson = resp.getBodyJson();
                     JSONObject retObj = JSONObject.parseObject(bodyJson);
@@ -119,7 +117,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         insertData(queryRouteVo, hostCode, productInfoList, productContainerList, productFeeItemList);
     }
 
-    private void parseData(BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<CrawlProductInfo> productInfoList, List<CrawlProductContainer> productContainerList, List<CrawlProductFeeItem> productFeeItemList, Map<String, CrawlProductInfo> existMap) throws ParseException
+    private void parseData(BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap) throws ParseException
     {
         int containerType = computeContainerType(container.getContainerCode());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -136,7 +134,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 JSONObject departureStart = departures.getJSONObject(0);
                 JSONObject departureEnd = departures.getJSONObject(departures.size() - 1);
 
-                CrawlProductInfo productInfo = new CrawlProductInfo();
+                ProductInfo productInfo = new ProductInfo();
                 productInfo.setDeparturePortZh(fromPort.getPortNameZh());
                 productInfo.setDeparturePortEn(fromPort.getPortCode());
                 productInfo.setDestinationPortZh(toPort.getPortNameZh());
@@ -179,11 +177,11 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                     productInfoList.add(productInfo);
                     existMap.put(existKey, productInfo);
                 } else {
-                    CrawlProductInfo existProduct = existMap.get(existKey);
+                    ProductInfo existProduct = existMap.get(existKey);
                     productInfo.setId(existProduct.getId());
                 }
 
-                CrawlProductContainer productContainer = new CrawlProductContainer();
+                ProductContainer productContainer = new ProductContainer();
                 productContainer.setContainerType(containerType);
                 productContainer.setProductId(productInfo.getId());
                 productContainer.setSpotId(productInfo.getSpotId());
@@ -195,7 +193,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 productContainer.setTenantId(0L);
                 productContainerList.add(productContainer);
 
-                CrawlProductFeeItem productFeeItem = new CrawlProductFeeItem();
+                ProductFeeItem productFeeItem = new ProductFeeItem();
                 productFeeItem.setContainerType(containerType);
                 productFeeItem.setSpotId(productInfo.getSpotId());
                 productFeeItem.setProductId(productInfo.getId());
@@ -211,21 +209,21 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 for (Object bofc : basicOceanFreightCharges) {
                     JSONObject basicOceanFreightCharge = (JSONObject) bofc;
                     confirmValue(productFeeItem, basicOceanFreightCharge);
-                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                 }
 
                 JSONArray originCharges = freightInfo.getJSONArray("originCharges");
                 for (Object oc : originCharges) {
                     JSONObject originCharge = (JSONObject) oc;
                     confirmValue(productFeeItem, originCharge);
-                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                 }
 
                 JSONArray destinationCharges = freightInfo.getJSONArray("destinationCharges");
                 for (Object dc : destinationCharges) {
                     JSONObject destinationCharge = (JSONObject) dc;
                     confirmValue(productFeeItem, destinationCharge);
-                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                 }
 
                 getFreeFee(productFeeItemList, productFeeItem, departureStart.getString("departureLoc"), departureEnd.getString("arrivalLoc"), departureEnd.getString("arrivalDateEstimated"), container, freightInfo.getString("spotRateOfferingId"));
@@ -235,7 +233,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
 
     }
 
-    private void confirmValue(CrawlProductFeeItem productFeeItem, JSONObject surcharge)
+    private void confirmValue(ProductFeeItem productFeeItem, JSONObject surcharge)
     {
         String chargeTarget = surcharge.getString("chargeTarget");
         if ("ORIGIN".equalsIgnoreCase(chargeTarget)) {
@@ -311,7 +309,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
      *
      * @return
      */
-    public String getFreeFee(List<CrawlProductFeeItem> productFeeItemList, CrawlProductFeeItem productFeeItem, String fromCode, String toCode, String arriveTime, ContainerDist containerDist, String spotRateOfferingId)
+    public String getFreeFee(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String fromCode, String toCode, String arriveTime, ContainerDist containerDist, String spotRateOfferingId)
     {
         String jsonParam = "{" +
                 "    \"originUNLocationCode\": \"" + fromCode + "\",\n" +
@@ -363,49 +361,49 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
             productFeeItem.setFeeCnName("origin demurrage (1-" + ftDys1 + ")");
             productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
             productFeeItem.setFeeCurrency(parseCurrentCy(currentCy1));
-            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
             productFeeItem.setPrice(new BigDecimal(ftDys1Price));
             productFeeItem.setFeeCnName("origin demurrage (" + ftDys1 + "+)");
             productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
             productFeeItem.setFeeCurrency(parseCurrentCy(currentCy1));
-            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
             productFeeItem.setPrice(new BigDecimal(0));
             productFeeItem.setFeeCnName("origin detention (1-" + ftDys2 + ")");
             productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
             productFeeItem.setFeeCurrency(parseCurrentCy(currentCy2));
-            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
             productFeeItem.setPrice(new BigDecimal(ftDys2Price));
             productFeeItem.setFeeCnName("origin detention (" + ftDys2 + "+)");
             productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
             productFeeItem.setFeeCurrency(parseCurrentCy(currentCy2));
-            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
             productFeeItem.setPrice(new BigDecimal(0));
             productFeeItem.setFeeCnName("destination demurrage (1-" + ftDys3 + ")");
             productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
             productFeeItem.setFeeCurrency(parseCurrentCy(currentCy3));
-            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
             productFeeItem.setPrice(new BigDecimal(ftDys3Price));
             productFeeItem.setFeeCnName("destination demurrage (" + ftDys3 + "+)");
             productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
             productFeeItem.setFeeCurrency(parseCurrentCy(currentCy3));
-            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
             productFeeItem.setPrice(new BigDecimal(0));
             productFeeItem.setFeeCnName("destination detention (1-" + ftDys4 + ")");
             productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
             productFeeItem.setFeeCurrency(parseCurrentCy(currentCy4));
-            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
             productFeeItem.setPrice(new BigDecimal(ftDys4Price));
             productFeeItem.setFeeCnName("destination detention (" + ftDys4 + "+)");
             productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
             productFeeItem.setFeeCurrency(parseCurrentCy(currentCy4));
-            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), CrawlProductFeeItem.class));
+            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
             return msg;
         } catch (Exception e) {

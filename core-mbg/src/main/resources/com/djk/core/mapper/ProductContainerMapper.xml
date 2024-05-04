@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.djk.core.mapper.CrawlProductContainerMapper">
-  <resultMap id="BaseResultMap" type="com.djk.core.model.CrawlProductContainer">
+<mapper namespace="com.djk.core.mapper.ProductContainerMapper">
+  <resultMap id="BaseResultMap" type="com.djk.core.model.ProductContainer">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="product_id" jdbcType="BIGINT" property="productId" />
     <result column="container_type" jdbcType="INTEGER" property="containerType" />
@@ -80,13 +80,13 @@
     id, product_id, container_type, selling_price, cost, sell_out, spot_id, creator, 
     create_time, updater, update_time, deleted, tenant_id, deleted_by, deleted_time
   </sql>
-  <select id="selectByExample" parameterType="com.djk.core.model.CrawlProductContainerExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.djk.core.model.ProductContainerExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from crawl_product_container
+    from product_container
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -97,21 +97,21 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from crawl_product_container
+    from product_container
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from crawl_product_container
+    delete from product_container
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.djk.core.model.CrawlProductContainerExample">
-    delete from crawl_product_container
+  <delete id="deleteByExample" parameterType="com.djk.core.model.ProductContainerExample">
+    delete from product_container
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.djk.core.model.CrawlProductContainer">
-    insert into crawl_product_container (id, product_id, container_type, 
+  <insert id="insert" parameterType="com.djk.core.model.ProductContainer">
+    insert into product_container (id, product_id, container_type, 
       selling_price, cost, sell_out, 
       spot_id, creator, create_time, 
       updater, update_time, deleted, 
@@ -124,8 +124,8 @@
       #{tenantId,jdbcType=BIGINT}, #{deletedBy,jdbcType=VARCHAR}, #{deletedTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.djk.core.model.CrawlProductContainer">
-    insert into crawl_product_container
+  <insert id="insertSelective" parameterType="com.djk.core.model.ProductContainer">
+    insert into product_container
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -221,14 +221,14 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.djk.core.model.CrawlProductContainerExample" resultType="java.lang.Long">
-    select count(*) from crawl_product_container
+  <select id="countByExample" parameterType="com.djk.core.model.ProductContainerExample" resultType="java.lang.Long">
+    select count(*) from product_container
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update crawl_product_container
+    update product_container
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
@@ -281,7 +281,7 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update crawl_product_container
+    update product_container
     set id = #{record.id,jdbcType=BIGINT},
       product_id = #{record.productId,jdbcType=BIGINT},
       container_type = #{record.containerType,jdbcType=INTEGER},
@@ -301,8 +301,8 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.djk.core.model.CrawlProductContainer">
-    update crawl_product_container
+  <update id="updateByPrimaryKeySelective" parameterType="com.djk.core.model.ProductContainer">
+    update product_container
     <set>
       <if test="productId != null">
         product_id = #{productId,jdbcType=BIGINT},
@@ -349,8 +349,8 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.djk.core.model.CrawlProductContainer">
-    update crawl_product_container
+  <update id="updateByPrimaryKey" parameterType="com.djk.core.model.ProductContainer">
+    update product_container
     set product_id = #{productId,jdbcType=BIGINT},
       container_type = #{containerType,jdbcType=INTEGER},
       selling_price = #{sellingPrice,jdbcType=DECIMAL},
@@ -369,7 +369,7 @@
   </update>
   <insert id="batchInsert">
     <if test="items.get(0) != null">
-            insert into crawl_product_container  (id, product_id, container_type, 
+            insert into product_container  (id, product_id, container_type, 
         selling_price, cost, sell_out, 
         spot_id, creator, create_time, 
         updater, update_time, deleted, 

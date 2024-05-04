@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.djk.core.mapper.CrawlProductFeeItemMapper">
-  <resultMap id="BaseResultMap" type="com.djk.core.model.CrawlProductFeeItem">
+<mapper namespace="com.djk.core.mapper.ProductFeeItemMapper">
+  <resultMap id="BaseResultMap" type="com.djk.core.model.ProductFeeItem">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="product_id" jdbcType="BIGINT" property="productId" />
     <result column="fee_cn_name" jdbcType="VARCHAR" property="feeCnName" />
@@ -86,13 +86,13 @@
     fee_currency, price, spot_id, creator, create_time, updater, update_time, deleted, 
     tenant_id, deleted_by, deleted_time, price_compute_type
   </sql>
-  <select id="selectByExample" parameterType="com.djk.core.model.CrawlProductFeeItemExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.djk.core.model.ProductFeeItemExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from crawl_product_fee_item
+    from product_fee_item
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -103,21 +103,21 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from crawl_product_fee_item
+    from product_fee_item
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from crawl_product_fee_item
+    delete from product_fee_item
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.djk.core.model.CrawlProductFeeItemExample">
-    delete from crawl_product_fee_item
+  <delete id="deleteByExample" parameterType="com.djk.core.model.ProductFeeItemExample">
+    delete from product_fee_item
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.djk.core.model.CrawlProductFeeItem">
-    insert into crawl_product_fee_item (id, product_id, fee_cn_name, 
+  <insert id="insert" parameterType="com.djk.core.model.ProductFeeItem">
+    insert into product_fee_item (id, product_id, fee_cn_name, 
       fee_en_name, fee_unit, container_type, 
       fee_source, fee_cost_type, fee_currency, 
       price, spot_id, creator, 
@@ -132,8 +132,8 @@
       #{deleted,jdbcType=BIT}, #{tenantId,jdbcType=BIGINT}, #{deletedBy,jdbcType=VARCHAR}, 
       #{deletedTime,jdbcType=TIMESTAMP}, #{priceComputeType,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.djk.core.model.CrawlProductFeeItem">
-    insert into crawl_product_fee_item
+  <insert id="insertSelective" parameterType="com.djk.core.model.ProductFeeItem">
+    insert into product_fee_item
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -259,14 +259,14 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.djk.core.model.CrawlProductFeeItemExample" resultType="java.lang.Long">
-    select count(*) from crawl_product_fee_item
+  <select id="countByExample" parameterType="com.djk.core.model.ProductFeeItemExample" resultType="java.lang.Long">
+    select count(*) from product_fee_item
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update crawl_product_fee_item
+    update product_fee_item
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
@@ -334,7 +334,7 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update crawl_product_fee_item
+    update product_fee_item
     set id = #{record.id,jdbcType=BIGINT},
       product_id = #{record.productId,jdbcType=BIGINT},
       fee_cn_name = #{record.feeCnName,jdbcType=VARCHAR},
@@ -359,8 +359,8 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.djk.core.model.CrawlProductFeeItem">
-    update crawl_product_fee_item
+  <update id="updateByPrimaryKeySelective" parameterType="com.djk.core.model.ProductFeeItem">
+    update product_fee_item
     <set>
       <if test="productId != null">
         product_id = #{productId,jdbcType=BIGINT},
@@ -422,8 +422,8 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.djk.core.model.CrawlProductFeeItem">
-    update crawl_product_fee_item
+  <update id="updateByPrimaryKey" parameterType="com.djk.core.model.ProductFeeItem">
+    update product_fee_item
     set product_id = #{productId,jdbcType=BIGINT},
       fee_cn_name = #{feeCnName,jdbcType=VARCHAR},
       fee_en_name = #{feeEnName,jdbcType=VARCHAR},
@@ -447,7 +447,7 @@
   </update>
   <insert id="batchInsert">
     <if test="items.get(0) != null">
-            insert into crawl_product_fee_item  (id, product_id, fee_cn_name, 
+            insert into product_fee_item  (id, product_id, fee_cn_name, 
         fee_en_name, fee_unit, container_type, 
         fee_source, fee_cost_type, fee_currency, 
         price, spot_id, creator, 

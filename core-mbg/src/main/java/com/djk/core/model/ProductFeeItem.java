@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class CrawlProductFeeItem implements Serializable {
+public class ProductFeeItem implements Serializable {
     @ApiModelProperty(value = "序号")
     private Long id;
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.djk.core.mapper.CrawlProductInfoMapper">
-  <resultMap id="BaseResultMap" type="com.djk.core.model.CrawlProductInfo">
+<mapper namespace="com.djk.core.mapper.ProductInfoMapper">
+  <resultMap id="BaseResultMap" type="com.djk.core.model.ProductInfo">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="product_number" jdbcType="VARCHAR" property="productNumber" />
     <result column="departure_port_zh" jdbcType="VARCHAR" property="departurePortZh" />
@@ -126,13 +126,13 @@
     approval_comment, spot_id, creator, create_time, updater, update_time, deleted, tenant_id, 
     deleted_by, deleted_time
   </sql>
-  <select id="selectByExample" parameterType="com.djk.core.model.CrawlProductInfoExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.djk.core.model.ProductInfoExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from crawl_product_info
+    from product_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -143,21 +143,21 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from crawl_product_info
+    from product_info
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from crawl_product_info
+    delete from product_info
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.djk.core.model.CrawlProductInfoExample">
-    delete from crawl_product_info
+  <delete id="deleteByExample" parameterType="com.djk.core.model.ProductInfoExample">
+    delete from product_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.djk.core.model.CrawlProductInfo">
-    insert into crawl_product_info (id, product_number, departure_port_zh, 
+  <insert id="insert" parameterType="com.djk.core.model.ProductInfo">
+    insert into product_info (id, product_number, departure_port_zh, 
       departure_port_en, destination_port_zh, destination_port_en, 
       shipping_company_id, cn_full_name, cn_abbreviation, 
       image, estimated_departure_date, route, 
@@ -198,8 +198,8 @@
       #{tenantId,jdbcType=BIGINT}, #{deletedBy,jdbcType=VARCHAR}, #{deletedTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.djk.core.model.CrawlProductInfo">
-    insert into crawl_product_info
+  <insert id="insertSelective" parameterType="com.djk.core.model.ProductInfo">
+    insert into product_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -523,14 +523,14 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.djk.core.model.CrawlProductInfoExample" resultType="java.lang.Long">
-    select count(*) from crawl_product_info
+  <select id="countByExample" parameterType="com.djk.core.model.ProductInfoExample" resultType="java.lang.Long">
+    select count(*) from product_info
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update crawl_product_info
+    update product_info
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
@@ -697,7 +697,7 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update crawl_product_info
+    update product_info
     set id = #{record.id,jdbcType=BIGINT},
       product_number = #{record.productNumber,jdbcType=VARCHAR},
       departure_port_zh = #{record.departurePortZh,jdbcType=VARCHAR},
@@ -755,8 +755,8 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.djk.core.model.CrawlProductInfo">
-    update crawl_product_info
+  <update id="updateByPrimaryKeySelective" parameterType="com.djk.core.model.ProductInfo">
+    update product_info
     <set>
       <if test="productNumber != null">
         product_number = #{productNumber,jdbcType=VARCHAR},
@@ -917,8 +917,8 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.djk.core.model.CrawlProductInfo">
-    update crawl_product_info
+  <update id="updateByPrimaryKey" parameterType="com.djk.core.model.ProductInfo">
+    update product_info
     set product_number = #{productNumber,jdbcType=VARCHAR},
       departure_port_zh = #{departurePortZh,jdbcType=VARCHAR},
       departure_port_en = #{departurePortEn,jdbcType=VARCHAR},
@@ -975,7 +975,7 @@
   </update>
   <insert id="batchInsert">
     <if test="items.get(0) != null">
-            insert into crawl_product_info  (id, product_number, departure_port_zh, 
+            insert into product_info  (id, product_number, departure_port_zh, 
         departure_port_en, destination_port_zh, destination_port_en, 
         shipping_company_id, cn_full_name, cn_abbreviation, 
         image, estimated_departure_date, route, 
