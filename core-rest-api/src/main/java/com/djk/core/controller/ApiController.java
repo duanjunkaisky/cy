@@ -59,8 +59,9 @@ public class ApiController
         log.info("推送到消息->\n topic: " + topic + "\n 消息id: " + msgId + ",\n " + JSONObject.toJSONString(queryRouteVo));
         JSONObject retObj = new JSONObject();
         retObj.put("requestId", requestId);
-        retObj.put("useage", "客户端可通过该requestId适时获取爬取进度等信息");
-        retObj.put("sql", "select p.* from product_info p where p.spot_id = '" + queryRouteVo.getSpotId() + "' and p.estimated_departure_date >= '" + queryRouteVo.getDepartureDate() + "'");
+        retObj.put("useage", "客户端可通过该requestId适时获取爬取进度等信息, host_code -> [msk cma one ...]");
+        retObj.put("查询数量", "select count(1) from product_info p where p.spot_id = '" + queryRouteVo.getSpotId() + "' and p.estimated_departure_date >= '" + queryRouteVo.getDepartureDate() + "' and shipping_company_id = 1");
+        retObj.put("查询状态", "select p.* from crawl_request_status p where p.spot_id = '" + queryRouteVo.getSpotId() + "' and host_code = 'msk'");
         return CommonResult.success(retObj, "操作成功");
     }
 
