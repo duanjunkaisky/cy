@@ -78,7 +78,7 @@ public class CrawlChain
             String[] split = item.split("->");
             log.info("---> " + queryRouteVo.getSpotId() + " - " + " 爬取完成 " + item);
             CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
-            crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(getHostCode(split[0])).andStatusEqualTo(Constant.CRAWL_STATUS.RUNNING.ordinal());
+            crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(getHostCode(split[0].trim().toLowerCase())).andStatusEqualTo(Constant.CRAWL_STATUS.RUNNING.ordinal());
             CrawlRequestStatus requestStatus = new CrawlRequestStatus();
             requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
             requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
