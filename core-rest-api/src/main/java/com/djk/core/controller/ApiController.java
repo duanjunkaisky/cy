@@ -3,9 +3,7 @@ package com.djk.core.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.djk.core.api.CommonResult;
 import com.djk.core.mapper.CrawlMetadataWebsiteConfigMapper;
-import com.djk.core.service.CrawlServiceFroCmaImpl;
-import com.djk.core.service.CrawlServiceFroMskImpl;
-import com.djk.core.service.Generator;
+import com.djk.core.service.*;
 import com.djk.core.vo.QueryRouteVo;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +39,7 @@ public class ApiController {
     CrawlMetadataWebsiteConfigMapper metadataWebsiteConfigMapper;
 
     @Autowired
-    CrawlServiceFroCmaImpl crawlService;
+    CrawlServiceFroOneImpl crawlService;
 
     /**
      * @param queryRouteVo
@@ -77,11 +75,8 @@ public class ApiController {
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult test() {
-        QueryRouteVo queryRouteVo = new QueryRouteVo();
-        queryRouteVo.setDeparturePortEn("SHANGHAI");
-        queryRouteVo.setDestinationPortEn("ROTTERDAM");
-        crawlService.queryData(queryRouteVo, "cma");
+    public CommonResult test(@RequestBody QueryRouteVo queryRouteVo) {
+        crawlService.queryData(queryRouteVo, queryRouteVo.getHostCode());
         return CommonResult.success("操作成功");
     }
 

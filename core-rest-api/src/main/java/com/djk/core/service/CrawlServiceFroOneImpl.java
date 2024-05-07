@@ -297,7 +297,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
     {
         String[] split = displayedName.split(",");
         for (String str : split) {
-            if (str.contains(portCodeEn)) {
+            if (str.toLowerCase().contains(portCodeEn.toLowerCase())) {
                 return true;
             }
         }

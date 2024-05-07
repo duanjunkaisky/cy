@@ -25,4 +25,6 @@ public class QueryRouteVo
     private String spotId;
 
     private long startTime;
+
+    private String hostCode;
 }
