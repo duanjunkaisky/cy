@@ -5,7 +5,7 @@
   "EquipmentSizeType": "${containerCode}",
   "WeightPerContainer": 18000,
   "PartnerCodes": [
-    "0007277203"
+    "${partnerCode}"
   ],
   "CommodityCode": "FAK",
   "SimulationDate": "${queryDate}",
