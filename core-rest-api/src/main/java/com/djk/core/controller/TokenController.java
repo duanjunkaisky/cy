@@ -24,8 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Slf4j
 @Api(tags = "TokenController", description = "token接口")
 @RequestMapping("/token")
-public class TokenController
-{
+public class TokenController {
     @Autowired
     CrawlMetadataWebsiteConfigMapper metadataWebsiteConfigMapper;
 
@@ -35,11 +34,10 @@ public class TokenController
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult update(@RequestBody CrawlMetadataWebsiteConfig metadataWebsiteConfig)
-    {
+    public CommonResult update(@RequestBody CrawlMetadataWebsiteConfig metadataWebsiteConfig) {
         String deployIp = metadataWebsiteConfig.getDeployIp();
         if (StringUtils.isEmpty(deployIp)) {
-            throw new ApiException("浏览器插件未设置deployIp,请升级插件或设置参数");
+            return CommonResult.failed("浏览器插件未设置deployIp,请升级插件或设置参数");
         }
         CrawlMetadataWebsiteConfigExample metadataWebsiteConfigExample = new CrawlMetadataWebsiteConfigExample();
         metadataWebsiteConfigExample

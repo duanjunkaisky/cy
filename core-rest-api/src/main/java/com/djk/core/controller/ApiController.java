@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,8 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Slf4j
 @Api(tags = "ApiController", description = "查询航班")
 @RequestMapping("/")
-public class ApiController
-{
+public class ApiController {
 
     @Value("${rocketmq.producer.topic}")
     private String topic;
@@ -49,8 +49,12 @@ public class ApiController
      */
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult query(@RequestBody QueryRouteVo queryRouteVo)
-    {
+    public CommonResult query(@RequestBody QueryRouteVo queryRouteVo) {
+        if (StringUtils.isEmpty(queryRouteVo.getDeparturePortEn())
+                || StringUtils.isEmpty(queryRouteVo.getDestinationPortEn())
+                || StringUtils.isEmpty(queryRouteVo.getDepartureDate())) {
+            return CommonResult.failed("param can not empty.");
+        }
         queryRouteVo.setStartTime(System.currentTimeMillis());
         queryRouteVo.setSpotId(crawlService.createSpotId(queryRouteVo.getDeparturePortEn(), queryRouteVo.getDestinationPortEn()));
         SendResult sendResult = rocketMQTemplate.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(queryRouteVo)).build());
@@ -66,16 +70,14 @@ public class ApiController
 
     @RequestMapping(value = "/productNumber", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult productNumber()
-    {
+    public CommonResult productNumber() {
         String productNumber = crawlService.getProductNumber();
         return CommonResult.success(productNumber, "操作成功");
     }
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult test()
-    {
+    public CommonResult test() {
         QueryRouteVo queryRouteVo = new QueryRouteVo();
         queryRouteVo.setDeparturePortEn("SHANGHAI");
         queryRouteVo.setDestinationPortEn("ROTTERDAM");
