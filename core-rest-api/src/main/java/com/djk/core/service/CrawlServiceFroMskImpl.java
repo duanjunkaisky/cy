@@ -66,7 +66,8 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     @Override
     @Transactional
     public String queryData(QueryRouteVo queryRouteVo, String hostCode) {
-        String proxy = MyProxyUtil.getProxy();
+        String proxy = null;
+//        String proxy = MyProxyUtil.getProxy();
         this.setHostCode(hostCode);
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + proxy);
         BasePort fromPort = getFromPort(queryRouteVo);

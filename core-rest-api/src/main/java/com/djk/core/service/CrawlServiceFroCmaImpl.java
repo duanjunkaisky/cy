@@ -68,13 +68,12 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
     @Override
     @Transactional
     public String queryData(QueryRouteVo queryRouteVo, String hostCode) {
-        String proxy = MyProxyUtil.getProxy();
         this.setHostCode(hostCode);
-        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + proxy);
+        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + null);
         BasePort fromPort = getFromPort(queryRouteVo);
         BasePort toPort = getToPort(queryRouteVo);
-        JSONObject portInfoFrom = getPortInfo(queryRouteVo, fromPort.getOneCode(), fromPort.getCountryCode(), proxy);
-        JSONObject portInfoTo = getPortInfo(queryRouteVo, toPort.getOneCode(), toPort.getCountryCode(), proxy);
+        JSONObject portInfoFrom = getPortInfo(queryRouteVo, fromPort.getOneCode(), fromPort.getCountryCode(), null);
+        JSONObject portInfoTo = getPortInfo(queryRouteVo, toPort.getOneCode(), toPort.getCountryCode(), null);
 
         BaseShippingCompany baseShippingCompany = getShipCompany(hostCode);
 
@@ -85,6 +84,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
 
         for (ContainerDist container : containerList) {
             while (reqCount < Constant.MAX_REQ_COUNT) {
+                String proxy = MyProxyUtil.getProxy();
                 try {
                     reqCount++;
                     Map<String, String> header = getHeader();
