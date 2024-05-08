@@ -39,7 +39,7 @@ public class ApiController {
     CrawlMetadataWebsiteConfigMapper metadataWebsiteConfigMapper;
 
     @Autowired
-    CrawlServiceFroOneImpl crawlService;
+    CrawlServiceFroCmaImpl crawlService;
 
     /**
      * @param queryRouteVo
@@ -76,7 +76,8 @@ public class ApiController {
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult test(@RequestBody QueryRouteVo queryRouteVo) {
-        crawlService.queryData(queryRouteVo, queryRouteVo.getHostCode());
+        crawlService.getRequestToken(null);
+//        crawlService.queryData(queryRouteVo, queryRouteVo.getHostCode());
         return CommonResult.success("操作成功");
     }
 
