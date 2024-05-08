@@ -7,7 +7,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class MyProxyUtil {
@@ -16,8 +17,8 @@ public class MyProxyUtil {
 
     public static final String SECRET_ID = "ojta9ox848z7rl48ef0q";
     public static final String SECRET_KEY = "2a6w6614cablpzz5ev6ptu70l8j8oqnp";
-    public static final int PER_PROXY_COUNT = 30;
-    public static ConcurrentLinkedDeque<String> proxyLIst = new ConcurrentLinkedDeque<>();
+    public static final int PER_PROXY_COUNT = 10;
+    public static ConcurrentHashMap<Integer, String> proxyMap = new ConcurrentHashMap<>(10);
 
     public static void newProxyList() {
         log.info("获取代理ip");
@@ -39,18 +40,26 @@ public class MyProxyUtil {
         HttpResp httpResp = HttpUtil.get("https://dps.kdlapi.com/api/getdps?format=json&secret_id=" + SECRET_ID + "&num=" + PER_PROXY_COUNT + "&signature=" + secretToken, null, false);
         JSONObject jsonObject = JSONObject.parseObject(httpResp.getBodyJson());
         JSONArray jsonArray = jsonObject.getJSONObject("data").getJSONArray("proxy_list");
-        jsonArray.stream().forEach(item -> proxyLIst.add(String.valueOf(item)));
+        for (int i = 0; i < jsonArray.size(); i++) {
+            String proxyString = (String) jsonArray.get(i);
+            proxyMap.put(i, proxyString);
+        }
     }
 
     public static String getProxy() {
-        String proxy = proxyLIst.poll();
+        String proxy = null;
         int count = 1;
-        while (StringUtils.isEmpty(proxy) && count <= 3) {
+        while (proxyMap.isEmpty() && StringUtils.isEmpty(proxy) && count <= 3) {
             newProxyList();
-            proxy = proxyLIst.poll();
+            int index = new Random().nextInt(proxyMap.size());
+            proxy = proxyMap.get(index);
+            if (!StringUtils.isEmpty(proxy)) {
+                return proxy;
+            }
             count++;
         }
-        return proxy;
+        int index = new Random().nextInt(proxyMap.size());
+        return proxyMap.get(index);
     }
 
 }

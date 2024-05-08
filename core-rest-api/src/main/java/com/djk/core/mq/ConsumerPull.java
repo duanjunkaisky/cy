@@ -9,6 +9,7 @@ import com.djk.core.mapper.CrawlRequestStatusMapper;
 import com.djk.core.model.CrawlRequestStatus;
 import com.djk.core.model.CrawlRequestStatusExample;
 import com.djk.core.service.CrawlChain;
+import com.djk.core.utils.MyProxyUtil;
 import com.djk.core.vo.QueryRouteVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.*;
@@ -35,8 +36,7 @@ import java.util.stream.Collectors;
  */
 @Component
 @Slf4j
-public class ConsumerPull implements CommandLineRunner
-{
+public class ConsumerPull implements CommandLineRunner {
 
     @Value("${rocketmq.name-server}")
     private String namesrvAddr;
@@ -73,8 +73,7 @@ public class ConsumerPull implements CommandLineRunner
     /**
      * @throws MQClientException
      */
-    public void consumeMessage() throws MQClientException
-    {
+    public void consumeMessage() throws MQClientException {
         // 1. 实例化对象
         final MQPullConsumerScheduleService scheduleService = new MQPullConsumerScheduleService(group);
         // 2. 设置NameServer
@@ -83,11 +82,9 @@ public class ConsumerPull implements CommandLineRunner
         scheduleService.setMessageModel(MessageModel.CLUSTERING);
         scheduleService.getDefaultMQPullConsumer().setInstanceName("consumerPull");
         // 4. 注册拉取回调函数
-        scheduleService.registerPullTaskCallback(topic, new PullTaskCallback()
-        {
+        scheduleService.registerPullTaskCallback(topic, new PullTaskCallback() {
             @Override
-            public void doPullTask(MessageQueue mq, PullTaskContext context)
-            {
+            public void doPullTask(MessageQueue mq, PullTaskContext context) {
                 if (isPull) {
                     // 5.从上下文中获取MQPullConsumer对象，此处其实就是DefaultMQPullConsumer。
                     MQPullConsumer consumer = context.getPullConsumer();
@@ -179,8 +176,7 @@ public class ConsumerPull implements CommandLineRunner
      * @throws Exception
      */
     @Override
-    public void run(String... args) throws Exception
-    {
+    public void run(String... args) throws Exception {
         consumeMessage();
     }
 
@@ -188,12 +184,19 @@ public class ConsumerPull implements CommandLineRunner
      * 每天12点触发
      */
     @Scheduled(cron = "0 0 23 * * ?")
-    public void delRequestStatus()
-    {
+    public void delRequestStatus() {
         //删除5天前的
         log.info("清除crawl_request_status 5天前的数据");
         String delSql = "delete from crawl_request_status where ( UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(create_time) ) / (60*60)  > (24*5)";
         customDao.executeSql(delSql);
+    }
+
+    /**
+     * 每3分钟清空一次ip代理，重新获取
+     */
+    @Scheduled(cron = "0 0/3 * * * ?")
+    public void refreshProxy() {
+        MyProxyUtil.proxyMap.clear();
     }
 
 }
