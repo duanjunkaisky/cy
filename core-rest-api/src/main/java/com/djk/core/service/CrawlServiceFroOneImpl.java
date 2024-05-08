@@ -30,8 +30,7 @@ import java.util.*;
 @Service
 @Slf4j
 @Data
-public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements CrawlService
-{
+public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements CrawlService {
     private static int reqCount = 0;
     private static int tokenIndex = 0;
 
@@ -60,8 +59,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
 
     @Override
     @Transactional
-    public String queryData(QueryRouteVo queryRouteVo, String hostCode)
-    {
+    public String queryData(QueryRouteVo queryRouteVo, String hostCode) {
         this.setHostCode(hostCode);
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据");
         BasePort fromPort = getFromPort(queryRouteVo);
@@ -88,7 +86,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
 
                     log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
-                    HttpResp resp = HttpUtil.postBody("https://ecomm.one-line.com/api/v1/quotation/schedules/vessel-dates", getHeader(), jsonParam);
+                    HttpResp resp = HttpUtil.postBody("https://ecomm.one-line.com/api/v1/quotation/schedules/vessel-dates", getHeader(), jsonParam, true);
                     Response response = resp.getResponse();
                     String bodyJson = resp.getBodyJson();
                     JSONObject retObj = JSONObject.parseObject(bodyJson);
@@ -117,8 +115,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         return insertData(queryRouteVo, hostCode, productInfoList, productContainerList, productFeeItemList);
     }
 
-    private void parseData(BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap) throws ParseException
-    {
+    private void parseData(BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap) throws ParseException {
         int containerType = computeContainerType(container.getContainerCode());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -233,8 +230,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
 
     }
 
-    private void confirmValue(ProductFeeItem productFeeItem, JSONObject surcharge)
-    {
+    private void confirmValue(ProductFeeItem productFeeItem, JSONObject surcharge) {
         String chargeTarget = surcharge.getString("chargeTarget");
         if ("ORIGIN".equalsIgnoreCase(chargeTarget)) {
             productFeeItem.setFeeCostType(1);
@@ -260,8 +256,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         productFeeItem.setFeeEnName(surcharge.getString("chargeName"));
     }
 
-    private Map<String, String> getHeader()
-    {
+    private Map<String, String> getHeader() {
         JSONObject tokenBean = getToken(this.getHostCode().toLowerCase(), tokenIndex);
         Map<String, String> header = new HashMap<>(3);
         header.put("Authorization", tokenBean.getString("authorization"));
@@ -270,12 +265,11 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         return header;
     }
 
-    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode)
-    {
+    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode) {
         String api = "https://ecomm.one-line.com/api/v1/quotation/locations?location=" + portCodeEn + "&orgDest=origin";
         Map<String, String> header = getHeader();
         try {
-            HttpResp resp = HttpUtil.get(api, header);
+            HttpResp resp = HttpUtil.get(api, header, true);
             String bodyJson = resp.getBodyJson();
             JSONObject retObj = JSONObject.parseObject(bodyJson);
             JSONArray arr = retObj.getJSONArray("data");
@@ -293,8 +287,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         throw new RuntimeException(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 网站未查询到港口代码信息: " + portCodeEn + ", 请检查base_port的" + this.getHostCode() + "_code信息");
     }
 
-    private boolean checkDisplayedName(String displayedName, String portCodeEn)
-    {
+    private boolean checkDisplayedName(String displayedName, String portCodeEn) {
         String[] split = displayedName.split(",");
         for (String str : split) {
             if (str.toLowerCase().contains(portCodeEn.toLowerCase())) {
@@ -309,8 +302,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
      *
      * @return
      */
-    public String getFreeFee(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String fromCode, String toCode, String arriveTime, ContainerDist containerDist, String spotRateOfferingId)
-    {
+    public String getFreeFee(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String fromCode, String toCode, String arriveTime, ContainerDist containerDist, String spotRateOfferingId) {
         String jsonParam = "{" +
                 "    \"originUNLocationCode\": \"" + fromCode + "\",\n" +
                 "    \"destinationUNLocationCode\": \"" + toCode + "\",\n" +
@@ -329,7 +321,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 "}";
 
         try {
-            HttpResp resp = HttpUtil.postBody("https://ecomm.one-line.com/api/v1/quotation/demurrage-detention-info", getHeader(), JSONObject.parseObject(jsonParam).toJSONString());
+            HttpResp resp = HttpUtil.postBody("https://ecomm.one-line.com/api/v1/quotation/demurrage-detention-info", getHeader(), JSONObject.parseObject(jsonParam).toJSONString(), true);
             String bodyJson = resp.getBodyJson();
             JSONObject jsonObject = JSONObject.parseObject(bodyJson);
             JSONObject origin = jsonObject.getJSONObject("origin");

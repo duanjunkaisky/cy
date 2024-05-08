@@ -39,7 +39,7 @@ public class ApiController {
     CrawlMetadataWebsiteConfigMapper metadataWebsiteConfigMapper;
 
     @Autowired
-    CrawlServiceFroOneImpl crawlService;
+    CrawlServiceFroCmaImpl crawlService;
 
     /**
      * @param queryRouteVo
@@ -51,7 +51,7 @@ public class ApiController {
         if (StringUtils.isEmpty(queryRouteVo.getDeparturePortEn())
                 || StringUtils.isEmpty(queryRouteVo.getDestinationPortEn())
                 || StringUtils.isEmpty(queryRouteVo.getDepartureDate())) {
-            return CommonResult.failed("param can not empty.");
+            return CommonResult.failed("参数不能为空");
         }
         queryRouteVo.setStartTime(System.currentTimeMillis());
         queryRouteVo.setSpotId(crawlService.createSpotId(queryRouteVo.getDeparturePortEn(), queryRouteVo.getDestinationPortEn()));

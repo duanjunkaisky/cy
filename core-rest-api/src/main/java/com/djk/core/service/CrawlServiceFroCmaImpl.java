@@ -12,7 +12,6 @@ import com.djk.core.utils.HttpUtil;
 import com.djk.core.vo.ContainerDist;
 import com.djk.core.vo.QueryRouteVo;
 import lombok.Data;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +103,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
 
                     log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
-                    HttpResp resp = HttpUtil.postBody("https://www.cma-cgm.com/ebusiness/pricing/getbestoffer", header, jsonParam);
+                    HttpResp resp = HttpUtil.postBody("https://www.cma-cgm.com/ebusiness/pricing/getbestoffer", header, jsonParam, true);
                     Response response = resp.getResponse();
                     String bodyJson = resp.getBodyJson();
                     JSONObject retObj = JSONObject.parseObject(bodyJson);
@@ -303,7 +302,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
     public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode) {
         String api = "https://www.cma-cgm.com/api/Ports/Get?id=" + portCodeEn + "&manageChinaCountryCode=true";
         try {
-            HttpResp resp = HttpUtil.get(api, null);
+            HttpResp resp = HttpUtil.get(api, null, true);
             String bodyJson = resp.getBodyJson();
             JSONArray arr = JSONObject.parseArray(bodyJson);
             for (Object o : arr) {
@@ -338,7 +337,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
                         "  \"OfferId\": \"" + offerId + "\",\n" +
                         "  \"TraceId\": \"" + traceId + "\"\n" +
                         "}";
-                HttpResp resp = HttpUtil.postBody("https://www.cma-cgm.com/ebusiness/pricing/getAllocationAndChargeDetails", getHeader(), JSONObject.parseObject(jsonParam).toJSONString());
+                HttpResp resp = HttpUtil.postBody("https://www.cma-cgm.com/ebusiness/pricing/getAllocationAndChargeDetails", getHeader(), JSONObject.parseObject(jsonParam).toJSONString(), true);
                 Response response = resp.getResponse();
                 String bodyJson = resp.getBodyJson();
                 JSONObject retObj = JSONObject.parseObject(bodyJson);
@@ -369,7 +368,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
             count++;
             try {
                 String api = "https://www.cma-cgm.com/ebusiness/pricing/getDetentionDemurrageNextDeparture/" + traceId + "/" + offerId;
-                HttpResp resp = HttpUtil.get(api, getHeader());
+                HttpResp resp = HttpUtil.get(api, getHeader(),true);
                 Response response = resp.getResponse();
                 String bodyJson = resp.getBodyJson();
                 JSONObject retObj = JSONObject.parseObject(bodyJson);
@@ -421,7 +420,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
             count++;
             try {
                 String api = "https://www.cma-cgm.com/ebusiness/pricing/cancellationfees/" + traceId + "/" + offerId;
-                HttpResp resp = HttpUtil.get(api, getHeader());
+                HttpResp resp = HttpUtil.get(api, getHeader(),true);
                 Response response = resp.getResponse();
                 String bodyJson = resp.getBodyJson();
                 JSONArray array = JSONObject.parseArray(bodyJson);
