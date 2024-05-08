@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author duanjunkai
@@ -88,6 +89,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
 
                     log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
+                    TimeUnit.MILLISECONDS.sleep(500L);
                     HttpResp resp = HttpUtil.postBody("https://ecomm.one-line.com/api/v1/quotation/schedules/vessel-dates", getHeader(), jsonParam, proxy);
                     Response response = resp.getResponse();
                     String bodyJson = resp.getBodyJson();
@@ -275,6 +277,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         String api = "https://ecomm.one-line.com/api/v1/quotation/locations?location=" + portCodeEn + "&orgDest=origin";
         Map<String, String> header = getHeader();
         try {
+            TimeUnit.MILLISECONDS.sleep(500L);
             HttpResp resp = HttpUtil.get(api, header, proxy);
             String bodyJson = resp.getBodyJson();
             JSONObject retObj = JSONObject.parseObject(bodyJson);
@@ -327,6 +330,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 "}";
 
         try {
+            TimeUnit.MILLISECONDS.sleep(1000L);
             HttpResp resp = HttpUtil.postBody("https://ecomm.one-line.com/api/v1/quotation/demurrage-detention-info", getHeader(), JSONObject.parseObject(jsonParam).toJSONString(), proxy);
             String bodyJson = resp.getBodyJson();
             JSONObject jsonObject = JSONObject.parseObject(bodyJson);

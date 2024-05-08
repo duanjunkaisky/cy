@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author duanjunkai
@@ -118,6 +119,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
                     log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
+                    TimeUnit.MILLISECONDS.sleep(500L);
                     HttpResp resp = HttpUtil.postBody("https://api.maersk.com/productoffer/v2/productoffers", header, jsonParam, proxy);
                     Response response = resp.getResponse();
                     String bodyJson = resp.getBodyJson();
@@ -384,6 +386,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         header.put("Host", "del");
         header.put("user-agent", "del");
         try {
+            TimeUnit.MILLISECONDS.sleep(500L);
             HttpResp resp = HttpUtil.get(api, header, proxy);
             String bodyJson = resp.getBodyJson();
             JSONArray arr = JSONArray.parseArray(bodyJson);
