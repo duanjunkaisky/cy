@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
+
 /**
  * @author duanjunkai
  * @date 2024/04/24
@@ -76,8 +78,10 @@ public class ApiController {
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult test(@RequestBody QueryRouteVo queryRouteVo) {
-        crawlService.getRequestToken(null);
-//        crawlService.queryData(queryRouteVo, queryRouteVo.getHostCode());
+        crawlService.queryData(queryRouteVo, queryRouteVo.getHostCode());
+//        crawlService.setHostCode(queryRouteVo.getHostCode());
+//        crawlService.getRequestToken(new HashMap<String,String>());
+
         return CommonResult.success("操作成功");
     }
 

@@ -42,6 +42,8 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
     private static int reqCount = 0;
     private static int tokenIndex = 0;
 
+    public static final long SLEEP_REQUEST_TIME = 1000L;
+
     @Autowired
     BasePortMapper basePortMapper;
 
@@ -72,8 +74,8 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + null);
         BasePort fromPort = getFromPort(queryRouteVo);
         BasePort toPort = getToPort(queryRouteVo);
-        JSONObject portInfoFrom = getPortInfo(queryRouteVo, fromPort.getOneCode(), fromPort.getCountryCode(), null);
-        JSONObject portInfoTo = getPortInfo(queryRouteVo, toPort.getOneCode(), toPort.getCountryCode(), null);
+        JSONObject portInfoFrom = getPortInfo(queryRouteVo, fromPort.getOneCode(), fromPort.getCountryCode());
+        JSONObject portInfoTo = getPortInfo(queryRouteVo, toPort.getOneCode(), toPort.getCountryCode());
 
         BaseShippingCompany baseShippingCompany = getShipCompany(hostCode);
 
@@ -84,10 +86,10 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
 
         for (ContainerDist container : containerList) {
             while (reqCount < Constant.MAX_REQ_COUNT) {
-                String proxy = MyProxyUtil.getProxy();
                 try {
                     reqCount++;
                     Map<String, String> header = getHeader();
+                    getRequestToken(header);
                     String cookie = header.get("Cookie");
                     String partnerCode = parsePartnerCode(cookie);
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -106,8 +108,8 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
 
                     log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
-                    TimeUnit.MILLISECONDS.sleep(500L);
-                    HttpResp resp = HttpUtil.postBody("https://www.cma-cgm.com/ebusiness/pricing/getbestoffer", header, jsonParam, proxy);
+                    TimeUnit.MILLISECONDS.sleep(SLEEP_REQUEST_TIME);
+                    HttpResp resp = HttpUtil.postBody("https://www.cma-cgm.com/ebusiness/pricing/getbestoffer", header, jsonParam, MyProxyUtil.getProxy());
                     Response response = resp.getResponse();
                     String bodyJson = resp.getBodyJson();
                     JSONObject retObj = JSONObject.parseObject(bodyJson);
@@ -133,7 +135,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
                         int solutionNumber = quoteLineAndRoutingHeader.getIntValue("SolutionNumber");
                         int ScheduleNumber = quoteLineAndRoutingHeader.getIntValue("ScheduleNumber");
                         String offerId = quoteLineAndRoutingHeader.getString("OfferId");
-                        JSONObject feeObj = getProductStatus(queryRouteVo, loggedId, solutionNumber, ScheduleNumber, offerId, traceId, proxy);
+                        JSONObject feeObj = getProductStatus(queryRouteVo, loggedId, solutionNumber, ScheduleNumber, offerId, traceId);
                         if (null != feeObj) {
                             quoteLineAndRoutingHeader.put("loggedId", loggedId);
                             quoteLineAndRoutingHeader.put("traceId", traceId);
@@ -143,7 +145,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
                     }
 
                     //开始处理入库
-                    parseData(baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap, proxy);
+                    parseData(baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap);
                     reqCount = 0;
                     break;
                 } catch (Exception e) {
@@ -159,7 +161,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
     }
 
 
-    private void parseData(BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap, String proxy) throws ParseException {
+    private void parseData(BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap) throws ParseException {
         int containerType = computeContainerType(container.getContainerType());
 
         for (Object o : offers) {
@@ -263,9 +265,9 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
                 parseFeeIntoList(productFeeItemList, productFeeItem, collectChargeDetail, 2);
             }
 
-            getFreeFee(productFeeItemList, productFeeItem, item.getString("traceId"), item.getString("OfferId"), proxy);
+            getFreeFee(productFeeItemList, productFeeItem, item.getString("traceId"), item.getString("OfferId"));
 
-            getOtherFee3(productFeeItemList, productFeeItem, item.getString("traceId"), item.getString("OfferId"), proxy);
+            getOtherFee3(productFeeItemList, productFeeItem, item.getString("traceId"), item.getString("OfferId"));
 
         }
 
@@ -303,11 +305,11 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
         return header;
     }
 
-    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode, String proxy) {
+    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode) {
         String api = "https://www.cma-cgm.com/api/Ports/Get?id=" + portCodeEn + "&manageChinaCountryCode=true";
         try {
-            TimeUnit.MILLISECONDS.sleep(500L);
-            HttpResp resp = HttpUtil.get(api, null, proxy);
+            TimeUnit.MILLISECONDS.sleep(SLEEP_REQUEST_TIME);
+            HttpResp resp = HttpUtil.get(api, null, MyProxyUtil.getProxy());
             String bodyJson = resp.getBodyJson();
             JSONArray arr = JSONObject.parseArray(bodyJson);
             for (Object o : arr) {
@@ -329,7 +331,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
         throw new RuntimeException(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 网站未查询到港口代码信息: " + portCodeEn + ", 请检查base_port的" + this.getHostCode() + "_code信息");
     }
 
-    private JSONObject getProductStatus(QueryRouteVo queryRouteVo, String loggedId, int solutionNumber, int ScheduleNumber, String offerId, String traceId, String proxy) {
+    private JSONObject getProductStatus(QueryRouteVo queryRouteVo, String loggedId, int solutionNumber, int ScheduleNumber, String offerId, String traceId) {
         int count = 0;
         while (count < Constant.MAX_REQ_COUNT) {
             count++;
@@ -342,8 +344,8 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
                         "  \"OfferId\": \"" + offerId + "\",\n" +
                         "  \"TraceId\": \"" + traceId + "\"\n" +
                         "}";
-                TimeUnit.MILLISECONDS.sleep(500L);
-                HttpResp resp = HttpUtil.postBody("https://www.cma-cgm.com/ebusiness/pricing/getAllocationAndChargeDetails", getHeader(), JSONObject.parseObject(jsonParam).toJSONString(), proxy);
+                TimeUnit.MILLISECONDS.sleep(SLEEP_REQUEST_TIME);
+                HttpResp resp = HttpUtil.postBody("https://www.cma-cgm.com/ebusiness/pricing/getAllocationAndChargeDetails", getHeader(), JSONObject.parseObject(jsonParam).toJSONString(), MyProxyUtil.getProxy());
                 Response response = resp.getResponse();
                 String bodyJson = resp.getBodyJson();
                 JSONObject retObj = JSONObject.parseObject(bodyJson);
@@ -368,14 +370,16 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
         return null;
     }
 
-    public void getFreeFee(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String traceId, String offerId, String proxy) {
+    public void getFreeFee(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String traceId, String offerId) {
         int count = 0;
         while (count < Constant.MAX_REQ_COUNT) {
             count++;
             try {
-                TimeUnit.MILLISECONDS.sleep(1000L);
+                TimeUnit.MILLISECONDS.sleep(SLEEP_REQUEST_TIME);
+                Map<String, String> header = getHeader();
+                getRequestToken(header);
                 String api = "https://www.cma-cgm.com/ebusiness/pricing/getDetentionDemurrageNextDeparture/" + traceId + "/" + offerId;
-                HttpResp resp = HttpUtil.get(api, getHeader(), proxy);
+                HttpResp resp = HttpUtil.get(api, header, MyProxyUtil.getProxy());
                 Response response = resp.getResponse();
                 String bodyJson = resp.getBodyJson();
                 JSONObject retObj = JSONObject.parseObject(bodyJson);
@@ -421,14 +425,16 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
 
     }
 
-    public void getOtherFee3(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String traceId, String offerId, String proxy) {
+    public void getOtherFee3(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String traceId, String offerId) {
         int count = 0;
         while (count < Constant.MAX_REQ_COUNT) {
             count++;
             try {
-                TimeUnit.MILLISECONDS.sleep(1000L);
+                TimeUnit.MILLISECONDS.sleep(SLEEP_REQUEST_TIME);
+                Map<String, String> header = getHeader();
+                getRequestToken(header);
                 String api = "https://www.cma-cgm.com/ebusiness/pricing/cancellationfees/" + traceId + "/" + offerId;
-                HttpResp resp = HttpUtil.get(api, getHeader(), proxy);
+                HttpResp resp = HttpUtil.get(api, header, MyProxyUtil.getProxy());
                 Response response = resp.getResponse();
                 String bodyJson = resp.getBodyJson();
                 JSONArray array = JSONObject.parseArray(bodyJson);
@@ -455,6 +461,55 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
                 }
             } catch (Exception e) {
                 log.error("获取取消订单费用信息出错");
+                log.error(ExceptionUtil.getMessage(e));
+                log.error(ExceptionUtil.stacktraceToString(e));
+            }
+        }
+
+    }
+
+    public void getRequestToken(Map<String, String> header) {
+        int count = 0;
+        while (count < Constant.MAX_REQ_COUNT) {
+            count++;
+            try {
+                TimeUnit.MILLISECONDS.sleep(SLEEP_REQUEST_TIME);
+                String api = "https://www.cma-cgm.com/ebusiness/pricing/instant-Quoting";
+                HttpResp resp = HttpUtil.get(api, getHeader(), null);
+                Response response = resp.getResponse();
+                String bodyJson = resp.getBodyJson();
+
+                Pattern pattern = Pattern.compile("input name=\"__RequestVerificationToken\" type=\"hidden\" value=\"[a-zA-Z0-9-_~!@#$%^&*+_\\(\\),\\./]+");
+                Matcher matcher = pattern.matcher(bodyJson);
+
+                if (matcher.find()) {
+                    String group = matcher.group();
+                    String requestPageToken = group.replace("input name=\"__RequestVerificationToken\" type=\"hidden\" value=\"", "");
+                    header.put("__RequestVerificationToken", requestPageToken);
+                }
+                String cookie = header.get("Cookie");
+                String newCookie = "";
+                String[] split = cookie.split(";");
+                List<String> headers = response.headers("set-cookie");
+                for (int i = 0; i < split.length; i++) {
+                    String s = split[i];
+                    String key = s.split("=")[0];
+                    boolean exist = false;
+                    for (int j = 0; j < headers.size(); j++) {
+                        String nowValue = headers.get(j);
+                        if (key.equalsIgnoreCase(nowValue.split("=")[0])) {
+                            newCookie += nowValue + ";";
+                            exist = true;
+                            break;
+                        }
+                    }
+                    if (!exist) {
+                        newCookie += s + ";";
+                    }
+                }
+                header.put("Cookie", newCookie);
+            } catch (Exception e) {
+                log.error("获取__RequestToken出错");
                 log.error(ExceptionUtil.getMessage(e));
                 log.error(ExceptionUtil.stacktraceToString(e));
             }

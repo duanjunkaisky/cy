@@ -12,11 +12,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class MyProxyUtil {
-    public static final String PROXY_USERNAME = "d1335559413";
+    public static final String PROXY_USERNAME = "d2408575423";
     public static final String PROXY_PASSWORD = "gl4pk39d";
 
-    public static final String SECRET_ID = "ojta9ox848z7rl48ef0q";
-    public static final String SECRET_KEY = "2a6w6614cablpzz5ev6ptu70l8j8oqnp";
+    public static final String SECRET_ID = "oda2ogeyl4chqa237c5d";
+    public static final String SECRET_KEY = "giok0a2fpr6srczuj7l594wlboe84um4";
     public static final int PER_PROXY_COUNT = 10;
     public static ConcurrentHashMap<Integer, String> proxyMap = new ConcurrentHashMap<>(10);
 
@@ -37,29 +37,43 @@ public class MyProxyUtil {
             count++;
         }
 
-        HttpResp httpResp = HttpUtil.get("https://dps.kdlapi.com/api/getdps?format=json&secret_id=" + SECRET_ID + "&num=" + PER_PROXY_COUNT + "&signature=" + secretToken, null, null);
-        JSONObject jsonObject = JSONObject.parseObject(httpResp.getBodyJson());
-        JSONArray jsonArray = jsonObject.getJSONObject("data").getJSONArray("proxy_list");
-        for (int i = 0; i < jsonArray.size(); i++) {
-            String proxyString = (String) jsonArray.get(i);
-            proxyMap.put(i, proxyString);
+        try {
+            HttpResp httpResp = HttpUtil.get("https://dps.kdlapi.com/api/getdps?format=json&secret_id=" + SECRET_ID + "&num=" + PER_PROXY_COUNT + "&signature=" + secretToken, null, null);
+            JSONObject jsonObject = JSONObject.parseObject(httpResp.getBodyJson());
+            JSONArray jsonArray = jsonObject.getJSONObject("data").getJSONArray("proxy_list");
+            for (int i = 0; i < jsonArray.size(); i++) {
+                String proxyString = (String) jsonArray.get(i);
+                proxyMap.put(i, proxyString);
+            }
+        } catch (Exception e) {
+            log.info("获取代理ip出错", e);
         }
+
     }
 
     public static String getProxy() {
-        String proxy = null;
-        int count = 1;
-        while (proxyMap.isEmpty() && StringUtils.isEmpty(proxy) && count <= 3) {
-            newProxyList();
-            int index = new Random().nextInt(proxyMap.size());
-            proxy = proxyMap.get(index);
-            if (!StringUtils.isEmpty(proxy)) {
-                return proxy;
+        try {
+            String proxy = null;
+            int count = 1;
+            while (proxyMap.isEmpty() && StringUtils.isEmpty(proxy) && count <= 3) {
+                newProxyList();
+                int index = new Random().nextInt(proxyMap.size());
+                proxy = proxyMap.get(index);
+                if (!StringUtils.isEmpty(proxy)) {
+                    return proxy;
+                }
+                count++;
             }
-            count++;
+            int index = new Random().nextInt(proxyMap.size());
+            return proxyMap.get(index);
+        } catch (Exception e) {
+            return null;
         }
-        int index = new Random().nextInt(proxyMap.size());
-        return proxyMap.get(index);
+    }
+
+    public static void main(String[] args) {
+        String proxy = getProxy();
+        System.out.println(proxy);
     }
 
 }
