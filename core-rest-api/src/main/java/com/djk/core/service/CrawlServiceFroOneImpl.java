@@ -263,7 +263,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
     }
 
     private Map<String, String> getHeader() {
-        JSONObject tokenBean = getToken(this.getHostCode().toLowerCase(), tokenIndex);
+        JSONObject tokenBean = getToken(this.getHostCode().toLowerCase(), tokenIndex++);
         Map<String, String> header = new HashMap<>(3);
         header.put("Authorization", tokenBean.getString("authorization"));
         header.put("Host", "del");

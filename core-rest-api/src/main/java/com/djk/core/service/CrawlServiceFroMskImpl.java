@@ -345,7 +345,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     }
 
     public Map<String, String> getRemoteSensorData(QueryRouteVo queryRouteVo, String proxy) {
-        JSONObject tokenBean = getToken(this.getHostCode(), tokenIndex);
+        JSONObject tokenBean = getToken(this.getHostCode(), tokenIndex++);
 
         Map<String, String> header = new HashMap<>(4);
         if (StringUtils.isEmpty(sensorData)) {
