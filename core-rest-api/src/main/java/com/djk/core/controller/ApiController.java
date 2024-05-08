@@ -39,7 +39,7 @@ public class ApiController {
     CrawlMetadataWebsiteConfigMapper metadataWebsiteConfigMapper;
 
     @Autowired
-    CrawlServiceFroCmaImpl crawlService;
+    CrawlServiceFroOneImpl crawlService;
 
     /**
      * @param queryRouteVo

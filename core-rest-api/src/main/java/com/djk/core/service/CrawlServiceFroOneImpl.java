@@ -100,7 +100,11 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
 
                     //开始处理入库
                     JSONArray offers = retObj.getJSONArray("data");
-                    parseData(baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap);
+                    if (null == offers || offers.isEmpty()) {
+                        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次 请求获取返回未空");
+                    } else {
+                        parseData(baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap);
+                    }
                     reqCount = 0;
                     break;
                 } catch (Exception e) {
