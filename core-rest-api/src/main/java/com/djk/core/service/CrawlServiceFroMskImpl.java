@@ -9,6 +9,7 @@ import com.djk.core.model.*;
 import com.djk.core.utils.FreeMakerUtil;
 import com.djk.core.utils.HttpResp;
 import com.djk.core.utils.HttpUtil;
+import com.djk.core.utils.MyProxyUtil;
 import com.djk.core.vo.ContainerDist;
 import com.djk.core.vo.QueryRouteVo;
 import lombok.extern.slf4j.Slf4j;
@@ -64,12 +65,13 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     @Override
     @Transactional
     public String queryData(QueryRouteVo queryRouteVo, String hostCode) {
+        String proxy = MyProxyUtil.getProxy();
         this.setHostCode(hostCode);
-        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据");
+        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + proxy);
         BasePort fromPort = getFromPort(queryRouteVo);
         BasePort toPort = getToPort(queryRouteVo);
-        JSONObject portInfoFrom = getPortInfo(queryRouteVo, fromPort.getMskCode(), fromPort.getCountryCode());
-        JSONObject portInfoTo = getPortInfo(queryRouteVo, toPort.getMskCode(), toPort.getCountryCode());
+        JSONObject portInfoFrom = getPortInfo(queryRouteVo, fromPort.getMskCode(), fromPort.getCountryCode(), proxy);
+        JSONObject portInfoTo = getPortInfo(queryRouteVo, toPort.getMskCode(), toPort.getCountryCode(), proxy);
 
         BaseShippingCompany baseShippingCompany = getShipCompany(hostCode);
 
@@ -94,7 +96,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 }
                 try {
                     reqCount++;
-                    Map<String, String> header = getRemoteSensorData(queryRouteVo);
+                    Map<String, String> header = getRemoteSensorData(queryRouteVo, proxy);
                     Map<String, Object> fillData = new HashMap<>(1);
                     fillData.put("fromPortId", portInfoFrom.getString("maerskGeoLocationId"));
                     fillData.put("fromPortCode", portInfoFrom.getString("maerskRkstCode"));
@@ -116,7 +118,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
                     log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
-                    HttpResp resp = HttpUtil.postBody("https://api.maersk.com/productoffer/v2/productoffers", header, jsonParam, true);
+                    HttpResp resp = HttpUtil.postBody("https://api.maersk.com/productoffer/v2/productoffers", header, jsonParam, proxy);
                     Response response = resp.getResponse();
                     String bodyJson = resp.getBodyJson();
                     if (response.code() != 200) {
@@ -342,7 +344,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         productFeeItem.setFeeEnName(surcharge.getString("chargedescription"));
     }
 
-    public Map<String, String> getRemoteSensorData(QueryRouteVo queryRouteVo) {
+    public Map<String, String> getRemoteSensorData(QueryRouteVo queryRouteVo, String proxy) {
         JSONObject tokenBean = getToken(this.getHostCode(), tokenIndex);
 
         Map<String, String> header = new HashMap<>(4);
@@ -354,7 +356,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
             sensorDataParams.put("siteUrl", "https://www.maersk.com.cn/book");
             sensorDataParams.put("abck", abck);
             sensorDataParams.put("bmsz", bmsz);
-            HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/v2/sensorData", null, JSONObject.toJSONString(sensorDataParams), true);
+            HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/v2/sensorData", null, JSONObject.toJSONString(sensorDataParams), proxy);
             JSONObject retObj = JSONObject.parseObject(resp.getBodyJson());
             userAgent = retObj.getString("ua");
             sensorData = retObj.getString("sensorData");
@@ -374,7 +376,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         return header;
     }
 
-    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode) {
+    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode, String proxy) {
         String api = "https://api.maersk.com.cn/synergy/reference-data/geography/locations?cityName=" + portCodeEn + "&pageSize=30&sort=cityName&type=city";
         Map<String, String> header = new HashMap<>(3);
         header.put("Consumer-Key", "Q09VmiYvj4ifBOa72Z0ekxkq9tLZCVYI");
@@ -382,7 +384,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         header.put("Host", "del");
         header.put("user-agent", "del");
         try {
-            HttpResp resp = HttpUtil.get(api, header, true);
+            HttpResp resp = HttpUtil.get(api, header, proxy);
             String bodyJson = resp.getBodyJson();
             JSONArray arr = JSONArray.parseArray(bodyJson);
             for (Object o : arr) {

@@ -46,8 +46,8 @@ public class HttpUtil {
      * @param params  参数
      * @return {@link Map}<{@link String}, {@link Object}>
      */
-    public static HttpResp postForm(String url, Map<String, String> headers, Map<String, Object> params, boolean proxyOn) {
-        return post(url, "form", headers, params, proxyOn);
+    public static HttpResp postForm(String url, Map<String, String> headers, Map<String, Object> params, String proxy) {
+        return post(url, "form", headers, params, proxy);
     }
 
 
@@ -59,8 +59,8 @@ public class HttpUtil {
      * @param params  参数
      * @return {@link Map}<{@link String}, {@link Object}>
      */
-    public static HttpResp postBody(String url, Map<String, String> headers, Map<String, Object> params, boolean proxyOn) {
-        return post(url, "body", headers, params, proxyOn);
+    public static HttpResp postBody(String url, Map<String, String> headers, Map<String, Object> params, String proxy) {
+        return post(url, "body", headers, params, proxy);
     }
 
     /**
@@ -72,9 +72,9 @@ public class HttpUtil {
      * @return {@link Map}<{@link String}, {@link Object}>
      */
 
-    public static HttpResp postBody(String url, Map<String, String> headers, String jsonString, boolean proxyOn) {
+    public static HttpResp postBody(String url, Map<String, String> headers, String jsonString, String proxy) {
         Map<String, Object> params = JSON.parseObject(jsonString, new HashMap<String, Object>().getClass());
-        return post(url, "body", headers, params, proxyOn);
+        return post(url, "body", headers, params, proxy);
     }
 
     /**
@@ -87,16 +87,16 @@ public class HttpUtil {
      * @param password 密码
      * @return {@link Map}<{@link String}, {@link Object}>
      */
-    public static HttpResp postBodyNTLM(String url, Map<String, String> headers, Map<String, Object> params, String username, String password, boolean proxyOn) {
-        return post(url, "body", "post", headers, params, null, username, password, proxyOn);
+    public static HttpResp postBodyNTLM(String url, Map<String, String> headers, Map<String, Object> params, String username, String password, String proxy) {
+        return post(url, "body", "post", headers, params, null, username, password, proxy);
     }
 
-    public static HttpResp postBodyNTLM(String url, Map<String, String> headers, String jsonParams, String username, String password, boolean proxyOn) {
-        return post(url, "body", "post", headers, null, jsonParams, username, password, proxyOn);
+    public static HttpResp postBodyNTLM(String url, Map<String, String> headers, String jsonParams, String username, String password, String proxy) {
+        return post(url, "body", "post", headers, null, jsonParams, username, password, proxy);
     }
 
-    public static HttpResp patchBodyNTLM(String url, Map<String, String> headers, String jsonParams, String username, String password, boolean proxyOn) {
-        return post(url, "body", "patch", headers, null, jsonParams, username, password, proxyOn);
+    public static HttpResp patchBodyNTLM(String url, Map<String, String> headers, String jsonParams, String username, String password, String proxy) {
+        return post(url, "body", "patch", headers, null, jsonParams, username, password, proxy);
     }
 
     /**
@@ -108,17 +108,17 @@ public class HttpUtil {
      * @param password 密码
      * @return {@link Map}<{@link String}, {@link Object}>
      */
-    public static HttpResp getNTLM(String url, Map<String, String> headers, String username, String password, boolean proxyOn) {
-        return get(url, headers, username, password, proxyOn);
+    public static HttpResp getNTLM(String url, Map<String, String> headers, String username, String password, String proxy) {
+        return get(url, headers, username, password, proxy);
     }
 
-    public static HttpResp get(String url, Map<String, String> headers, boolean proxyOn) {
-        return get(url, headers, null, null, proxyOn);
+    public static HttpResp get(String url, Map<String, String> headers, String proxy) {
+        return get(url, headers, null, null, proxy);
     }
 
-    public static HttpResp get(String url, Map<String, String> headers, String username, String password, boolean proxyOn) {
+    public static HttpResp get(String url, Map<String, String> headers, String username, String password, String proxy) {
         HttpResp resp = new HttpResp();
-        OkHttpClient client = buildClient(url, username, password, proxyOn);
+        OkHttpClient client = buildClient(url, username, password, proxy);
 
         if (sendRequest(url, "get", false, headers, null, resp, client, null)) {
             return resp;
@@ -126,7 +126,7 @@ public class HttpUtil {
         return null;
     }
 
-    private static OkHttpClient buildClient(String url, String username, String password, boolean proxyOn, long timeOut) {
+    private static OkHttpClient buildClient(String url, String username, String password, String proxy, long timeOut) {
 
         OkHttpClient.Builder builder = new OkHttpClient().newBuilder();
         try {
@@ -148,11 +148,10 @@ public class HttpUtil {
                 .connectTimeout(timeOut, TimeUnit.SECONDS);
 //                .writeTimeout(5, TimeUnit.SECONDS);
 
-        if (proxyOn) {
-            String proxyString = MyProxyUtil.getProxy();
-            if (!StringUtils.isEmpty(proxyString)) {
-                String[] split = proxyString.split(":");
-                Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(split[0], Integer.parseInt(split[1])));
+        if (!StringUtils.isEmpty(proxy)) {
+            if (!StringUtils.isEmpty(proxy) && proxy.split(":").length == 2) {
+                String[] split = proxy.split(":");
+                Proxy proxyReq = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(split[0], Integer.parseInt(split[1])));
                 Authenticator authenticator = new Authenticator() {
                     @Override
                     public Request authenticate(Route route, Response response) throws IOException {
@@ -162,7 +161,7 @@ public class HttpUtil {
                                 .build();
                     }
                 };
-                builder.proxy(proxy).proxyAuthenticator(authenticator);
+                builder.proxy(proxyReq).proxyAuthenticator(authenticator);
             } else {
                 log.info("获取代理失败");
             }
@@ -184,25 +183,25 @@ public class HttpUtil {
         return builder.build();
     }
 
-    private static OkHttpClient buildClient(String url, String username, String password, boolean proxyOn) {
-        return buildClient(url, username, password, proxyOn, 120);
+    private static OkHttpClient buildClient(String url, String username, String password, String proxy) {
+        return buildClient(url, username, password, proxy, 120);
     }
 
-    private static HttpResp post(String url, String type, Map<String, String> headers, Map<String, Object> params, boolean proxyOn) {
-        return post(url, type, "post", headers, params, null, null, null, proxyOn);
+    private static HttpResp post(String url, String type, Map<String, String> headers, Map<String, Object> params, String proxy) {
+        return post(url, type, "post", headers, params, null, null, null, proxy);
     }
 
-    public static HttpResp post(String url, String type, String method, Map<String, String> headers, String jsonString, boolean proxyOn) {
-        return post(url, type, method, headers, null, jsonString, null, null, proxyOn);
+    public static HttpResp post(String url, String type, String method, Map<String, String> headers, String jsonString, String proxy) {
+        return post(url, type, method, headers, null, jsonString, null, null, proxy);
     }
 
-    public static HttpResp post(String url, String type, String method, Map<String, String> headers, Map<String, Object> params, boolean proxyOn) {
-        return post(url, type, method, headers, params, null, null, null, proxyOn);
+    public static HttpResp post(String url, String type, String method, Map<String, String> headers, Map<String, Object> params, String proxy) {
+        return post(url, type, method, headers, params, null, null, null, proxy);
     }
 
-    private static HttpResp post(String url, String type, String method, Map<String, String> headers, Map<String, Object> params, String jsonParams, String username, String password, boolean proxyOn) {
+    private static HttpResp post(String url, String type, String method, Map<String, String> headers, Map<String, Object> params, String jsonParams, String username, String password, String proxy) {
         HttpResp resp = new HttpResp();
-        OkHttpClient client = buildClient(url, username, password, proxyOn);
+        OkHttpClient client = buildClient(url, username, password, proxy);
 
         String contentType = "application/json; charset=utf-8";
         if (null != headers) {
@@ -368,7 +367,7 @@ public class HttpUtil {
      * @return boolean
      */
     public static boolean download(String url, Map<String, String> headers, String rootDir, String fileName) {
-        OkHttpClient client = buildClient(url, null, null, false, 10);
+        OkHttpClient client = buildClient(url, null, null, null, 10);
         Map<String, Object> retMap = new HashMap<>();
         if (sendRequestDb(url, "get", true, headers, null, retMap, client, null)) {
             Response response = (Response) retMap.get("response");
@@ -483,7 +482,7 @@ public class HttpUtil {
      * @return boolean
      */
     public static boolean canDownload(String url, Map<String, String> headers) {
-        OkHttpClient client = buildClient(url, null, null, false, 10);
+        OkHttpClient client = buildClient(url, null, null, null, 10);
         Map<String, Object> retMap = new HashMap<>();
         if (sendRequestDb(url, "get", true, headers, null, retMap, client, null)) {
             Response response = (Response) retMap.get("response");
@@ -579,7 +578,7 @@ public class HttpUtil {
         header.put("Authorization", "Bearer Ra4b2DGF6k5UiN1OZ5NE8GQ8_z0u2S7wZlw7NUvNSYyc3CzrIJEasS3i3zUzH5lp");
         header.put("user-Agent", "del");
         header.put("Host", "del");
-        HttpResp resp = HttpUtil.postBody(api, header, "{\"isSoc\":false,\"destinationLocationType\":\"CY\",\"serviceScopeCode\":\"AEW\",\"originLoc\":\"CNSHA\",\"reeferType\":\"\",\"destinationLoc\":\"NLRTM\",\"commodityCode\":\"000000\",\"containers\":[{\"cargoType\":\"DR\",\"quantity\":1,\"isError\":false,\"isFocus\":false,\"equipmentONECntrTpSz\":\"D2\",\"equipmentIsoCode\":\"22G1\",\"equipmentName\":\"DRY 20\",\"equipmentSize\":\"20\",\"commodityGroups\":[{\"commodityGroup\":\"FAK\"}]}],\"commodityGroups\":[],\"originLocationType\":\"CY\"}", false);
+        HttpResp resp = HttpUtil.postBody(api, header, "{\"isSoc\":false,\"destinationLocationType\":\"CY\",\"serviceScopeCode\":\"AEW\",\"originLoc\":\"CNSHA\",\"reeferType\":\"\",\"destinationLoc\":\"NLRTM\",\"commodityCode\":\"000000\",\"containers\":[{\"cargoType\":\"DR\",\"quantity\":1,\"isError\":false,\"isFocus\":false,\"equipmentONECntrTpSz\":\"D2\",\"equipmentIsoCode\":\"22G1\",\"equipmentName\":\"DRY 20\",\"equipmentSize\":\"20\",\"commodityGroups\":[{\"commodityGroup\":\"FAK\"}]}],\"commodityGroups\":[],\"originLocationType\":\"CY\"}", null);
         String bodyJson = resp.getBodyJson();
         System.out.println(bodyJson);
 

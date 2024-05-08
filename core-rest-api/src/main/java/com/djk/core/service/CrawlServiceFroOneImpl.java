@@ -9,6 +9,7 @@ import com.djk.core.model.*;
 import com.djk.core.utils.FreeMakerUtil;
 import com.djk.core.utils.HttpResp;
 import com.djk.core.utils.HttpUtil;
+import com.djk.core.utils.MyProxyUtil;
 import com.djk.core.vo.ContainerDist;
 import com.djk.core.vo.QueryRouteVo;
 import lombok.Data;
@@ -60,12 +61,13 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
     @Override
     @Transactional
     public String queryData(QueryRouteVo queryRouteVo, String hostCode) {
+        String proxy = MyProxyUtil.getProxy();
         this.setHostCode(hostCode);
-        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据");
+        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + proxy);
         BasePort fromPort = getFromPort(queryRouteVo);
         BasePort toPort = getToPort(queryRouteVo);
-        JSONObject portInfoFrom = getPortInfo(queryRouteVo, fromPort.getOneCode(), fromPort.getCountryCode());
-        JSONObject portInfoTo = getPortInfo(queryRouteVo, toPort.getOneCode(), toPort.getCountryCode());
+        JSONObject portInfoFrom = getPortInfo(queryRouteVo, fromPort.getOneCode(), fromPort.getCountryCode(), proxy);
+        JSONObject portInfoTo = getPortInfo(queryRouteVo, toPort.getOneCode(), toPort.getCountryCode(), proxy);
 
         BaseShippingCompany baseShippingCompany = getShipCompany(hostCode);
 
@@ -86,7 +88,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
 
                     log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
-                    HttpResp resp = HttpUtil.postBody("https://ecomm.one-line.com/api/v1/quotation/schedules/vessel-dates", getHeader(), jsonParam, true);
+                    HttpResp resp = HttpUtil.postBody("https://ecomm.one-line.com/api/v1/quotation/schedules/vessel-dates", getHeader(), jsonParam, proxy);
                     Response response = resp.getResponse();
                     String bodyJson = resp.getBodyJson();
                     JSONObject retObj = JSONObject.parseObject(bodyJson);
@@ -103,7 +105,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                     if (null == offers || offers.isEmpty()) {
                         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次 请求获取返回未空");
                     } else {
-                        parseData(baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap);
+                        parseData(baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap, proxy);
                     }
                     reqCount = 0;
                     break;
@@ -119,7 +121,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         return insertData(queryRouteVo, hostCode, productInfoList, productContainerList, productFeeItemList);
     }
 
-    private void parseData(BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap) throws ParseException {
+    private void parseData(BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap, String proxy) throws ParseException {
         int containerType = computeContainerType(container.getContainerCode());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -227,7 +229,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                     productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                 }
 
-                getFreeFee(productFeeItemList, productFeeItem, departureStart.getString("departureLoc"), departureEnd.getString("arrivalLoc"), departureEnd.getString("arrivalDateEstimated"), container, freightInfo.getString("spotRateOfferingId"));
+                getFreeFee(productFeeItemList, productFeeItem, departureStart.getString("departureLoc"), departureEnd.getString("arrivalLoc"), departureEnd.getString("arrivalDateEstimated"), container, freightInfo.getString("spotRateOfferingId"), proxy);
 
             }
         }
@@ -269,11 +271,11 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         return header;
     }
 
-    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode) {
+    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode, String proxy) {
         String api = "https://ecomm.one-line.com/api/v1/quotation/locations?location=" + portCodeEn + "&orgDest=origin";
         Map<String, String> header = getHeader();
         try {
-            HttpResp resp = HttpUtil.get(api, header, true);
+            HttpResp resp = HttpUtil.get(api, header, proxy);
             String bodyJson = resp.getBodyJson();
             JSONObject retObj = JSONObject.parseObject(bodyJson);
             JSONArray arr = retObj.getJSONArray("data");
@@ -306,7 +308,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
      *
      * @return
      */
-    public String getFreeFee(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String fromCode, String toCode, String arriveTime, ContainerDist containerDist, String spotRateOfferingId) {
+    public String getFreeFee(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String fromCode, String toCode, String arriveTime, ContainerDist containerDist, String spotRateOfferingId, String proxy) {
         String jsonParam = "{" +
                 "    \"originUNLocationCode\": \"" + fromCode + "\",\n" +
                 "    \"destinationUNLocationCode\": \"" + toCode + "\",\n" +
@@ -325,7 +327,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 "}";
 
         try {
-            HttpResp resp = HttpUtil.postBody("https://ecomm.one-line.com/api/v1/quotation/demurrage-detention-info", getHeader(), JSONObject.parseObject(jsonParam).toJSONString(), true);
+            HttpResp resp = HttpUtil.postBody("https://ecomm.one-line.com/api/v1/quotation/demurrage-detention-info", getHeader(), JSONObject.parseObject(jsonParam).toJSONString(), proxy);
             String bodyJson = resp.getBodyJson();
             JSONObject jsonObject = JSONObject.parseObject(bodyJson);
             JSONObject origin = jsonObject.getJSONObject("origin");

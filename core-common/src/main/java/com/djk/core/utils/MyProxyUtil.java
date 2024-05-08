@@ -28,7 +28,7 @@ public class MyProxyUtil {
         String secretToken = null;
         int count = 1;
         while (count <= 3 && StringUtils.isEmpty(secretToken)) {
-            HttpResp resp = HttpUtil.postForm("https://auth.kdlapi.com/api/get_secret_token", null, params, false);
+            HttpResp resp = HttpUtil.postForm("https://auth.kdlapi.com/api/get_secret_token", null, params, null);
             JSONObject jsonObject = JSONObject.parseObject(resp.getBodyJson());
             JSONObject data = jsonObject.getJSONObject("data");
             if (null != data) {
@@ -37,7 +37,7 @@ public class MyProxyUtil {
             count++;
         }
 
-        HttpResp httpResp = HttpUtil.get("https://dps.kdlapi.com/api/getdps?format=json&secret_id=" + SECRET_ID + "&num=" + PER_PROXY_COUNT + "&signature=" + secretToken, null, false);
+        HttpResp httpResp = HttpUtil.get("https://dps.kdlapi.com/api/getdps?format=json&secret_id=" + SECRET_ID + "&num=" + PER_PROXY_COUNT + "&signature=" + secretToken, null, null);
         JSONObject jsonObject = JSONObject.parseObject(httpResp.getBodyJson());
         JSONArray jsonArray = jsonObject.getJSONObject("data").getJSONArray("proxy_list");
         for (int i = 0; i < jsonArray.size(); i++) {
