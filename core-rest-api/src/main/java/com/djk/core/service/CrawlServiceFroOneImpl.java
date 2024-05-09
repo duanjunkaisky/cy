@@ -107,7 +107,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                     if (null == offers || offers.isEmpty()) {
                         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次 请求获取返回未空");
                     } else {
-                        parseData(baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap, proxy);
+                        parseData(queryRouteVo, baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap, proxy);
                     }
                     reqCount = 0;
                     break;
@@ -123,7 +123,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         return insertData(queryRouteVo, hostCode, productInfoList, productContainerList, productFeeItemList);
     }
 
-    private void parseData(BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap, String proxy) throws ParseException {
+    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap, String proxy) throws ParseException {
         int containerType = computeContainerType(container.getContainerCode());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -169,7 +169,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 productInfo.setDeleted(false);
                 productInfo.setTenantId(0L);
 
-                productInfo.setSpotId(createSpotId(productInfo.getDeparturePortEn(), productInfo.getDestinationPortEn()));
+                productInfo.setSpotId(queryRouteVo.getSpotId());
 
                 String existKey = productInfo.getDeparturePortEn()
                         + productInfo.getDestinationPortEn()

@@ -137,7 +137,7 @@ abstract class BaseSimpleCrawlService implements CrawlService
 
     public String createSpotId(String departurePortEn, String destinationPortEn)
     {
-        String spotIdStr = departurePortEn + destinationPortEn;
+        String spotIdStr = departurePortEn.toUpperCase() + destinationPortEn.toUpperCase();
         return DigestUtils.md5DigestAsHex(spotIdStr.getBytes());
     }
 
