@@ -20,7 +20,7 @@ public class MyProxyUtil {
     public static final int PER_PROXY_COUNT = 10;
     public static ConcurrentHashMap<Integer, String> proxyMap = new ConcurrentHashMap<>(10);
 
-    public static void newProxyList() {
+    public synchronized static void newProxyList() {
         log.info("获取代理ip");
         Map<String, Object> params = new HashMap<>();
         params.put("secret_id", SECRET_ID);

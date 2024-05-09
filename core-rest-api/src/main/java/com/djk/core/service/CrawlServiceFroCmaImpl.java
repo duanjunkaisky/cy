@@ -352,15 +352,17 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
                         "  \"TraceId\": \"" + traceId + "\"\n" +
                         "}";
                 TimeUnit.MILLISECONDS.sleep(SLEEP_REQUEST_TIME);
-                HttpResp resp = HttpUtil.postBody("https://www.cma-cgm.com/ebusiness/pricing/getAllocationAndChargeDetails", getHeader(), JSONObject.parseObject(jsonParam).toJSONString(), MyProxyUtil.getProxy());
+                Map<String, String> header = getHeader();
+                getRequestToken(header);
+                HttpResp resp = HttpUtil.postBody("https://www.cma-cgm.com/ebusiness/pricing/getAllocationAndChargeDetails", header, JSONObject.parseObject(jsonParam).toJSONString(), MyProxyUtil.getProxy());
                 Response response = resp.getResponse();
                 String bodyJson = resp.getBodyJson();
                 JSONObject retObj = JSONObject.parseObject(bodyJson);
                 if (response.code() != 200 && response.code() != 201) {
                     tokenIndex++;
-                    log.info(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 第" + count + "次获取费目信息失败\n" + bodyJson);
+                    log.info(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 第" + count + "次获取售罄+费目信息失败\n" + bodyJson);
                 } else {
-                    log.info(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 第" + count + "次获取费目信息成功");
+                    log.info(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 第" + count + "次获取售罄+费目信息成功");
                     Boolean aBoolean = retObj.getJSONObject("AllocationResponse").getBoolean("HasAllocation");
                     if (aBoolean) {
                         return retObj;
