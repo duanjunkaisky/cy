@@ -38,6 +38,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ConsumerPull implements CommandLineRunner {
 
+//    相同的爬取请求前后2次需要间隔
+    public static final Long FREE_TIME = 60 * 1000 * 2L;
+
     @Value("${rocketmq.name-server}")
     private String namesrvAddr;
 
@@ -126,8 +129,8 @@ public class ConsumerPull implements CommandLineRunner {
                                                         .filter(item -> item.getStatus() == Constant.CRAWL_STATUS.RUNNING.ordinal())
                                                         .collect(Collectors.toList());
                                                 long offsetTime = System.currentTimeMillis() - startTime;
-                                                //相同的爬取请求前后2次需要间隔1分钟
-                                                if ((null == mergeList || mergeList.isEmpty()) && offsetTime > 1000 * 60) {
+                                                //相同的爬取请求前后2次需要间隔
+                                                if ((null == mergeList || mergeList.isEmpty()) && offsetTime > FREE_TIME) {
                                                     canCrawl = true;
                                                 }
                                             } else {
