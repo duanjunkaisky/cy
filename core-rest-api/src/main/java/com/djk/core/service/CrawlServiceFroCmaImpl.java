@@ -38,7 +38,8 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Data
-public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements CrawlService {
+public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements CrawlService
+{
     private static int reqCount = 0;
     private static int tokenIndex = 0;
 
@@ -145,7 +146,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
                     }
 
                     //开始处理入库
-                    parseData(queryRouteVo, baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap);
+                    parseData(baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap);
                     reqCount = 0;
                     break;
                 } catch (Exception e) {
@@ -161,7 +162,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
     }
 
 
-    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap) throws ParseException {
+    private void parseData(BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap) throws ParseException {
         int containerType = computeContainerType(container.getContainerType());
 
         for (Object o : offers) {
@@ -200,7 +201,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
             productInfo.setDeleted(false);
             productInfo.setTenantId(0L);
 
-            productInfo.setSpotId(queryRouteVo.getSpotId());
+            productInfo.setSpotId(createSpotId(productInfo.getDeparturePortEn(), productInfo.getDestinationPortEn()));
 
             String existKey = productInfo.getDeparturePortEn()
                     + productInfo.getDestinationPortEn()
