@@ -367,8 +367,8 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
                 }
             } catch (Exception e) {
                 log.error("获取费目出错\nheader: " + JSONObject.toJSONString(header) + "\n body: " + JSONObject.parseObject(jsonParam).toJSONString());
-                log.error(ExceptionUtil.getMessage(e).substring(0, 1000));
-                log.error(ExceptionUtil.stacktraceToString(e).substring(0, 1000));
+                log.error(ExceptionUtil.getMessage(e));
+                log.error(ExceptionUtil.stacktraceToString(e));
             }
         }
         return null;
