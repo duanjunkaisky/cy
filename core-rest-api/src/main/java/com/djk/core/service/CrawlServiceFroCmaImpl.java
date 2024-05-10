@@ -41,7 +41,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
     private static int reqCount = 0;
     private static int tokenIndex = 0;
 
-    public static final long SLEEP_REQUEST_TIME = 1000L;
+    public static final long SLEEP_REQUEST_TIME = 200L;
 
     @Autowired
     BasePortMapper basePortMapper;
