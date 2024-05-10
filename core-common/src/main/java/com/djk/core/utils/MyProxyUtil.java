@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class MyProxyUtil {
+    public static final boolean proxyOn = false;
     public static final String PROXY_USERNAME = "d2408575423";
     public static final String PROXY_PASSWORD = "gl4pk39d";
 
@@ -52,21 +53,25 @@ public class MyProxyUtil {
     }
 
     public static String getProxy() {
-        try {
-            String proxy = null;
-            int count = 1;
-            while (proxyMap.isEmpty() && StringUtils.isEmpty(proxy) && count <= 3) {
-                newProxyList();
-                int index = new Random().nextInt(proxyMap.size());
-                proxy = proxyMap.get(index);
-                if (!StringUtils.isEmpty(proxy)) {
-                    return proxy;
+        if (proxyOn) {
+            try {
+                String proxy = null;
+                int count = 1;
+                while (proxyMap.isEmpty() && StringUtils.isEmpty(proxy) && count <= 3) {
+                    newProxyList();
+                    int index = new Random().nextInt(proxyMap.size());
+                    proxy = proxyMap.get(index);
+                    if (!StringUtils.isEmpty(proxy)) {
+                        return proxy;
+                    }
+                    count++;
                 }
-                count++;
+                int index = new Random().nextInt(proxyMap.size());
+                return proxyMap.get(index);
+            } catch (Exception e) {
+                return null;
             }
-            int index = new Random().nextInt(proxyMap.size());
-            return proxyMap.get(index);
-        } catch (Exception e) {
+        } else {
             return null;
         }
     }
