@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class MyProxyUtil {
-    public static final boolean proxyOn = false;
+    public static final boolean proxyOn = true;
     public static final String PROXY_USERNAME = "d2408575423";
     public static final String PROXY_PASSWORD = "gl4pk39d";
 

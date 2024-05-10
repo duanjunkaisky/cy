@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author duanjunkai
@@ -42,6 +42,9 @@ public class ApiController {
 
     @Autowired
     CrawlServiceFroCmaImpl crawlService;
+
+    @Autowired
+    CrawlChain crawlChain;
 
     /**
      * @param queryRouteVo
@@ -78,10 +81,27 @@ public class ApiController {
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult test(@RequestBody QueryRouteVo queryRouteVo) {
-        crawlService.queryData(queryRouteVo, queryRouteVo.getHostCode());
-//        crawlService.setHostCode(queryRouteVo.getHostCode());
-//        crawlService.getRequestToken(new HashMap<String,String>());
+        try {
+            queryRouteVo.setStartTime(System.currentTimeMillis());
+            queryRouteVo.setSpotId(crawlService.createSpotId(queryRouteVo.getDeparturePortEn(), queryRouteVo.getDestinationPortEn()));
+            crawlChain.doBusiness(queryRouteVo);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return CommonResult.success("操作成功");
+    }
 
+    @RequestMapping(value = "/getToken", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult getToken(@RequestBody QueryRouteVo queryRouteVo) {
+        try {
+            JSONObject token = crawlService.getToken(queryRouteVo.getHostCode(), 1);
+            return CommonResult.success(token);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return CommonResult.success("操作成功");
     }
 

@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -60,7 +59,6 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
     }
 
     @Override
-    @Transactional
     public String queryData(QueryRouteVo queryRouteVo, String hostCode) {
         this.setHostCode(hostCode);
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + null);

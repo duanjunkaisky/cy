@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -68,7 +67,6 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
     }
 
     @Override
-    @Transactional
     public String queryData(QueryRouteVo queryRouteVo, String hostCode) {
         this.setHostCode(hostCode);
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + null);
@@ -475,51 +473,51 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
     }
 
     public void getRequestToken(Map<String, String> header) {
-        int count = 0;
-        while (count < Constant.MAX_REQ_COUNT) {
-            count++;
-            try {
-                TimeUnit.MILLISECONDS.sleep(SLEEP_REQUEST_TIME);
-                String api = "https://www.cma-cgm.com/ebusiness/pricing/instant-Quoting";
-                HttpResp resp = HttpUtil.get(api, getHeader(), null);
-                Response response = resp.getResponse();
-                String bodyJson = resp.getBodyJson();
-
-                Pattern pattern = Pattern.compile("input name=\"__RequestVerificationToken\" type=\"hidden\" value=\"[a-zA-Z0-9-_~!@#$%^&*+_\\(\\),\\./]+");
-                Matcher matcher = pattern.matcher(bodyJson);
-
-                if (matcher.find()) {
-                    String group = matcher.group();
-                    String requestPageToken = group.replace("input name=\"__RequestVerificationToken\" type=\"hidden\" value=\"", "");
-                    header.put("__RequestVerificationToken", requestPageToken);
-                }
-                String cookie = header.get("Cookie");
-                String newCookie = "";
-                String[] split = cookie.split(";");
-                List<String> headers = response.headers("set-cookie");
-                for (int i = 0; i < split.length; i++) {
-                    String s = split[i];
-                    String key = s.split("=")[0];
-                    boolean exist = false;
-                    for (int j = 0; j < headers.size(); j++) {
-                        String nowValue = headers.get(j);
-                        if (key.equalsIgnoreCase(nowValue.split("=")[0])) {
-                            newCookie += nowValue + ";";
-                            exist = true;
-                            break;
-                        }
-                    }
-                    if (!exist) {
-                        newCookie += s + ";";
-                    }
-                }
-                header.put("Cookie", newCookie);
-            } catch (Exception e) {
-                log.error("获取__RequestToken出错");
-                log.error(ExceptionUtil.getMessage(e));
-                log.error(ExceptionUtil.stacktraceToString(e));
-            }
-        }
+//        int count = 0;
+//        while (count < Constant.MAX_REQ_COUNT) {
+//            count++;
+//            try {
+//                TimeUnit.MILLISECONDS.sleep(SLEEP_REQUEST_TIME);
+//                String api = "https://www.cma-cgm.com/ebusiness/pricing/instant-Quoting";
+//                HttpResp resp = HttpUtil.get(api, getHeader(), null);
+//                Response response = resp.getResponse();
+//                String bodyJson = resp.getBodyJson();
+//
+//                Pattern pattern = Pattern.compile("input name=\"__RequestVerificationToken\" type=\"hidden\" value=\"[a-zA-Z0-9-_~!@#$%^&*+_\\(\\),\\./]+");
+//                Matcher matcher = pattern.matcher(bodyJson);
+//
+//                if (matcher.find()) {
+//                    String group = matcher.group();
+//                    String requestPageToken = group.replace("input name=\"__RequestVerificationToken\" type=\"hidden\" value=\"", "");
+//                    header.put("__RequestVerificationToken", requestPageToken);
+//                }
+//                String cookie = header.get("Cookie");
+//                String newCookie = "";
+//                String[] split = cookie.split(";");
+//                List<String> headers = response.headers("set-cookie");
+//                for (int i = 0; i < split.length; i++) {
+//                    String s = split[i];
+//                    String key = s.split("=")[0];
+//                    boolean exist = false;
+//                    for (int j = 0; j < headers.size(); j++) {
+//                        String nowValue = headers.get(j);
+//                        if (key.equalsIgnoreCase(nowValue.split("=")[0])) {
+//                            newCookie += nowValue + ";";
+//                            exist = true;
+//                            break;
+//                        }
+//                    }
+//                    if (!exist) {
+//                        newCookie += s + ";";
+//                    }
+//                }
+//                header.put("Cookie", newCookie);
+//            } catch (Exception e) {
+//                log.error("获取__RequestToken出错");
+//                log.error(ExceptionUtil.getMessage(e));
+//                log.error(ExceptionUtil.stacktraceToString(e));
+//            }
+//        }
 
     }
 

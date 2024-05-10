@@ -9,14 +9,12 @@ import com.djk.core.model.*;
 import com.djk.core.utils.FreeMakerUtil;
 import com.djk.core.utils.HttpResp;
 import com.djk.core.utils.HttpUtil;
-import com.djk.core.utils.MyProxyUtil;
 import com.djk.core.vo.ContainerDist;
 import com.djk.core.vo.QueryRouteVo;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -64,7 +62,6 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     }
 
     @Override
-    @Transactional
     public String queryData(QueryRouteVo queryRouteVo, String hostCode) {
         String proxy = null;
 //        String proxy = MyProxyUtil.getProxy();
