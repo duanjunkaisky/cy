@@ -177,12 +177,12 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
             productInfo.setCnAbbreviation(baseShippingCompany.getCnAbbreviation());
             productInfo.setImage(baseShippingCompany.getImage());
 
-            productInfo.setEstimatedDepartureDate(parseDate(departureStart.getString("DepartureDate")));
+            productInfo.setEstimatedDepartureDate(parseDate(departureStart.getString("DepartureGmtDate"), 0));
             //scheduleDetails有多个就是中转，只有一个就是直达
             productInfo.setRoute(routingDetails.size() == 1 ? 1 : 2);
             productInfo.setCourse(fromPort.getPortNameZh() + " - " + toPort.getPortNameZh());
-            productInfo.setArrivalTime(parseDate(departureEnd.getString("ArrivalDate")));
-            productInfo.setProductExpiryDate(parseDate(item.getString("BookingCutoffDate")));
+            productInfo.setArrivalTime(parseDate(departureEnd.getString("ArrivalGmtDate"), 1000 * 60 * 60 * 8));
+            productInfo.setProductExpiryDate(parseDate(item.getString("BookingCutoffDate"), 1000 * 60 * 60 * 8));
 
             productInfo.setShipName(item.getString("VesselName"));
             productInfo.setVoyageNumber(item.getString("Voyage"));
@@ -523,13 +523,14 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
 
     }
 
-    public Date parseDate(String dateString) {
+    public Date parseDate(String dateString, long gmt)
+    {
         String pattern = "\\d+(\\.\\d+)?";
         Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(dateString);
 
         if (m.find()) {
-            return new Date(Long.parseLong(m.group()));
+            return new Date(Long.parseLong(m.group()) - gmt);
         }
         throw new RuntimeException("时间解析出错: " + dateString);
     }
