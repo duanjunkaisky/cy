@@ -224,6 +224,8 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
             productContainer.setSpotId(productInfo.getSpotId());
             productContainer.setSellingPrice(chargeDetail.getJSONObject("TotalCharge").getBigDecimal("Amount"));
             productContainer.setCost(productContainer.getSellingPrice());
+            String currency = chargeDetail.getJSONObject("TotalCharge").getJSONObject("Currency").getString("Code");
+            productContainer.setFeeCurrency(parseCurrentCy(currency));
             productContainer.setCreateTime(new Date());
             productContainer.setUpdateTime(new Date());
             productContainer.setDeleted(false);
