@@ -38,8 +38,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Data
-public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements CrawlService
-{
+public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements CrawlService {
     private static int reqCount = 0;
     private static int tokenIndex = 0;
 
@@ -337,17 +336,21 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
         while (count < Constant.MAX_REQ_COUNT) {
             count++;
             try {
-                String jsonParam = "{\n" +
-                        "  \"LoggedId\": \"" + loggedId + "\",\n" +
-                        "  \"NextDepartureSolutionNumber\": " + solutionNumber + ",\n" +
-                        "  \"NextDepartureScheduleNumber\": " + ScheduleNumber + ",\n" +
-                        "  \"DigitalAllocationsDisplay\": \"infoOnly\",\n" +
-                        "  \"OfferId\": \"" + offerId + "\",\n" +
-                        "  \"TraceId\": \"" + traceId + "\"\n" +
-                        "}";
                 TimeUnit.MILLISECONDS.sleep(SLEEP_REQUEST_TIME);
-                Map<String, String> header = getHeader();
-                getRequestToken(header);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            Map<String, String> header = getHeader();
+            getRequestToken(header);
+            String jsonParam = "{\n" +
+                    "  \"LoggedId\": \"" + loggedId + "\",\n" +
+                    "  \"NextDepartureSolutionNumber\": " + solutionNumber + ",\n" +
+                    "  \"NextDepartureScheduleNumber\": " + ScheduleNumber + ",\n" +
+                    "  \"DigitalAllocationsDisplay\": \"infoOnly\",\n" +
+                    "  \"OfferId\": \"" + offerId + "\",\n" +
+                    "  \"TraceId\": \"" + traceId + "\"\n" +
+                    "}";
+            try {
                 HttpResp resp = HttpUtil.postBody("https://www.cma-cgm.com/ebusiness/pricing/getAllocationAndChargeDetails", header, JSONObject.parseObject(jsonParam).toJSONString(), MyProxyUtil.getProxy());
                 Response response = resp.getResponse();
                 String bodyJson = resp.getBodyJson();
@@ -365,9 +368,9 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
                     }
                 }
             } catch (Exception e) {
-                log.error("获取费目出错");
-                log.error(ExceptionUtil.getMessage(e));
-                log.error(ExceptionUtil.stacktraceToString(e));
+                log.error("获取费目出错\nheader: " + JSONObject.toJSONString(header) + "\n body: " + JSONObject.parseObject(jsonParam).toJSONString());
+                log.error(ExceptionUtil.getMessage(e).substring(0, 1000));
+                log.error(ExceptionUtil.stacktraceToString(e).substring(0, 1000));
             }
         }
         return null;
