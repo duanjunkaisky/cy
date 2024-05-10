@@ -7,6 +7,7 @@
     <result column="container_type" jdbcType="INTEGER" property="containerType" />
     <result column="selling_price" jdbcType="DECIMAL" property="sellingPrice" />
     <result column="cost" jdbcType="DECIMAL" property="cost" />
+    <result column="fee_currency" jdbcType="INTEGER" property="feeCurrency" />
     <result column="sell_out" jdbcType="BIT" property="sellOut" />
     <result column="spot_id" jdbcType="VARCHAR" property="spotId" />
     <result column="creator" jdbcType="VARCHAR" property="creator" />
@@ -77,8 +78,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, product_id, container_type, selling_price, cost, sell_out, spot_id, creator, 
-    create_time, updater, update_time, deleted, tenant_id, deleted_by, deleted_time
+    id, product_id, container_type, selling_price, cost, fee_currency, sell_out, spot_id, 
+    creator, create_time, updater, update_time, deleted, tenant_id, deleted_by, deleted_time
   </sql>
   <select id="selectByExample" parameterType="com.djk.core.model.ProductContainerExample" resultMap="BaseResultMap">
     select
@@ -112,17 +113,17 @@
   </delete>
   <insert id="insert" parameterType="com.djk.core.model.ProductContainer">
     insert into product_container (id, product_id, container_type, 
-      selling_price, cost, sell_out, 
-      spot_id, creator, create_time, 
-      updater, update_time, deleted, 
-      tenant_id, deleted_by, deleted_time
-      )
+      selling_price, cost, fee_currency, 
+      sell_out, spot_id, creator, 
+      create_time, updater, update_time, 
+      deleted, tenant_id, deleted_by, 
+      deleted_time)
     values (#{id,jdbcType=BIGINT}, #{productId,jdbcType=BIGINT}, #{containerType,jdbcType=INTEGER}, 
-      #{sellingPrice,jdbcType=DECIMAL}, #{cost,jdbcType=DECIMAL}, #{sellOut,jdbcType=BIT}, 
-      #{spotId,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updater,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=BIT}, 
-      #{tenantId,jdbcType=BIGINT}, #{deletedBy,jdbcType=VARCHAR}, #{deletedTime,jdbcType=TIMESTAMP}
-      )
+      #{sellingPrice,jdbcType=DECIMAL}, #{cost,jdbcType=DECIMAL}, #{feeCurrency,jdbcType=INTEGER}, 
+      #{sellOut,jdbcType=BIT}, #{spotId,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updater,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{deleted,jdbcType=BIT}, #{tenantId,jdbcType=BIGINT}, #{deletedBy,jdbcType=VARCHAR}, 
+      #{deletedTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.djk.core.model.ProductContainer">
     insert into product_container
@@ -141,6 +142,9 @@
       </if>
       <if test="cost != null">
         cost,
+      </if>
+      <if test="feeCurrency != null">
+        fee_currency,
       </if>
       <if test="sellOut != null">
         sell_out,
@@ -188,6 +192,9 @@
       </if>
       <if test="cost != null">
         #{cost,jdbcType=DECIMAL},
+      </if>
+      <if test="feeCurrency != null">
+        #{feeCurrency,jdbcType=INTEGER},
       </if>
       <if test="sellOut != null">
         #{sellOut,jdbcType=BIT},
@@ -245,6 +252,9 @@
       <if test="record.cost != null">
         cost = #{record.cost,jdbcType=DECIMAL},
       </if>
+      <if test="record.feeCurrency != null">
+        fee_currency = #{record.feeCurrency,jdbcType=INTEGER},
+      </if>
       <if test="record.sellOut != null">
         sell_out = #{record.sellOut,jdbcType=BIT},
       </if>
@@ -287,6 +297,7 @@
       container_type = #{record.containerType,jdbcType=INTEGER},
       selling_price = #{record.sellingPrice,jdbcType=DECIMAL},
       cost = #{record.cost,jdbcType=DECIMAL},
+      fee_currency = #{record.feeCurrency,jdbcType=INTEGER},
       sell_out = #{record.sellOut,jdbcType=BIT},
       spot_id = #{record.spotId,jdbcType=VARCHAR},
       creator = #{record.creator,jdbcType=VARCHAR},
@@ -315,6 +326,9 @@
       </if>
       <if test="cost != null">
         cost = #{cost,jdbcType=DECIMAL},
+      </if>
+      <if test="feeCurrency != null">
+        fee_currency = #{feeCurrency,jdbcType=INTEGER},
       </if>
       <if test="sellOut != null">
         sell_out = #{sellOut,jdbcType=BIT},
@@ -355,6 +369,7 @@
       container_type = #{containerType,jdbcType=INTEGER},
       selling_price = #{sellingPrice,jdbcType=DECIMAL},
       cost = #{cost,jdbcType=DECIMAL},
+      fee_currency = #{feeCurrency,jdbcType=INTEGER},
       sell_out = #{sellOut,jdbcType=BIT},
       spot_id = #{spotId,jdbcType=VARCHAR},
       creator = #{creator,jdbcType=VARCHAR},
@@ -370,19 +385,19 @@
   <insert id="batchInsert">
     <if test="items.get(0) != null">
             insert into product_container  (id, product_id, container_type, 
-        selling_price, cost, sell_out, 
-        spot_id, creator, create_time, 
-        updater, update_time, deleted, 
-        tenant_id, deleted_by, deleted_time
-        )
+        selling_price, cost, fee_currency, 
+        sell_out, spot_id, creator, 
+        create_time, updater, update_time, 
+        deleted, tenant_id, deleted_by, 
+        deleted_time)
       values
       <foreach collection="items" item="item" index="index" separator=",">
       (#{item.id,jdbcType=BIGINT}, #{item.productId,jdbcType=BIGINT}, #{item.containerType,jdbcType=INTEGER}, 
-        #{item.sellingPrice,jdbcType=DECIMAL}, #{item.cost,jdbcType=DECIMAL}, #{item.sellOut,jdbcType=BIT}, 
-        #{item.spotId,jdbcType=VARCHAR}, #{item.creator,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, 
-        #{item.updater,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.deleted,jdbcType=BIT}, 
-        #{item.tenantId,jdbcType=BIGINT}, #{item.deletedBy,jdbcType=VARCHAR}, #{item.deletedTime,jdbcType=TIMESTAMP}
-        )
+        #{item.sellingPrice,jdbcType=DECIMAL}, #{item.cost,jdbcType=DECIMAL}, #{item.feeCurrency,jdbcType=INTEGER}, 
+        #{item.sellOut,jdbcType=BIT}, #{item.spotId,jdbcType=VARCHAR}, #{item.creator,jdbcType=VARCHAR}, 
+        #{item.createTime,jdbcType=TIMESTAMP}, #{item.updater,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP}, 
+        #{item.deleted,jdbcType=BIT}, #{item.tenantId,jdbcType=BIGINT}, #{item.deletedBy,jdbcType=VARCHAR}, 
+        #{item.deletedTime,jdbcType=TIMESTAMP})
       </foreach>
     </if>
   </insert>

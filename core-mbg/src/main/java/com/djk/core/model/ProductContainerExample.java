@@ -406,6 +406,66 @@ public class ProductContainerExample {
             return (Criteria) this;
         }
 
+        public Criteria andFeeCurrencyIsNull() {
+            addCriterion("fee_currency is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCurrencyIsNotNull() {
+            addCriterion("fee_currency is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCurrencyEqualTo(Integer value) {
+            addCriterion("fee_currency =", value, "feeCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCurrencyNotEqualTo(Integer value) {
+            addCriterion("fee_currency <>", value, "feeCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCurrencyGreaterThan(Integer value) {
+            addCriterion("fee_currency >", value, "feeCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCurrencyGreaterThanOrEqualTo(Integer value) {
+            addCriterion("fee_currency >=", value, "feeCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCurrencyLessThan(Integer value) {
+            addCriterion("fee_currency <", value, "feeCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCurrencyLessThanOrEqualTo(Integer value) {
+            addCriterion("fee_currency <=", value, "feeCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCurrencyIn(List<Integer> values) {
+            addCriterion("fee_currency in", values, "feeCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCurrencyNotIn(List<Integer> values) {
+            addCriterion("fee_currency not in", values, "feeCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCurrencyBetween(Integer value1, Integer value2) {
+            addCriterion("fee_currency between", value1, value2, "feeCurrency");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeCurrencyNotBetween(Integer value1, Integer value2) {
+            addCriterion("fee_currency not between", value1, value2, "feeCurrency");
+            return (Criteria) this;
+        }
+
         public Criteria andSellOutIsNull() {
             addCriterion("sell_out is null");
             return (Criteria) this;

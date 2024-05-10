@@ -71,14 +71,23 @@ public class BasePort implements Serializable {
     @ApiModelProperty(value = "MSK代码")
     private String mskCode;
 
+    @ApiModelProperty(value = "MSK的maerskRkstCode")
+    private String mskRkstCode;
+
     @ApiModelProperty(value = "MCC代码")
     private String mccCode;
+
+    @ApiModelProperty(value = "MCC的maerskRkstCode")
+    private String mccRkstCode;
 
     @ApiModelProperty(value = "ONE代码")
     private String oneCode;
 
     @ApiModelProperty(value = "MSC代码")
     private String mscCode;
+
+    @ApiModelProperty(value = "MSC的LongDisplayName")
+    private String mscLocalCode;
 
     @ApiModelProperty(value = "ZIM代码")
     private String zimCode;
@@ -94,6 +103,9 @@ public class BasePort implements Serializable {
 
     @ApiModelProperty(value = "HPL代码")
     private String hplCode;
+
+    @ApiModelProperty(value = "HPL的businessPostalCode")
+    private String hplPostalCode;
 
     @ApiModelProperty(value = "创建者")
     private String creator;
@@ -297,12 +309,28 @@ public class BasePort implements Serializable {
         this.mskCode = mskCode;
     }
 
+    public String getMskRkstCode() {
+        return mskRkstCode;
+    }
+
+    public void setMskRkstCode(String mskRkstCode) {
+        this.mskRkstCode = mskRkstCode;
+    }
+
     public String getMccCode() {
         return mccCode;
     }
 
     public void setMccCode(String mccCode) {
         this.mccCode = mccCode;
+    }
+
+    public String getMccRkstCode() {
+        return mccRkstCode;
+    }
+
+    public void setMccRkstCode(String mccRkstCode) {
+        this.mccRkstCode = mccRkstCode;
     }
 
     public String getOneCode() {
@@ -319,6 +347,14 @@ public class BasePort implements Serializable {
 
     public void setMscCode(String mscCode) {
         this.mscCode = mscCode;
+    }
+
+    public String getMscLocalCode() {
+        return mscLocalCode;
+    }
+
+    public void setMscLocalCode(String mscLocalCode) {
+        this.mscLocalCode = mscLocalCode;
     }
 
     public String getZimCode() {
@@ -359,6 +395,14 @@ public class BasePort implements Serializable {
 
     public void setHplCode(String hplCode) {
         this.hplCode = hplCode;
+    }
+
+    public String getHplPostalCode() {
+        return hplPostalCode;
+    }
+
+    public void setHplPostalCode(String hplPostalCode) {
+        this.hplPostalCode = hplPostalCode;
     }
 
     public String getCreator() {
@@ -453,14 +497,18 @@ public class BasePort implements Serializable {
         sb.append(", ooclCode=").append(ooclCode);
         sb.append(", emcCode=").append(emcCode);
         sb.append(", mskCode=").append(mskCode);
+        sb.append(", mskRkstCode=").append(mskRkstCode);
         sb.append(", mccCode=").append(mccCode);
+        sb.append(", mccRkstCode=").append(mccRkstCode);
         sb.append(", oneCode=").append(oneCode);
         sb.append(", mscCode=").append(mscCode);
+        sb.append(", mscLocalCode=").append(mscLocalCode);
         sb.append(", zimCode=").append(zimCode);
         sb.append(", hmmCode=").append(hmmCode);
         sb.append(", cmaCode=").append(cmaCode);
         sb.append(", cncCode=").append(cncCode);
         sb.append(", hplCode=").append(hplCode);
+        sb.append(", hplPostalCode=").append(hplPostalCode);
         sb.append(", creator=").append(creator);
         sb.append(", createTime=").append(createTime);
         sb.append(", updater=").append(updater);

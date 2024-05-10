@@ -1595,6 +1595,76 @@ public class BasePortExample {
             return (Criteria) this;
         }
 
+        public Criteria andMskRkstCodeIsNull() {
+            addCriterion("msk_rkst_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMskRkstCodeIsNotNull() {
+            addCriterion("msk_rkst_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMskRkstCodeEqualTo(String value) {
+            addCriterion("msk_rkst_code =", value, "mskRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMskRkstCodeNotEqualTo(String value) {
+            addCriterion("msk_rkst_code <>", value, "mskRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMskRkstCodeGreaterThan(String value) {
+            addCriterion("msk_rkst_code >", value, "mskRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMskRkstCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("msk_rkst_code >=", value, "mskRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMskRkstCodeLessThan(String value) {
+            addCriterion("msk_rkst_code <", value, "mskRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMskRkstCodeLessThanOrEqualTo(String value) {
+            addCriterion("msk_rkst_code <=", value, "mskRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMskRkstCodeLike(String value) {
+            addCriterion("msk_rkst_code like", value, "mskRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMskRkstCodeNotLike(String value) {
+            addCriterion("msk_rkst_code not like", value, "mskRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMskRkstCodeIn(List<String> values) {
+            addCriterion("msk_rkst_code in", values, "mskRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMskRkstCodeNotIn(List<String> values) {
+            addCriterion("msk_rkst_code not in", values, "mskRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMskRkstCodeBetween(String value1, String value2) {
+            addCriterion("msk_rkst_code between", value1, value2, "mskRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMskRkstCodeNotBetween(String value1, String value2) {
+            addCriterion("msk_rkst_code not between", value1, value2, "mskRkstCode");
+            return (Criteria) this;
+        }
+
         public Criteria andMccCodeIsNull() {
             addCriterion("mcc_code is null");
             return (Criteria) this;
@@ -1662,6 +1732,76 @@ public class BasePortExample {
 
         public Criteria andMccCodeNotBetween(String value1, String value2) {
             addCriterion("mcc_code not between", value1, value2, "mccCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMccRkstCodeIsNull() {
+            addCriterion("mcc_rkst_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMccRkstCodeIsNotNull() {
+            addCriterion("mcc_rkst_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMccRkstCodeEqualTo(String value) {
+            addCriterion("mcc_rkst_code =", value, "mccRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMccRkstCodeNotEqualTo(String value) {
+            addCriterion("mcc_rkst_code <>", value, "mccRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMccRkstCodeGreaterThan(String value) {
+            addCriterion("mcc_rkst_code >", value, "mccRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMccRkstCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("mcc_rkst_code >=", value, "mccRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMccRkstCodeLessThan(String value) {
+            addCriterion("mcc_rkst_code <", value, "mccRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMccRkstCodeLessThanOrEqualTo(String value) {
+            addCriterion("mcc_rkst_code <=", value, "mccRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMccRkstCodeLike(String value) {
+            addCriterion("mcc_rkst_code like", value, "mccRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMccRkstCodeNotLike(String value) {
+            addCriterion("mcc_rkst_code not like", value, "mccRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMccRkstCodeIn(List<String> values) {
+            addCriterion("mcc_rkst_code in", values, "mccRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMccRkstCodeNotIn(List<String> values) {
+            addCriterion("mcc_rkst_code not in", values, "mccRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMccRkstCodeBetween(String value1, String value2) {
+            addCriterion("mcc_rkst_code between", value1, value2, "mccRkstCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMccRkstCodeNotBetween(String value1, String value2) {
+            addCriterion("mcc_rkst_code not between", value1, value2, "mccRkstCode");
             return (Criteria) this;
         }
 
@@ -1802,6 +1942,76 @@ public class BasePortExample {
 
         public Criteria andMscCodeNotBetween(String value1, String value2) {
             addCriterion("msc_code not between", value1, value2, "mscCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMscLocalCodeIsNull() {
+            addCriterion("msc_local_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMscLocalCodeIsNotNull() {
+            addCriterion("msc_local_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMscLocalCodeEqualTo(String value) {
+            addCriterion("msc_local_code =", value, "mscLocalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMscLocalCodeNotEqualTo(String value) {
+            addCriterion("msc_local_code <>", value, "mscLocalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMscLocalCodeGreaterThan(String value) {
+            addCriterion("msc_local_code >", value, "mscLocalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMscLocalCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("msc_local_code >=", value, "mscLocalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMscLocalCodeLessThan(String value) {
+            addCriterion("msc_local_code <", value, "mscLocalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMscLocalCodeLessThanOrEqualTo(String value) {
+            addCriterion("msc_local_code <=", value, "mscLocalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMscLocalCodeLike(String value) {
+            addCriterion("msc_local_code like", value, "mscLocalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMscLocalCodeNotLike(String value) {
+            addCriterion("msc_local_code not like", value, "mscLocalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMscLocalCodeIn(List<String> values) {
+            addCriterion("msc_local_code in", values, "mscLocalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMscLocalCodeNotIn(List<String> values) {
+            addCriterion("msc_local_code not in", values, "mscLocalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMscLocalCodeBetween(String value1, String value2) {
+            addCriterion("msc_local_code between", value1, value2, "mscLocalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andMscLocalCodeNotBetween(String value1, String value2) {
+            addCriterion("msc_local_code not between", value1, value2, "mscLocalCode");
             return (Criteria) this;
         }
 
@@ -2152,6 +2362,76 @@ public class BasePortExample {
 
         public Criteria andHplCodeNotBetween(String value1, String value2) {
             addCriterion("hpl_code not between", value1, value2, "hplCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andHplPostalCodeIsNull() {
+            addCriterion("hpl_postal_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHplPostalCodeIsNotNull() {
+            addCriterion("hpl_postal_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHplPostalCodeEqualTo(String value) {
+            addCriterion("hpl_postal_code =", value, "hplPostalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andHplPostalCodeNotEqualTo(String value) {
+            addCriterion("hpl_postal_code <>", value, "hplPostalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andHplPostalCodeGreaterThan(String value) {
+            addCriterion("hpl_postal_code >", value, "hplPostalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andHplPostalCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("hpl_postal_code >=", value, "hplPostalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andHplPostalCodeLessThan(String value) {
+            addCriterion("hpl_postal_code <", value, "hplPostalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andHplPostalCodeLessThanOrEqualTo(String value) {
+            addCriterion("hpl_postal_code <=", value, "hplPostalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andHplPostalCodeLike(String value) {
+            addCriterion("hpl_postal_code like", value, "hplPostalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andHplPostalCodeNotLike(String value) {
+            addCriterion("hpl_postal_code not like", value, "hplPostalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andHplPostalCodeIn(List<String> values) {
+            addCriterion("hpl_postal_code in", values, "hplPostalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andHplPostalCodeNotIn(List<String> values) {
+            addCriterion("hpl_postal_code not in", values, "hplPostalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andHplPostalCodeBetween(String value1, String value2) {
+            addCriterion("hpl_postal_code between", value1, value2, "hplPostalCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andHplPostalCodeNotBetween(String value1, String value2) {
+            addCriterion("hpl_postal_code not between", value1, value2, "hplPostalCode");
             return (Criteria) this;
         }
 

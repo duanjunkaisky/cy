@@ -21,6 +21,9 @@ public class ProductContainer implements Serializable {
     @ApiModelProperty(value = "成本")
     private BigDecimal cost;
 
+    @ApiModelProperty(value = "币种 字典配置 1人民币/2美元/3欧元")
+    private Integer feeCurrency;
+
     @ApiModelProperty(value = "是否售罄")
     private Boolean sellOut;
 
@@ -91,6 +94,14 @@ public class ProductContainer implements Serializable {
 
     public void setCost(BigDecimal cost) {
         this.cost = cost;
+    }
+
+    public Integer getFeeCurrency() {
+        return feeCurrency;
+    }
+
+    public void setFeeCurrency(Integer feeCurrency) {
+        this.feeCurrency = feeCurrency;
     }
 
     public Boolean getSellOut() {
@@ -184,6 +195,7 @@ public class ProductContainer implements Serializable {
         sb.append(", containerType=").append(containerType);
         sb.append(", sellingPrice=").append(sellingPrice);
         sb.append(", cost=").append(cost);
+        sb.append(", feeCurrency=").append(feeCurrency);
         sb.append(", sellOut=").append(sellOut);
         sb.append(", spotId=").append(spotId);
         sb.append(", creator=").append(creator);

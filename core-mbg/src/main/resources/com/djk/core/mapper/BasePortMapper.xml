@@ -24,14 +24,18 @@
     <result column="oocl_code" jdbcType="VARCHAR" property="ooclCode" />
     <result column="emc_code" jdbcType="VARCHAR" property="emcCode" />
     <result column="msk_code" jdbcType="VARCHAR" property="mskCode" />
+    <result column="msk_rkst_code" jdbcType="VARCHAR" property="mskRkstCode" />
     <result column="mcc_code" jdbcType="VARCHAR" property="mccCode" />
+    <result column="mcc_rkst_code" jdbcType="VARCHAR" property="mccRkstCode" />
     <result column="one_code" jdbcType="VARCHAR" property="oneCode" />
     <result column="msc_code" jdbcType="VARCHAR" property="mscCode" />
+    <result column="msc_local_code" jdbcType="VARCHAR" property="mscLocalCode" />
     <result column="zim_code" jdbcType="VARCHAR" property="zimCode" />
     <result column="hmm_code" jdbcType="VARCHAR" property="hmmCode" />
     <result column="cma_code" jdbcType="VARCHAR" property="cmaCode" />
     <result column="cnc_code" jdbcType="VARCHAR" property="cncCode" />
     <result column="hpl_code" jdbcType="VARCHAR" property="hplCode" />
+    <result column="hpl_postal_code" jdbcType="VARCHAR" property="hplPostalCode" />
     <result column="creator" jdbcType="VARCHAR" property="creator" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="updater" jdbcType="VARCHAR" property="updater" />
@@ -102,9 +106,10 @@
   <sql id="Base_Column_List">
     id, port_name_en, port_name_zh, port_code, country_name_en, country_name_zh, country_code, 
     province_zh, province_en, state_zh, state_en, city_zh, city_en, port_type, region, 
-    area, status, notes, cosco_code, oocl_code, emc_code, msk_code, mcc_code, one_code, 
-    msc_code, zim_code, hmm_code, cma_code, cnc_code, hpl_code, creator, create_time, 
-    updater, update_time, deleted, tenant_id, deleted_by, deleted_time
+    area, status, notes, cosco_code, oocl_code, emc_code, msk_code, msk_rkst_code, mcc_code, 
+    mcc_rkst_code, one_code, msc_code, msc_local_code, zim_code, hmm_code, cma_code, 
+    cnc_code, hpl_code, hpl_postal_code, creator, create_time, updater, update_time, 
+    deleted, tenant_id, deleted_by, deleted_time
   </sql>
   <select id="selectByExample" parameterType="com.djk.core.model.BasePortExample" resultMap="BaseResultMap">
     select
@@ -144,12 +149,14 @@
       city_en, port_type, region, 
       area, status, notes, 
       cosco_code, oocl_code, emc_code, 
-      msk_code, mcc_code, one_code, 
-      msc_code, zim_code, hmm_code, 
+      msk_code, msk_rkst_code, mcc_code, 
+      mcc_rkst_code, one_code, msc_code, 
+      msc_local_code, zim_code, hmm_code, 
       cma_code, cnc_code, hpl_code, 
-      creator, create_time, updater, 
-      update_time, deleted, tenant_id, 
-      deleted_by, deleted_time)
+      hpl_postal_code, creator, create_time, 
+      updater, update_time, deleted, 
+      tenant_id, deleted_by, deleted_time
+      )
     values (#{id,jdbcType=BIGINT}, #{portNameEn,jdbcType=VARCHAR}, #{portNameZh,jdbcType=VARCHAR}, 
       #{portCode,jdbcType=VARCHAR}, #{countryNameEn,jdbcType=VARCHAR}, #{countryNameZh,jdbcType=VARCHAR}, 
       #{countryCode,jdbcType=VARCHAR}, #{provinceZh,jdbcType=VARCHAR}, #{provinceEn,jdbcType=VARCHAR}, 
@@ -157,12 +164,14 @@
       #{cityEn,jdbcType=VARCHAR}, #{portType,jdbcType=INTEGER}, #{region,jdbcType=BIGINT}, 
       #{area,jdbcType=BIGINT}, #{status,jdbcType=TINYINT}, #{notes,jdbcType=VARCHAR}, 
       #{coscoCode,jdbcType=VARCHAR}, #{ooclCode,jdbcType=VARCHAR}, #{emcCode,jdbcType=VARCHAR}, 
-      #{mskCode,jdbcType=VARCHAR}, #{mccCode,jdbcType=VARCHAR}, #{oneCode,jdbcType=VARCHAR}, 
-      #{mscCode,jdbcType=VARCHAR}, #{zimCode,jdbcType=VARCHAR}, #{hmmCode,jdbcType=VARCHAR}, 
+      #{mskCode,jdbcType=VARCHAR}, #{mskRkstCode,jdbcType=VARCHAR}, #{mccCode,jdbcType=VARCHAR}, 
+      #{mccRkstCode,jdbcType=VARCHAR}, #{oneCode,jdbcType=VARCHAR}, #{mscCode,jdbcType=VARCHAR}, 
+      #{mscLocalCode,jdbcType=VARCHAR}, #{zimCode,jdbcType=VARCHAR}, #{hmmCode,jdbcType=VARCHAR}, 
       #{cmaCode,jdbcType=VARCHAR}, #{cncCode,jdbcType=VARCHAR}, #{hplCode,jdbcType=VARCHAR}, 
-      #{creator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updater,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=BIT}, #{tenantId,jdbcType=BIGINT}, 
-      #{deletedBy,jdbcType=VARCHAR}, #{deletedTime,jdbcType=TIMESTAMP})
+      #{hplPostalCode,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updater,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=BIT}, 
+      #{tenantId,jdbcType=BIGINT}, #{deletedBy,jdbcType=VARCHAR}, #{deletedTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.djk.core.model.BasePort">
     insert into base_port
@@ -233,14 +242,23 @@
       <if test="mskCode != null">
         msk_code,
       </if>
+      <if test="mskRkstCode != null">
+        msk_rkst_code,
+      </if>
       <if test="mccCode != null">
         mcc_code,
+      </if>
+      <if test="mccRkstCode != null">
+        mcc_rkst_code,
       </if>
       <if test="oneCode != null">
         one_code,
       </if>
       <if test="mscCode != null">
         msc_code,
+      </if>
+      <if test="mscLocalCode != null">
+        msc_local_code,
       </if>
       <if test="zimCode != null">
         zim_code,
@@ -256,6 +274,9 @@
       </if>
       <if test="hplCode != null">
         hpl_code,
+      </if>
+      <if test="hplPostalCode != null">
+        hpl_postal_code,
       </if>
       <if test="creator != null">
         creator,
@@ -349,14 +370,23 @@
       <if test="mskCode != null">
         #{mskCode,jdbcType=VARCHAR},
       </if>
+      <if test="mskRkstCode != null">
+        #{mskRkstCode,jdbcType=VARCHAR},
+      </if>
       <if test="mccCode != null">
         #{mccCode,jdbcType=VARCHAR},
+      </if>
+      <if test="mccRkstCode != null">
+        #{mccRkstCode,jdbcType=VARCHAR},
       </if>
       <if test="oneCode != null">
         #{oneCode,jdbcType=VARCHAR},
       </if>
       <if test="mscCode != null">
         #{mscCode,jdbcType=VARCHAR},
+      </if>
+      <if test="mscLocalCode != null">
+        #{mscLocalCode,jdbcType=VARCHAR},
       </if>
       <if test="zimCode != null">
         #{zimCode,jdbcType=VARCHAR},
@@ -372,6 +402,9 @@
       </if>
       <if test="hplCode != null">
         #{hplCode,jdbcType=VARCHAR},
+      </if>
+      <if test="hplPostalCode != null">
+        #{hplPostalCode,jdbcType=VARCHAR},
       </if>
       <if test="creator != null">
         #{creator,jdbcType=VARCHAR},
@@ -474,14 +507,23 @@
       <if test="record.mskCode != null">
         msk_code = #{record.mskCode,jdbcType=VARCHAR},
       </if>
+      <if test="record.mskRkstCode != null">
+        msk_rkst_code = #{record.mskRkstCode,jdbcType=VARCHAR},
+      </if>
       <if test="record.mccCode != null">
         mcc_code = #{record.mccCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mccRkstCode != null">
+        mcc_rkst_code = #{record.mccRkstCode,jdbcType=VARCHAR},
       </if>
       <if test="record.oneCode != null">
         one_code = #{record.oneCode,jdbcType=VARCHAR},
       </if>
       <if test="record.mscCode != null">
         msc_code = #{record.mscCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mscLocalCode != null">
+        msc_local_code = #{record.mscLocalCode,jdbcType=VARCHAR},
       </if>
       <if test="record.zimCode != null">
         zim_code = #{record.zimCode,jdbcType=VARCHAR},
@@ -497,6 +539,9 @@
       </if>
       <if test="record.hplCode != null">
         hpl_code = #{record.hplCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hplPostalCode != null">
+        hpl_postal_code = #{record.hplPostalCode,jdbcType=VARCHAR},
       </if>
       <if test="record.creator != null">
         creator = #{record.creator,jdbcType=VARCHAR},
@@ -551,14 +596,18 @@
       oocl_code = #{record.ooclCode,jdbcType=VARCHAR},
       emc_code = #{record.emcCode,jdbcType=VARCHAR},
       msk_code = #{record.mskCode,jdbcType=VARCHAR},
+      msk_rkst_code = #{record.mskRkstCode,jdbcType=VARCHAR},
       mcc_code = #{record.mccCode,jdbcType=VARCHAR},
+      mcc_rkst_code = #{record.mccRkstCode,jdbcType=VARCHAR},
       one_code = #{record.oneCode,jdbcType=VARCHAR},
       msc_code = #{record.mscCode,jdbcType=VARCHAR},
+      msc_local_code = #{record.mscLocalCode,jdbcType=VARCHAR},
       zim_code = #{record.zimCode,jdbcType=VARCHAR},
       hmm_code = #{record.hmmCode,jdbcType=VARCHAR},
       cma_code = #{record.cmaCode,jdbcType=VARCHAR},
       cnc_code = #{record.cncCode,jdbcType=VARCHAR},
       hpl_code = #{record.hplCode,jdbcType=VARCHAR},
+      hpl_postal_code = #{record.hplPostalCode,jdbcType=VARCHAR},
       creator = #{record.creator,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       updater = #{record.updater,jdbcType=VARCHAR},
@@ -637,14 +686,23 @@
       <if test="mskCode != null">
         msk_code = #{mskCode,jdbcType=VARCHAR},
       </if>
+      <if test="mskRkstCode != null">
+        msk_rkst_code = #{mskRkstCode,jdbcType=VARCHAR},
+      </if>
       <if test="mccCode != null">
         mcc_code = #{mccCode,jdbcType=VARCHAR},
+      </if>
+      <if test="mccRkstCode != null">
+        mcc_rkst_code = #{mccRkstCode,jdbcType=VARCHAR},
       </if>
       <if test="oneCode != null">
         one_code = #{oneCode,jdbcType=VARCHAR},
       </if>
       <if test="mscCode != null">
         msc_code = #{mscCode,jdbcType=VARCHAR},
+      </if>
+      <if test="mscLocalCode != null">
+        msc_local_code = #{mscLocalCode,jdbcType=VARCHAR},
       </if>
       <if test="zimCode != null">
         zim_code = #{zimCode,jdbcType=VARCHAR},
@@ -660,6 +718,9 @@
       </if>
       <if test="hplCode != null">
         hpl_code = #{hplCode,jdbcType=VARCHAR},
+      </if>
+      <if test="hplPostalCode != null">
+        hpl_postal_code = #{hplPostalCode,jdbcType=VARCHAR},
       </if>
       <if test="creator != null">
         creator = #{creator,jdbcType=VARCHAR},
@@ -711,14 +772,18 @@
       oocl_code = #{ooclCode,jdbcType=VARCHAR},
       emc_code = #{emcCode,jdbcType=VARCHAR},
       msk_code = #{mskCode,jdbcType=VARCHAR},
+      msk_rkst_code = #{mskRkstCode,jdbcType=VARCHAR},
       mcc_code = #{mccCode,jdbcType=VARCHAR},
+      mcc_rkst_code = #{mccRkstCode,jdbcType=VARCHAR},
       one_code = #{oneCode,jdbcType=VARCHAR},
       msc_code = #{mscCode,jdbcType=VARCHAR},
+      msc_local_code = #{mscLocalCode,jdbcType=VARCHAR},
       zim_code = #{zimCode,jdbcType=VARCHAR},
       hmm_code = #{hmmCode,jdbcType=VARCHAR},
       cma_code = #{cmaCode,jdbcType=VARCHAR},
       cnc_code = #{cncCode,jdbcType=VARCHAR},
       hpl_code = #{hplCode,jdbcType=VARCHAR},
+      hpl_postal_code = #{hplPostalCode,jdbcType=VARCHAR},
       creator = #{creator,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       updater = #{updater,jdbcType=VARCHAR},
@@ -738,12 +803,14 @@
         city_en, port_type, region, 
         area, status, notes, 
         cosco_code, oocl_code, emc_code, 
-        msk_code, mcc_code, one_code, 
-        msc_code, zim_code, hmm_code, 
+        msk_code, msk_rkst_code, mcc_code, 
+        mcc_rkst_code, one_code, msc_code, 
+        msc_local_code, zim_code, hmm_code, 
         cma_code, cnc_code, hpl_code, 
-        creator, create_time, updater, 
-        update_time, deleted, tenant_id, 
-        deleted_by, deleted_time)
+        hpl_postal_code, creator, create_time, 
+        updater, update_time, deleted, 
+        tenant_id, deleted_by, deleted_time
+        )
       values
       <foreach collection="items" item="item" index="index" separator=",">
       (#{item.id,jdbcType=BIGINT}, #{item.portNameEn,jdbcType=VARCHAR}, #{item.portNameZh,jdbcType=VARCHAR}, 
@@ -753,12 +820,14 @@
         #{item.cityEn,jdbcType=VARCHAR}, #{item.portType,jdbcType=INTEGER}, #{item.region,jdbcType=BIGINT}, 
         #{item.area,jdbcType=BIGINT}, #{item.status,jdbcType=TINYINT}, #{item.notes,jdbcType=VARCHAR}, 
         #{item.coscoCode,jdbcType=VARCHAR}, #{item.ooclCode,jdbcType=VARCHAR}, #{item.emcCode,jdbcType=VARCHAR}, 
-        #{item.mskCode,jdbcType=VARCHAR}, #{item.mccCode,jdbcType=VARCHAR}, #{item.oneCode,jdbcType=VARCHAR}, 
-        #{item.mscCode,jdbcType=VARCHAR}, #{item.zimCode,jdbcType=VARCHAR}, #{item.hmmCode,jdbcType=VARCHAR}, 
+        #{item.mskCode,jdbcType=VARCHAR}, #{item.mskRkstCode,jdbcType=VARCHAR}, #{item.mccCode,jdbcType=VARCHAR}, 
+        #{item.mccRkstCode,jdbcType=VARCHAR}, #{item.oneCode,jdbcType=VARCHAR}, #{item.mscCode,jdbcType=VARCHAR}, 
+        #{item.mscLocalCode,jdbcType=VARCHAR}, #{item.zimCode,jdbcType=VARCHAR}, #{item.hmmCode,jdbcType=VARCHAR}, 
         #{item.cmaCode,jdbcType=VARCHAR}, #{item.cncCode,jdbcType=VARCHAR}, #{item.hplCode,jdbcType=VARCHAR}, 
-        #{item.creator,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updater,jdbcType=VARCHAR}, 
-        #{item.updateTime,jdbcType=TIMESTAMP}, #{item.deleted,jdbcType=BIT}, #{item.tenantId,jdbcType=BIGINT}, 
-        #{item.deletedBy,jdbcType=VARCHAR}, #{item.deletedTime,jdbcType=TIMESTAMP})
+        #{item.hplPostalCode,jdbcType=VARCHAR}, #{item.creator,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, 
+        #{item.updater,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.deleted,jdbcType=BIT}, 
+        #{item.tenantId,jdbcType=BIGINT}, #{item.deletedBy,jdbcType=VARCHAR}, #{item.deletedTime,jdbcType=TIMESTAMP}
+        )
       </foreach>
     </if>
   </insert>
