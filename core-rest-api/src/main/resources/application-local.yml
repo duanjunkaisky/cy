@@ -12,7 +12,7 @@ spring:
       validation-query: select 1
       test-while-idle: true
   redis:
-    host: 127.0.0.1
+    host: 124.223.114.215
     database: 0
     port: 16379
     password: $123456$
