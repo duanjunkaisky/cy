@@ -4,6 +4,7 @@ import cn.hutool.core.exceptions.ExceptionUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.djk.core.config.Constant;
 import com.djk.core.config.SpringUtil;
+import com.djk.core.dao.CustomDao;
 import com.djk.core.mapper.CrawlRequestStatusMapper;
 import com.djk.core.model.CrawlRequestStatus;
 import com.djk.core.model.CrawlRequestStatusExample;
@@ -30,8 +31,7 @@ import java.util.concurrent.*;
 @Data
 @ConfigurationProperties(prefix = "crawl")
 @Slf4j
-public class CrawlChain
-{
+public class CrawlChain {
     private List<String> target;
 
     public static ListeningExecutorService EXECUTOR_SERVICE = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
@@ -39,9 +39,11 @@ public class CrawlChain
     @Autowired
     CrawlRequestStatusMapper requestStatusMapper;
 
+    @Autowired
+    CustomDao customDao;
+
     @Async("asyncServiceExecutor")
-    public void doBusiness(QueryRouteVo queryRouteVo) throws ExecutionException, InterruptedException
-    {
+    public void doBusiness(QueryRouteVo queryRouteVo) throws ExecutionException, InterruptedException {
         List<ListenableFuture<String>> futureList = new ArrayList<>();
         for (String beanName : target) {
             String hostCode = getHostCode(beanName);
@@ -83,13 +85,16 @@ public class CrawlChain
             requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
             requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
         });
+
+        customDao.executeSql("delete from product_container where  spot_id='" + queryRouteVo.getSpotId() + "' and not exists ( select 1 from product_info where id=product_id)");
+        customDao.executeSql("delete from product_fee_item where  spot_id='" + queryRouteVo.getSpotId() + "' and not exists ( select 1 from product_info where id=product_id)");
+
         ConsumerPull.currentJobs.remove(String.valueOf(queryRouteVo.getSpotId()));
 
         log.info("---> " + queryRouteVo.getSpotId() + " - 本次请求爬取结束!");
     }
 
-    public static String getHostCode(String beanName)
-    {
+    public static String getHostCode(String beanName) {
         String str = beanName.toLowerCase();
         return str.replaceAll("crawlservicefro", "").replaceAll("impl", "");
     }
