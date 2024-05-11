@@ -188,7 +188,10 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 productContainer.setContainerType(containerType);
                 productContainer.setProductId(productInfo.getId());
                 productContainer.setSpotId(productInfo.getSpotId());
-                productContainer.setSellingPrice(freightInfo.getBigDecimal("price"));
+
+                BigDecimal totalPrice = item.getBigDecimal("totalPrice");
+                BigDecimal totalPricePremium = item.getBigDecimal("totalPricePremium");
+                productContainer.setSellingPrice(totalPrice.add(totalPricePremium));
                 productContainer.setCost(freightInfo.getBigDecimal("price"));
                 String currency = item.getJSONArray("currencies").getString(0);
                 productContainer.setFeeCurrency(parseCurrentCy(currency));
