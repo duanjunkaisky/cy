@@ -251,9 +251,11 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
             JSONArray prepaidChargeDetails = chargeDetail.getJSONArray("PrepaidChargeDetails");
             JSONObject blChargeDetail = fee.getJSONObject("BlChargeDetail");
             JSONArray prepaidChargeDetails2 = blChargeDetail.getJSONArray("PrepaidChargeDetails");
+            JSONArray prepaidChargeDetails3 = blChargeDetail.getJSONArray("FreightChargeDetails");
             JSONArray array = new JSONArray();
             array.addAll(prepaidChargeDetails);
             array.addAll(prepaidChargeDetails2);
+            array.addAll(prepaidChargeDetails3);
             for (Object pcd : array) {
                 JSONObject prepaidChargeDetail = (JSONObject) pcd;
                 parseFeeIntoList(productFeeItemList, productFeeItem, prepaidChargeDetail, 1);
@@ -289,7 +291,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
         }
 
         productFeeItem.setPrice(amount);
-        productFeeItem.setFeeCnName(StringUtils.isEmpty(chargeName) ? "OceanFreight Basic" : chargeName);
+        productFeeItem.setFeeCnName(StringUtils.isEmpty(chargeName) ? "Bunker surcharge NOS/Ocean Carrier-Intl Ship & port Facility Security" : chargeName);
         productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
 
         productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));

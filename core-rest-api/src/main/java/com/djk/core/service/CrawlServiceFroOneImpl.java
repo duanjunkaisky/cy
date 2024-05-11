@@ -224,6 +224,20 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                     productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                 }
 
+                JSONArray premiumCharges = freightInfo.getJSONArray("premiumCharges");
+                for (Object oc : premiumCharges) {
+                    JSONObject premiumCharge = (JSONObject) oc;
+                    confirmValue(productFeeItem, premiumCharge);
+                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
+                }
+
+                JSONArray freightCharges = freightInfo.getJSONArray("freightCharges");
+                for (Object oc : freightCharges) {
+                    JSONObject freightCharge = (JSONObject) oc;
+                    confirmValue(productFeeItem, freightCharge);
+                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
+                }
+
                 JSONArray destinationCharges = freightInfo.getJSONArray("destinationCharges");
                 for (Object dc : destinationCharges) {
                     JSONObject destinationCharge = (JSONObject) dc;
