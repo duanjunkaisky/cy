@@ -183,6 +183,31 @@ abstract class BaseSimpleCrawlService implements CrawlService {
             productFeeItemMapper.batchInsert(productFeeItemList);
 
             log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 入库完成");
+        } else {
+            BaseShippingCompany baseShippingCompany = getShipCompany(hostCode);
+            ProductInfoExample productInfoExample = new ProductInfoExample();
+            productInfoExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId()).andShippingCompanyIdEqualTo(baseShippingCompany.getId());
+
+            List<ProductInfo> productInfos = productInfoMapper.selectByExample(productInfoExample);
+
+            productInfoMapper.deleteByExample(productInfoExample);
+
+            if (null != productInfos && !productInfos.isEmpty()) {
+                List<Long> productIds = productInfos.stream().map(item -> item.getId()).collect(Collectors.toList());
+
+                ProductContainerExample productContainerExample = new ProductContainerExample();
+                ProductContainerExample.Criteria criteria = productContainerExample.createCriteria();
+                criteria.andSpotIdEqualTo(queryRouteVo.getSpotId());
+                criteria.andProductIdIn(productIds);
+                productContainerMapper.deleteByExample(productContainerExample);
+
+                ProductFeeItemExample productFeeItemExample = new ProductFeeItemExample();
+                ProductFeeItemExample.Criteria criteria1 = productFeeItemExample.createCriteria();
+                criteria1.andSpotIdEqualTo(queryRouteVo.getSpotId());
+                criteria1.andProductIdIn(productIds);
+                productFeeItemMapper.deleteByExample(productFeeItemExample);
+            }
+
         }
 
         return String.valueOf(productInfoList.size());
