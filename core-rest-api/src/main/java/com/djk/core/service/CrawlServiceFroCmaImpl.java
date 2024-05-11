@@ -251,7 +251,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
             JSONArray prepaidChargeDetails = chargeDetail.getJSONArray("PrepaidChargeDetails");
             JSONObject blChargeDetail = fee.getJSONObject("BlChargeDetail");
             JSONArray prepaidChargeDetails2 = blChargeDetail.getJSONArray("PrepaidChargeDetails");
-            JSONArray prepaidChargeDetails3 = blChargeDetail.getJSONArray("FreightChargeDetails");
+            JSONArray prepaidChargeDetails3 = chargeDetail.getJSONArray("FreightChargeDetails");
             JSONArray array = new JSONArray();
             array.addAll(prepaidChargeDetails);
             array.addAll(prepaidChargeDetails2);
