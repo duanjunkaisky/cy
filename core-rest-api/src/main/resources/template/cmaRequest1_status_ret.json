@@ -1,222 +1,195 @@
 {
-  "ChargeDetails": [
-    {
-      "SizeType": "20ST",
-      "OceanFreight": {
-        "Price": {
-          "Amount": 2230.0,
-          "Currency": {
-            "Code": "USD",
-            "Name": null
-          }
-        },
-        "ChargeName": null,
-        "PaymentMethod": null,
-        "FixedByThePricer": false,
-        "ChargeCode": null,
-        "CommentOnChargeRule": null,
-        "ConvertedRate": 0.0,
-        "IsUnSubscribedVas": false
-      },
-      "CollectCharges": {
-        "Amount": 262.0,
-        "Currency": {
-          "Code": "USD",
-          "Name": "US Dollar"
-        }
-      },
-      "PrepaidCharges": {
-        "Amount": 96.0,
-        "Currency": {
-          "Code": "USD",
-          "Name": "US Dollar"
-        }
-      },
-      "FreightCharges": {
-        "Amount": 250.0,
-        "Currency": {
-          "Code": "USD",
-          "Name": "US Dollar"
-        }
-      },
-      "OceanFreightDetails": [
-        "Bunker surcharge NOS",
-        "Ocean Carrier-Intl Ship \u0026 port Facility Security"
-      ],
-      "CollectChargeDetails": [
-        {
-          "Price": {
-            "Amount": 245.0,
-            "Currency": {
-              "Code": "EUR",
-              "Name": "euro"
-            }
-          },
-          "ChargeName": "Terminal handl. ch  destination",
-          "PaymentMethod": "C",
-          "FixedByThePricer": false,
-          "ChargeCode": "THC34",
-          "CommentOnChargeRule": null,
-          "ConvertedRate": 262.0,
-          "IsUnSubscribedVas": false
-        }
-      ],
-      "PrepaidChargeDetails": [
-        {
-          "Price": {
-            "Amount": 30.0,
-            "Currency": {
-              "Code": "CNY",
-              "Name": "Yuan Renminbi"
-            }
-          },
-          "ChargeName": "Sealing service export",
-          "PaymentMethod": "P",
-          "FixedByThePricer": false,
-          "ChargeCode": "SEA06",
-          "CommentOnChargeRule": null,
-          "ConvertedRate": 4.0,
-          "IsUnSubscribedVas": false
-        },
-        {
-          "Price": {
-            "Amount": 665.0,
-            "Currency": {
-              "Code": "CNY",
-              "Name": "Yuan Renminbi"
-            }
-          },
-          "ChargeName": "Terminal handl ch origin",
-          "PaymentMethod": "P",
-          "FixedByThePricer": false,
-          "ChargeCode": "THC58",
-          "CommentOnChargeRule": "If standard dimensions and container gross weight over 30.50 tons, THC rates CNY 1094 / 1635 / 2038 per 20’ / 40 ‘ / 45’  DRY\n",
-          "ConvertedRate": 92.0,
-          "IsUnSubscribedVas": false
-        }
-      ],
-      "FreightChargeDetails": [
-        {
-          "Price": {
-            "Amount": 250.0,
-            "Currency": {
-              "Code": "USD",
-              "Name": "US Dollar"
-            }
-          },
-          "ChargeName": "Overweight, freight additional",
-          "PaymentMethod": null,
-          "FixedByThePricer": false,
-          "ChargeCode": "FRT61",
-          "CommentOnChargeRule": null,
-          "ConvertedRate": 250.0,
-          "IsUnSubscribedVas": false
-        }
-      ],
-      "OceanFreightChargeDetails": [
-        {
-          "Price": {
-            "Amount": 360.0,
-            "Currency": {
-              "Code": "USD",
-              "Name": "US Dollar"
-            }
-          },
-          "ChargeName": "Bunker surcharge NOS",
-          "PaymentMethod": null,
-          "FixedByThePricer": true,
-          "ChargeCode": "BAF03",
-          "CommentOnChargeRule": null,
-          "ConvertedRate": 360.0,
-          "IsUnSubscribedVas": false
-        },
-        {
-          "Price": {
-            "Amount": 14.0,
-            "Currency": {
-              "Code": "USD",
-              "Name": "US Dollar"
-            }
-          },
-          "ChargeName": "Ocean Carrier-Intl Ship \u0026 port Facility Security",
-          "PaymentMethod": null,
-          "FixedByThePricer": true,
-          "ChargeCode": "ISS01",
-          "CommentOnChargeRule": null,
-          "ConvertedRate": 14.0,
-          "IsUnSubscribedVas": false
-        }
-      ],
-      "TotalCharge": {
-        "Amount": 2838.0,
-        "Currency": {
-          "Code": "USD",
-          "Name": null
-        }
-      }
-    }
-  ],
-  "BlChargeDetail": {
-    "SizeType": null,
-    "OceanFreight": null,
-    "CollectCharges": {
-      "Amount": 0.0,
-      "Currency": {
-        "Code": "USD",
-        "Name": "US Dollar"
-      }
-    },
-    "PrepaidCharges": {
-      "Amount": 25.0,
-      "Currency": {
-        "Code": "USD",
-        "Name": "US Dollar"
-      }
-    },
-    "FreightCharges": {
-      "Amount": 0.0,
-      "Currency": {
-        "Code": "USD",
-        "Name": "US Dollar"
-      }
-    },
-    "OceanFreightDetails": [],
-    "CollectChargeDetails": [],
-    "PrepaidChargeDetails": [
+  "routingDetails": {
+    "SolutionNumber": 1,
+    "ScheduleNumber": 1,
+    "TransitTime": "37",
+    "TotalCO2": 0,
+    "LegGroups": [
       {
-        "Price": {
-          "Amount": 25.0,
-          "Currency": {
-            "Code": "USD",
-            "Name": "US Dollar"
-          }
+        "LegNumber": 1,
+        "RouteCode": null,
+        "CO2": 0,
+        "DepartureDate": "\/Date(1715742000000)\/",
+        "DepartureGmtDate": "\/Date(1715713200000)\/",
+        "ArrivalDate": "\/Date(1718949600000)\/",
+        "ArrivalGmtDate": "\/Date(1718942400000)\/",
+        "CutOffDate": "\/Date(1715504400000)\/",
+        "CutOffDateUtc": "\/Date(1715475600000)\/",
+        "VgmCutOffDate": "\/Date(1715504400000)\/",
+        "SpecialBookingAcceptance": "\/Date(1715245200000)\/",
+        "SpecialBookingAcceptanceUtc": "\/Date(1715216400000)\/",
+        "StandardBookingAcceptance": "\/Date(1715504400000)\/",
+        "StandardBookingAcceptanceUtc": "\/Date(1715475600000)\/",
+        "ServiceName": "French Asia Line 3",
+        "ServiceCode": "FAL3",
+        "VesselName": "CMA CGM MONTMARTRE",
+        "Feeder": false,
+        "VoyageRef": "0FMFNW1MA",
+        "LocalVoyageRef": null,
+        "DepartureDetails": {
+          "PlaceCode": "CNSHA",
+          "PlaceName": "SHANGHAI",
+          "PlaceCountryCode": "CN",
+          "PlaceCountryName": "CHINA",
+          "TerminalCode": "YAN",
+          "TerminalName": "YANGSHAN DEEP WATER PORT PHASE1 TER",
+          "Port": false,
+          "CallId": null
         },
-        "ChargeName": "Export Declaration Surcharge",
-        "PaymentMethod": "P",
-        "FixedByThePricer": false,
-        "ChargeCode": "CUS16",
-        "CommentOnChargeRule": null,
-        "ConvertedRate": 25.0,
-        "IsUnSubscribedVas": false
+        "ArrivalDetails": {
+          "PlaceCode": "NLRTM",
+          "PlaceName": "ROTTERDAM",
+          "PlaceCountryCode": "NL",
+          "PlaceCountryName": "NETHERLANDS",
+          "TerminalCode": "RWG",
+          "TerminalName": "ROTTERDAM WORLD GATEWAY TERMINAL",
+          "Port": false,
+          "CallId": null
+        }
+      }
+    ]
+  },
+  "quoteLineDetails": {
+    "QuoteLineExternalId": "99116548",
+    "QuoteLineId": 0,
+    "QuoteLineStatus": null,
+    "QuotationReference": "11761-SPOT-ASIA_NE/EUR_IOI_OCEANIA-DR/OG-ALL",
+    "QuoteLineType": "PL",
+    "QuoteLineAmendementNumber": 0,
+    "ExportMovementType": "Port",
+    "ImportMovementType": "Port",
+    "ExportInlandPointCode": null,
+    "PortOfLoading": "CNSHA",
+    "PortOfDischarge": "NLRTM",
+    "Origin": null,
+    "Destination": null,
+    "ImportInlandPointCode": null,
+    "Oversize": false,
+    "ShipperOwnedContainer": false,
+    "Hazardous": false,
+    "Reefer": false,
+    "Affiliates": [
+      {
+        "City": "LIANYUNGANG",
+        "Code": "0007418468",
+        "Name": "LIANYUNGANG HANGWEIYUN TECHNOLOGY DEVELOPMENT CO LTD",
+        "Type": null,
+        "ValidityFrom": null,
+        "ValidityTo": null,
+        "quotation": null,
+        "MainPartner": false
       }
     ],
-    "FreightChargeDetails": [],
-    "OceanFreightChargeDetails": [],
-    "TotalCharge": {
-      "Amount": 25.0,
-      "Currency": {
-        "Code": "USD",
-        "Name": "US Dollar"
+    "Tariff": {
+      "Type": "PL",
+      "Reference": null,
+      "BasedRateType": "BOF",
+      "dealPeriod": "SPOT"
+    },
+    "Equipments": [
+      {
+        "Code": "20ST",
+        "OceanFreightRate": 2980.0,
+        "CurrencyCode": "USD",
+        "TaoRate": null,
+        "TaoRateCurrencyCode": null,
+        "TadRate": null,
+        "TadRateCurrencyCode": null,
+        "NetWeight": 0,
+        "MaxNetWeight": 0,
+        "Volume": null,
+        "Height": null,
+        "Width": null,
+        "Length": null,
+        "TareWeight": null,
+        "SizeUnitOfMeasure": "TNE",
+        "CalculationType": null,
+        "Name": "20\u0027 干货标准集装箱",
+        "CurrName": "US Dollar"
       }
-    }
-  },
-  "AdditionalInformation": [],
-  "AllocationResponse": {
-    "HasBadResponse": false,
-    "HasAllocation": true,
-    "NoOfContainersAvailable": null,
-    "IsPartialAllocation": false
-  },
-  "AllocationBadRequest": false,
-  "TierPerVolume": null
+    ],
+    "ShippingCompany": "0001",
+    "Commodities": [
+      {
+        "Type": "GRP",
+        "Code": "FAK LISA (UPA)",
+        "Name": "Freight All Kind"
+      }
+    ],
+    "BulletCode": null,
+    "FreightOfAllKinds": true,
+    "MovementTypeFrom": null,
+    "MovementTypeTo": null,
+    "ExportModeOfTranportCode": null,
+    "ImportModeOfTranportCode": null,
+    "NonOperatingReefer": false,
+    "ValidityFrom": "\/Date(1715724000000)\/",
+    "ValidityTo": "\/Date(1716588000000)\/",
+    "ActualValidityFrom": null,
+    "ActualValidityTo": null,
+    "AdditionalTariff": null,
+    "ExportZipCode": null,
+    "ExportPoolPointCode": null,
+    "ExportDepotCode": null,
+    "ImportZipCode": null,
+    "ImportPoolPointCode": null,
+    "ImportDepotCode": null,
+    "ControlledAtmosphere": false,
+    "OverLength": false,
+    "OverWidth": false,
+    "OverHeight": false,
+    "CargoType": "ST",
+    "Temperature": null,
+    "Ventilation": null,
+    "CommentToCustomer": null,
+    "RoutingComment": "[SCHEDULE:0FMFNW1MA]",
+    "ExportConstruction": true,
+    "ImportConstruction": true,
+    "InlandExportConstructed": false,
+    "InlandImportConstructed": false,
+    "Trade": null,
+    "GroupCriteria": null,
+    "LineSequence": 0,
+    "BasePortCodeOrigin": null,
+    "BasePortCodeDestination": null,
+    "PaymentMethod": null,
+    "FedralMaritimeControl": false,
+    "SpotValidityInDays": 28,
+    "UnderDeck": false,
+    "ExportLinerTerms": null,
+    "ImportLinerTerms": null,
+    "Premium": false,
+    "AmendmentCode": null,
+    "SegmentId": null,
+    "InitialPortOfLoading": null,
+    "InitalPortOfDischarge": null,
+    "ImportDepotName": null,
+    "ExportDepotName": null,
+    "Schedule": null,
+    "Solution": null,
+    "Voyages": null,
+    "Services": null,
+    "ServiceMatched": null,
+    "VoyageMatched": null,
+    "solutionNumber": 1,
+    "SpotOffer": true,
+    "NumberOfContainer": 1,
+    "scheduleNumber": 1,
+    "qlKey": null,
+    "PolName": "SHANGHAI, CN",
+    "PodName": "ROTTERDAM, NL",
+    "RecPtName": null,
+    "DelPtName": null,
+    "BasePrtOrgName": null,
+    "BasePrtDestName": null,
+    "PickUpName": null,
+    "DropOffName": null,
+    "SpecialEquipDimen": null,
+    "SpecialEquipValue": null,
+    "OOgFlagDimen": null,
+    "HasNAC": false,
+    "HasEquipmentWeight": false,
+    "NextDepartureIndex": "quote_9911654811761-SPOT-ASIA_NE/EUR_IOI_OCEANIA-DR/OG-ALLsol_1sch_1",
+    "HasBookingAvailable": false
+  }
 }
