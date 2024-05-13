@@ -27,6 +27,11 @@ rocketmq:
     topic: ASYNC_CRAWL_TOPIC
     send-message-timeout: 3000
     mqMax: 32
+  producer-msk:
+    group: async_crawl_msk_page_group
+    topic: ASYNC_CRAWL_MSK_PAGE
+    send-message-timeout: 3000
+    mqMax: 32
   pull: true
   maxCrawlTime: 1800000 #一次爬取最大30分钟
   maxCrawlCount: 3 #一台机器最多执行3个爬取请求,因为每个请求中最多可能有10个网站的爬取线程

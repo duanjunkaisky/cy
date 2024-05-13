@@ -62,9 +62,9 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
     public static List<ContainerDist> containerList = new ArrayList<>(3);
 
     static {
-        containerList.add(ContainerDist.builder().flag("20GP").containerCode("20ST").containerType("22G1").build());
-        containerList.add(ContainerDist.builder().flag("40GP").containerCode("40ST").containerType("42G1").build());
-        containerList.add(ContainerDist.builder().flag("40HC").containerCode("45HC").containerType("45G1").build());
+        containerList.add(ContainerDist.builder().flag("1").containerCode("20ST").containerType("22G1").build());
+        containerList.add(ContainerDist.builder().flag("2").containerCode("40ST").containerType("42G1").build());
+        containerList.add(ContainerDist.builder().flag("3").containerCode("45HC").containerType("45G1").build());
     }
 
     @Override

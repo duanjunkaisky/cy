@@ -55,9 +55,9 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
     public static List<ContainerDist> containerList = new ArrayList<>(3);
 
     static {
-        containerList.add(ContainerDist.builder().flag("20GP").containerCode("22G1").containerSize("20").containerType("D2").build());
-        containerList.add(ContainerDist.builder().flag("40GP").containerCode("42G1").containerSize("40").containerType("D4").build());
-        containerList.add(ContainerDist.builder().flag("40HC").containerCode("45G1").containerSize("40").containerType("D5").build());
+        containerList.add(ContainerDist.builder().flag("1").containerCode("22G1").containerSize("20").containerType("D2").build());
+        containerList.add(ContainerDist.builder().flag("2").containerCode("42G1").containerSize("40").containerType("D4").build());
+        containerList.add(ContainerDist.builder().flag("3").containerCode("45G1").containerSize("40").containerType("D5").build());
     }
 
     @Override
@@ -145,6 +145,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 JSONObject departureEnd = departures.getJSONObject(departures.size() - 1);
 
                 ProductInfo productInfo = new ProductInfo();
+                productInfo.setProductNumber(getProductNumber());
                 productInfo.setDeparturePortZh(fromPort.getPortNameZh());
                 productInfo.setDeparturePortEn(fromPort.getPortCode());
                 productInfo.setDestinationPortZh(toPort.getPortNameZh());

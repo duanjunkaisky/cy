@@ -11,9 +11,13 @@ import com.djk.core.utils.HttpResp;
 import com.djk.core.utils.HttpUtil;
 import com.djk.core.vo.ContainerDist;
 import com.djk.core.vo.QueryRouteVo;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -30,6 +34,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@Data
 public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements CrawlService
 {
     private final int WEEK_STEP = 2;
@@ -39,6 +44,12 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
     private static String sensorData;
     private static String userAgent;
+
+//    @Value("${rocketmq.producer-msk.topic}")
+//    private String topic;
+
+//    @Autowired
+//    RocketMQTemplate rocketMQTemplate;
 
     @Autowired
     BasePortMapper basePortMapper;
@@ -58,9 +69,9 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     public static List<ContainerDist> containerList = new ArrayList<>(3);
 
     static {
-        containerList.add(ContainerDist.builder().flag("20GP").containerCode("22G1").containerSize("20").containerType("DRY").build());
-        containerList.add(ContainerDist.builder().flag("40GP").containerCode("42G1").containerSize("40").containerType("DRY").build());
-        containerList.add(ContainerDist.builder().flag("40HC").containerCode("45G1").containerSize("40").containerType("HDRY").build());
+        containerList.add(ContainerDist.builder().flag("1").containerCode("22G1").containerSize("20").containerType("DRY").build());
+        containerList.add(ContainerDist.builder().flag("2").containerCode("42G1").containerSize("40").containerType("DRY").build());
+        containerList.add(ContainerDist.builder().flag("3").containerCode("45G1").containerSize("40").containerType("HDRY").build());
     }
 
     @Override
@@ -91,66 +102,76 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         List<ContainerDist> realList = containerList.stream().filter(i -> i.getFlag().equalsIgnoreCase(queryRouteVo.getContainerType())).collect(Collectors.toList());
         for (ContainerDist container : realList) {
             boolean hasMore = true;
-            int page = 1;
-            while (hasMore) {
-                if (reqCount >= Constant.MAX_REQ_COUNT) {
-                    reqCount = 0;
-                    break;
-                }
-                try {
-                    reqCount++;
-                    Map<String, String> header = getRemoteSensorData(queryRouteVo, proxy);
-                    Map<String, Object> fillData = new HashMap<>(1);
-                    fillData.put("fromPortId", portInfoFrom.getString("maerskGeoLocationId"));
-                    fillData.put("fromPortCode", portInfoFrom.getString("maerskRkstCode"));
-                    fillData.put("fromPortCountry", fromPort.getCountryCode());
-                    fillData.put("fromPortFullName", portInfoFrom.getString("maerskRkstCode") + " (" + portInfoFrom.getString("maerskRkstCode") + "), " + portInfoFrom.getString("maerskRkstCode"));
-
-                    fillData.put("toPortId", portInfoTo.getString("maerskGeoLocationId"));
-                    fillData.put("toPortCode", portInfoTo.getString("maerskRkstCode"));
-                    fillData.put("toPortCountry", toPort.getCountryCode());
-                    fillData.put("toPortFullName", portInfoTo.getString("maerskRkstCode") + " (" + portInfoTo.getString("maerskRkstCode") + "), " + portInfoTo.getString("maerskRkstCode"));
-
-                    fillData.put("containerCode", container.getContainerCode());
-                    fillData.put("containerSize", container.getContainerSize());
-                    fillData.put("containerType", container.getContainerType());
-
-                    fillData.put("queryDate", format.format(queryTime));
-                    fillData.put("weekOffset", (page - 1) * WEEK_STEP);
-                    String jsonParam = FreeMakerUtil.createByTemplate("real_mskQuery.ftl", fillData);
-
-                    log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
-
-                    TimeUnit.MILLISECONDS.sleep(500L);
-                    HttpResp resp = HttpUtil.postBody("https://api.maersk.com/productoffer/v2/productoffers", header, jsonParam, proxy);
-                    Response response = resp.getResponse();
-                    String bodyJson = resp.getBodyJson();
-                    if (response.code() != 200) {
-                        sensorData = null;
-                        tokenIndex++;
-                        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求失败");
-                        continue;
+            for (int i = 1; i <= 4; i++) {
+                final int page = i;
+                new Thread()
+                {
+                    @Override
+                    public void run()
+                    {
+                        getDataPerPage(queryRouteVo, proxy, fromPort, toPort, portInfoFrom, portInfoTo, baseShippingCompany, existMap, productInfoList, productContainerList, productFeeItemList, format, queryTime, container, page);
                     }
-
-                    JSONObject retObj = JSONObject.parseObject(bodyJson);
-                    hasMore = retObj.getBoolean("loadMore");
-                    log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求返回成功, hasMore: " + hasMore);
-                    page++;
-
-                    //开始处理入库
-                    JSONArray offers = retObj.getJSONArray("offers");
-                    parseData(queryRouteVo, baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap);
-                    reqCount = 0;
-                } catch (Exception e) {
-                    log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求出错");
-                    log.error(ExceptionUtil.getMessage(e));
-                    log.error(ExceptionUtil.stacktraceToString(e));
-                }
+                }.start();
             }
-            reqCount = 0;
+//            rocketMQTemplate.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(queryRouteVo)).build());
         }
 
         return String.valueOf(productInfoList.size());
+    }
+
+    private void getDataPerPage(QueryRouteVo queryRouteVo, String proxy, BasePort fromPort, BasePort toPort, JSONObject portInfoFrom, JSONObject portInfoTo, BaseShippingCompany baseShippingCompany, Map<String, ProductInfo> existMap, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, SimpleDateFormat format, Date queryTime, ContainerDist container, int page)
+    {
+        reqCount = 0;
+        String hostCode = queryRouteVo.getHostCode();
+        while (reqCount < Constant.MAX_REQ_COUNT) {
+            try {
+                reqCount++;
+                Map<String, String> header = getRemoteSensorData(queryRouteVo, proxy);
+                Map<String, Object> fillData = new HashMap<>(1);
+                fillData.put("fromPortId", portInfoFrom.getString("maerskGeoLocationId"));
+                fillData.put("fromPortCode", portInfoFrom.getString("maerskRkstCode"));
+                fillData.put("fromPortCountry", fromPort.getCountryCode());
+                fillData.put("fromPortFullName", portInfoFrom.getString("maerskRkstCode") + " (" + portInfoFrom.getString("maerskRkstCode") + "), " + portInfoFrom.getString("maerskRkstCode"));
+
+                fillData.put("toPortId", portInfoTo.getString("maerskGeoLocationId"));
+                fillData.put("toPortCode", portInfoTo.getString("maerskRkstCode"));
+                fillData.put("toPortCountry", toPort.getCountryCode());
+                fillData.put("toPortFullName", portInfoTo.getString("maerskRkstCode") + " (" + portInfoTo.getString("maerskRkstCode") + "), " + portInfoTo.getString("maerskRkstCode"));
+
+                fillData.put("containerCode", container.getContainerCode());
+                fillData.put("containerSize", container.getContainerSize());
+                fillData.put("containerType", container.getContainerType());
+
+                fillData.put("queryDate", format.format(queryTime));
+                fillData.put("weekOffset", (page - 1) * WEEK_STEP);
+                String jsonParam = FreeMakerUtil.createByTemplate("real_mskQuery.ftl", fillData);
+
+                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
+
+                TimeUnit.MILLISECONDS.sleep(500L);
+                HttpResp resp = HttpUtil.postBody("https://api.maersk.com/productoffer/v2/productoffers", header, jsonParam, proxy);
+                Response response = resp.getResponse();
+                String bodyJson = resp.getBodyJson();
+                if (response.code() != 200) {
+                    sensorData = null;
+                    tokenIndex++;
+                    log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求失败");
+                    continue;
+                }
+
+                JSONObject retObj = JSONObject.parseObject(bodyJson);
+                boolean hasMore = retObj.getBoolean("loadMore");
+                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求返回成功, hasMore: " + hasMore);
+
+                //开始处理入库
+                JSONArray offers = retObj.getJSONArray("offers");
+                parseData(queryRouteVo, baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap);
+            } catch (Exception e) {
+                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求出错");
+                log.error(ExceptionUtil.getMessage(e));
+                log.error(ExceptionUtil.stacktraceToString(e));
+            }
+        }
     }
 
     private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap) throws ParseException
@@ -170,6 +191,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 JSONObject toLocation = routeScheduleFull.getJSONObject("toLocation");
                 JSONArray scheduleDetails = routeScheduleFull.getJSONArray("scheduleDetails");
                 ProductInfo productInfo = new ProductInfo();
+                productInfo.setProductNumber(getProductNumber());
                 productInfo.setDeparturePortZh(fromPort.getPortNameZh());
                 productInfo.setDeparturePortEn(fromPort.getPortCode());
                 productInfo.setDestinationPortZh(toPort.getPortNameZh());
