@@ -23,4 +23,6 @@ public class ContainerDist
      *
      */
     private String containerType;
+
+    private String flag;
 }

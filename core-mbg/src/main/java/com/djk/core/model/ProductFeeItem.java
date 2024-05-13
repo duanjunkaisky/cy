@@ -12,6 +12,9 @@ public class ProductFeeItem implements Serializable {
     @ApiModelProperty(value = "产品ID")
     private Long productId;
 
+    @ApiModelProperty(value = "费项id")
+    private Long feeId;
+
     @ApiModelProperty(value = "费项中文名称")
     private String feeCnName;
 
@@ -27,7 +30,7 @@ public class ProductFeeItem implements Serializable {
     @ApiModelProperty(value = "来源，字典配置（1.船司/2.自建）")
     private Integer feeSource;
 
-    @ApiModelProperty(value = "费用类型 1起运港费用 2目的港费用 3其他费用 4亏舱费 5免用箱费 6基础航运费")
+    @ApiModelProperty(value = "费用类型 1海运费，2附加费，3其他费用，4亏仓费，5目的港费用")
     private Integer feeCostType;
 
     @ApiModelProperty(value = "币种 字典配置 1人民币/2美元/3欧元")
@@ -66,6 +69,8 @@ public class ProductFeeItem implements Serializable {
     @ApiModelProperty(value = "单价计算方式：0:有多个箱子时需要乘以个数,1:固定单价,与箱子个数无关")
     private Integer priceComputeType;
 
+    private Long shippingCompanyId;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -82,6 +87,14 @@ public class ProductFeeItem implements Serializable {
 
     public void setProductId(Long productId) {
         this.productId = productId;
+    }
+
+    public Long getFeeId() {
+        return feeId;
+    }
+
+    public void setFeeId(Long feeId) {
+        this.feeId = feeId;
     }
 
     public String getFeeCnName() {
@@ -228,6 +241,14 @@ public class ProductFeeItem implements Serializable {
         this.priceComputeType = priceComputeType;
     }
 
+    public Long getShippingCompanyId() {
+        return shippingCompanyId;
+    }
+
+    public void setShippingCompanyId(Long shippingCompanyId) {
+        this.shippingCompanyId = shippingCompanyId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -236,6 +257,7 @@ public class ProductFeeItem implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", productId=").append(productId);
+        sb.append(", feeId=").append(feeId);
         sb.append(", feeCnName=").append(feeCnName);
         sb.append(", feeEnName=").append(feeEnName);
         sb.append(", feeUnit=").append(feeUnit);
@@ -254,6 +276,7 @@ public class ProductFeeItem implements Serializable {
         sb.append(", deletedBy=").append(deletedBy);
         sb.append(", deletedTime=").append(deletedTime);
         sb.append(", priceComputeType=").append(priceComputeType);
+        sb.append(", shippingCompanyId=").append(shippingCompanyId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

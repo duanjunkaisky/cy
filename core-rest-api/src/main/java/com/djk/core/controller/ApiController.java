@@ -6,11 +6,12 @@ import com.djk.core.mapper.CrawlMetadataWebsiteConfigMapper;
 import com.djk.core.service.*;
 import com.djk.core.vo.QueryRouteVo;
 import io.swagger.annotations.Api;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.concurrent.ExecutionException;
+import java.util.List;
 
 /**
  * @author duanjunkai
@@ -29,10 +30,15 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 @Api(tags = "ApiController", description = "查询航班")
 @RequestMapping("/")
-public class ApiController {
+@Data
+@ConfigurationProperties(prefix = "crawl")
+public class ApiController
+{
 
     @Value("${rocketmq.producer.topic}")
     private String topic;
+
+    private List<String> target;
 
     @Autowired
     RocketMQTemplate rocketMQTemplate;
@@ -52,42 +58,47 @@ public class ApiController {
      */
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult query(@RequestBody QueryRouteVo queryRouteVo) {
+    public CommonResult query(@RequestBody QueryRouteVo queryRouteVo)
+    {
         if (StringUtils.isEmpty(queryRouteVo.getDeparturePortEn())
                 || StringUtils.isEmpty(queryRouteVo.getDestinationPortEn())
-                || StringUtils.isEmpty(queryRouteVo.getDepartureDate())) {
+                || StringUtils.isEmpty(queryRouteVo.getDepartureDate())
+                || StringUtils.isEmpty(queryRouteVo.getContainerType())) {
             return CommonResult.failed("参数不能为空");
         }
+
         queryRouteVo.setStartTime(System.currentTimeMillis());
         queryRouteVo.setSpotId(crawlService.createSpotId(queryRouteVo.getDeparturePortEn(), queryRouteVo.getDestinationPortEn()));
-        SendResult sendResult = rocketMQTemplate.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(queryRouteVo)).build());
-        String msgId = sendResult.getMsgId();
-        log.info("推送到消息->\n topic: " + topic + "\n 消息id: " + msgId + ",\n " + JSONObject.toJSONString(queryRouteVo));
+        for (String beanName : target) {
+            queryRouteVo.setBeanName(beanName);
+            String hostCode = getHostCode(beanName);
+            queryRouteVo.setHostCode(hostCode);
+            rocketMQTemplate.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(queryRouteVo)).build());
+            log.info("推送到消息->\n topic: " + topic + ",\n " + JSONObject.toJSONString(queryRouteVo));
+        }
+
         JSONObject retObj = new JSONObject();
         retObj.put("spot_id", queryRouteVo.getSpotId());
-        retObj.put("useage", "客户端可通过该 spot_id 适时获取爬取进度等信息, host_code -> [msk cma one ...]");
-        retObj.put("查询数量", "select count(1) from product_info p where p.spot_id = '" + queryRouteVo.getSpotId() + "' and p.estimated_departure_date >= '" + queryRouteVo.getDepartureDate() + "' and shipping_company_id = 1");
-        retObj.put("查询状态", "select p.* from crawl_request_status p where p.spot_id = '" + queryRouteVo.getSpotId() + "' and host_code = 'msk'");
         return CommonResult.success(retObj, "操作成功");
     }
 
     @RequestMapping(value = "/productNumber", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult productNumber() {
+    public CommonResult productNumber()
+    {
         String productNumber = crawlService.getProductNumber();
         return CommonResult.success(productNumber, "操作成功");
     }
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult test(@RequestBody QueryRouteVo queryRouteVo) {
+    public CommonResult test(@RequestBody QueryRouteVo queryRouteVo)
+    {
         try {
             queryRouteVo.setStartTime(System.currentTimeMillis());
             queryRouteVo.setSpotId(crawlService.createSpotId(queryRouteVo.getDeparturePortEn(), queryRouteVo.getDestinationPortEn()));
             crawlChain.doBusiness(queryRouteVo);
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return CommonResult.success("操作成功");
@@ -95,7 +106,8 @@ public class ApiController {
 
     @RequestMapping(value = "/getToken", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult getToken(@RequestBody QueryRouteVo queryRouteVo) {
+    public CommonResult getToken(@RequestBody QueryRouteVo queryRouteVo)
+    {
         try {
             JSONObject token = crawlService.getToken(queryRouteVo.getHostCode(), 1);
             return CommonResult.success(token);
@@ -103,6 +115,12 @@ public class ApiController {
             e.printStackTrace();
         }
         return CommonResult.success("操作成功");
+    }
+
+    private static String getHostCode(String beanName)
+    {
+        String str = beanName.toLowerCase();
+        return str.replaceAll("crawlservicefro", "").replaceAll("impl", "");
     }
 
 }

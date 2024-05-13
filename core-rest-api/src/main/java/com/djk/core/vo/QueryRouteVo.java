@@ -22,9 +22,16 @@ public class QueryRouteVo
      */
     private String destinationPortEn;
 
+    /**
+        20GP 40GP 40HC
+     */
+    private String containerType;
+
     private String spotId;
 
     private long startTime;
 
     private String hostCode;
+
+    private String beanName;
 }

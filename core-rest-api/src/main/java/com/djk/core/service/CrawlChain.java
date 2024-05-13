@@ -10,11 +10,11 @@ import com.djk.core.model.CrawlRequestStatus;
 import com.djk.core.model.CrawlRequestStatusExample;
 import com.djk.core.mq.ConsumerPull;
 import com.djk.core.vo.QueryRouteVo;
-import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * @author duanjunkai
@@ -29,74 +30,80 @@ import java.util.concurrent.*;
  */
 @Component
 @Data
-@ConfigurationProperties(prefix = "crawl")
 @Slf4j
-public class CrawlChain {
-    private List<String> target;
-
+@ConfigurationProperties(prefix = "crawl")
+public class CrawlChain
+{
     public static ListeningExecutorService EXECUTOR_SERVICE = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
 
     @Autowired
     CrawlRequestStatusMapper requestStatusMapper;
 
+    private List<String> target;
+
     @Autowired
     CustomDao customDao;
 
+    @Value("${redis.database}")
+    public String REDIS_DATABASE;
+
+    @Autowired
+    RedisService redisService;
+
     @Async("asyncServiceExecutor")
-    public void doBusiness(QueryRouteVo queryRouteVo) throws ExecutionException, InterruptedException {
+    public void doBusiness(QueryRouteVo queryRouteVo)
+    {
         List<ListenableFuture<String>> futureList = new ArrayList<>();
-        for (String beanName : target) {
-            String hostCode = getHostCode(beanName);
-            futureList.add(EXECUTOR_SERVICE.submit(() -> {
-                CrawlService crawlService = (CrawlService) SpringUtil.getBean(beanName);
-                try {
-                    CrawlRequestStatus requestStatus = new CrawlRequestStatus();
-                    requestStatus.setSpotId(String.valueOf(queryRouteVo.getSpotId()));
-                    requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
-                    requestStatus.setStartTime(queryRouteVo.getStartTime());
-                    requestStatus.setFromProt(queryRouteVo.getDeparturePortEn());
-                    requestStatus.setToPort(queryRouteVo.getDestinationPortEn());
-                    requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
-                    requestStatus.setHostCode(hostCode);
-                    requestStatusMapper.insertSelective(requestStatus);
 
-                    return hostCode + " -> " + crawlService.queryData(queryRouteVo, hostCode);
-                } catch (Exception e) {
-                    log.error(ExceptionUtil.getMessage(e));
-                    log.error(ExceptionUtil.stacktraceToString(e));
-                    CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
-                    crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(hostCode);
-                    CrawlRequestStatus requestStatus = new CrawlRequestStatus();
-                    requestStatus.setStatus(Constant.CRAWL_STATUS.ERROR.ordinal());
-                    requestStatus.setMsg(ExceptionUtil.stacktraceToString(e));
-                    requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
+        futureList.add(EXECUTOR_SERVICE.submit(() -> {
+            CrawlService crawlService = (CrawlService) SpringUtil.getBean(queryRouteVo.getBeanName());
+            try {
+                CrawlRequestStatus requestStatus = new CrawlRequestStatus();
+                requestStatus.setSpotId(String.valueOf(queryRouteVo.getSpotId()));
+                requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
+                requestStatus.setStartTime(queryRouteVo.getStartTime());
+                requestStatus.setFromProt(queryRouteVo.getDeparturePortEn());
+                requestStatus.setToPort(queryRouteVo.getDestinationPortEn());
+                requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
+                requestStatus.setHostCode(queryRouteVo.getHostCode());
+                requestStatusMapper.insertSelective(requestStatus);
+
+                String str = queryRouteVo.getHostCode() + " -> " + crawlService.queryData(queryRouteVo, queryRouteVo.getHostCode());
+
+                CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
+                crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
+                requestStatus = new CrawlRequestStatus();
+                requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
+                requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
+
+                log.info(str);
+
+                crawlRequestStatusExample = new CrawlRequestStatusExample();
+                crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId());
+                List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
+                if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
+                    List<CrawlRequestStatus> mergeList = crawlRequestStatuses.stream()
+                            .filter(item -> item.getStatus() == Constant.CRAWL_STATUS.RUNNING.ordinal())
+                            .collect(Collectors.toList());
+                    if (null == mergeList || mergeList.isEmpty()) {
+                        ConsumerPull.currentJobs.remove(String.valueOf(queryRouteVo.getSpotId()));
+                        log.info("---> " + queryRouteVo.getSpotId() + " - 本次请求爬取结束!");
+                    }
                 }
-                return hostCode + " -> 0";
-            }));
-        }
-        ListenableFuture<List<String>> listListenableFuture = Futures.allAsList(Lists.newArrayList(futureList));
-        List<String> implNameList = listListenableFuture.get();
-        implNameList.forEach(item -> {
-            String[] split = item.split("->");
-            log.info("---> " + queryRouteVo.getSpotId() + " - " + " 爬取完成 " + item);
-            CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
-            crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(getHostCode(split[0].trim().toLowerCase())).andStatusEqualTo(Constant.CRAWL_STATUS.RUNNING.ordinal());
-            CrawlRequestStatus requestStatus = new CrawlRequestStatus();
-            requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
-            requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
-        });
 
-        customDao.executeSql("delete from product_container where  spot_id='" + queryRouteVo.getSpotId() + "' and not exists ( select 1 from product_info where id=product_id)");
-        customDao.executeSql("delete from product_fee_item where  spot_id='" + queryRouteVo.getSpotId() + "' and not exists ( select 1 from product_info where id=product_id)");
-
-        ConsumerPull.currentJobs.remove(String.valueOf(queryRouteVo.getSpotId()));
-
-        log.info("---> " + queryRouteVo.getSpotId() + " - 本次请求爬取结束!");
-    }
-
-    public static String getHostCode(String beanName) {
-        String str = beanName.toLowerCase();
-        return str.replaceAll("crawlservicefro", "").replaceAll("impl", "");
+                return str;
+            } catch (Exception e) {
+                log.error(ExceptionUtil.getMessage(e));
+                log.error(ExceptionUtil.stacktraceToString(e));
+                CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
+                crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
+                CrawlRequestStatus requestStatus = new CrawlRequestStatus();
+                requestStatus.setStatus(Constant.CRAWL_STATUS.ERROR.ordinal());
+                requestStatus.setMsg(ExceptionUtil.stacktraceToString(e));
+                requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
+            }
+            return queryRouteVo.getHostCode() + " -> 0";
+        }));
     }
 
 }

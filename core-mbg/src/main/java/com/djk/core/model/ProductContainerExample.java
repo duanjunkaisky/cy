@@ -1105,6 +1105,66 @@ public class ProductContainerExample {
             addCriterion("deleted_time not between", value1, value2, "deletedTime");
             return (Criteria) this;
         }
+
+        public Criteria andShippingCompanyIdIsNull() {
+            addCriterion("shipping_company_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdIsNotNull() {
+            addCriterion("shipping_company_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdEqualTo(Long value) {
+            addCriterion("shipping_company_id =", value, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdNotEqualTo(Long value) {
+            addCriterion("shipping_company_id <>", value, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdGreaterThan(Long value) {
+            addCriterion("shipping_company_id >", value, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("shipping_company_id >=", value, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdLessThan(Long value) {
+            addCriterion("shipping_company_id <", value, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdLessThanOrEqualTo(Long value) {
+            addCriterion("shipping_company_id <=", value, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdIn(List<Long> values) {
+            addCriterion("shipping_company_id in", values, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdNotIn(List<Long> values) {
+            addCriterion("shipping_company_id not in", values, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdBetween(Long value1, Long value2) {
+            addCriterion("shipping_company_id between", value1, value2, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdNotBetween(Long value1, Long value2) {
+            addCriterion("shipping_company_id not between", value1, value2, "shippingCompanyId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

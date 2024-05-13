@@ -54,6 +54,8 @@ public class ProductContainer implements Serializable {
     @ApiModelProperty(value = "删除时间")
     private Date deletedTime;
 
+    private Long shippingCompanyId;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -184,6 +186,14 @@ public class ProductContainer implements Serializable {
         this.deletedTime = deletedTime;
     }
 
+    public Long getShippingCompanyId() {
+        return shippingCompanyId;
+    }
+
+    public void setShippingCompanyId(Long shippingCompanyId) {
+        this.shippingCompanyId = shippingCompanyId;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -206,6 +216,7 @@ public class ProductContainer implements Serializable {
         sb.append(", tenantId=").append(tenantId);
         sb.append(", deletedBy=").append(deletedBy);
         sb.append(", deletedTime=").append(deletedTime);
+        sb.append(", shippingCompanyId=").append(shippingCompanyId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

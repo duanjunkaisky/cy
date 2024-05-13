@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author duanjunkai
@@ -31,7 +32,8 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Slf4j
 @Data
-public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements CrawlService {
+public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements CrawlService
+{
     private static int reqCount = 0;
     private static int tokenIndex = 0;
 
@@ -53,13 +55,14 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
     public static List<ContainerDist> containerList = new ArrayList<>(3);
 
     static {
-        containerList.add(ContainerDist.builder().containerCode("22G1").containerSize("20").containerType("D2").build());
-        containerList.add(ContainerDist.builder().containerCode("42G1").containerSize("40").containerType("D4").build());
-        containerList.add(ContainerDist.builder().containerCode("45G1").containerSize("40").containerType("D5").build());
+        containerList.add(ContainerDist.builder().flag("20GP").containerCode("22G1").containerSize("20").containerType("D2").build());
+        containerList.add(ContainerDist.builder().flag("40GP").containerCode("42G1").containerSize("40").containerType("D4").build());
+        containerList.add(ContainerDist.builder().flag("40HC").containerCode("45G1").containerSize("40").containerType("D5").build());
     }
 
     @Override
-    public String queryData(QueryRouteVo queryRouteVo, String hostCode) {
+    public String queryData(QueryRouteVo queryRouteVo, String hostCode)
+    {
         this.setHostCode(hostCode);
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + null);
         BasePort fromPort = getFromPort(queryRouteVo);
@@ -74,7 +77,8 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         List<ProductContainer> productContainerList = new ArrayList<>();
         List<ProductFeeItem> productFeeItemList = new ArrayList<>();
 
-        for (ContainerDist container : containerList) {
+        List<ContainerDist> realList = containerList.stream().filter(i -> i.getFlag().equalsIgnoreCase(queryRouteVo.getContainerType())).collect(Collectors.toList());
+        for (ContainerDist container : realList) {
             String proxy = MyProxyUtil.getProxy();
             while (reqCount < Constant.MAX_REQ_COUNT) {
                 try {
@@ -118,10 +122,11 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
             reqCount = 0;
         }
 
-        return insertData(queryRouteVo, hostCode, productInfoList, productContainerList, productFeeItemList);
+        return String.valueOf(productInfoList.size());
     }
 
-    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap, String proxy) throws ParseException {
+    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap, String proxy) throws ParseException
+    {
         int containerType = computeContainerType(container.getContainerCode());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -132,6 +137,8 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
             //排除售罄
             if (null != freightInfos && !freightInfos.isEmpty()
                     && !freightInfos.getJSONObject(0).getString("status").equalsIgnoreCase("Sold Out")) {
+
+                productFeeItemList = new ArrayList<>();
                 JSONObject freightInfo = freightInfos.getJSONObject(0);
                 JSONArray departures = freightInfo.getJSONArray("departures");
                 JSONObject departureStart = departures.getJSONObject(0);
@@ -183,6 +190,7 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                     ProductInfo existProduct = existMap.get(existKey);
                     productInfo.setId(existProduct.getId());
                 }
+                productInfoMapper.insertSelective(productInfo);
 
                 ProductContainer productContainer = new ProductContainer();
                 productContainer.setContainerType(containerType);
@@ -199,9 +207,12 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 productContainer.setUpdateTime(new Date());
                 productContainer.setDeleted(false);
                 productContainer.setTenantId(0L);
+                productContainer.setShippingCompanyId(productInfo.getShippingCompanyId());
                 productContainerList.add(productContainer);
+                productContainerMapper.insertSelective(productContainer);
 
                 ProductFeeItem productFeeItem = new ProductFeeItem();
+                productFeeItem.setShippingCompanyId(productInfo.getShippingCompanyId());
                 productFeeItem.setContainerType(containerType);
                 productFeeItem.setSpotId(productInfo.getSpotId());
                 productFeeItem.setProductId(productInfo.getId());
@@ -250,12 +261,14 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
 
                 getFreeFee(productFeeItemList, productFeeItem, departureStart.getString("departureLoc"), departureEnd.getString("arrivalLoc"), departureEnd.getString("arrivalDateEstimated"), container, freightInfo.getString("spotRateOfferingId"), proxy);
 
+                productFeeItemMapper.batchInsert(productFeeItemList);
             }
         }
 
     }
 
-    private void confirmValue(ProductFeeItem productFeeItem, JSONObject surcharge) {
+    private void confirmValue(ProductFeeItem productFeeItem, JSONObject surcharge)
+    {
         String chargeTarget = surcharge.getString("chargeTarget");
         if ("ORIGIN".equalsIgnoreCase(chargeTarget)) {
             productFeeItem.setFeeCostType(1);
@@ -281,7 +294,8 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         productFeeItem.setFeeEnName(surcharge.getString("chargeName"));
     }
 
-    private Map<String, String> getHeader() {
+    private Map<String, String> getHeader()
+    {
         JSONObject tokenBean = getToken(this.getHostCode().toLowerCase(), tokenIndex++);
         Map<String, String> header = new HashMap<>(3);
         header.put("Authorization", tokenBean.getString("authorization"));
@@ -290,30 +304,36 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         return header;
     }
 
-    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode, String proxy) {
-        String api = "https://ecomm.one-line.com/api/v1/quotation/locations?location=" + portCodeEn + "&orgDest=origin";
-        Map<String, String> header = getHeader();
-        try {
-            TimeUnit.MILLISECONDS.sleep(500L);
-            HttpResp resp = HttpUtil.get(api, header, proxy);
-            String bodyJson = resp.getBodyJson();
-            JSONObject retObj = JSONObject.parseObject(bodyJson);
-            JSONArray arr = retObj.getJSONArray("data");
-            for (Object o : arr) {
-                JSONObject item = (JSONObject) o;
-                if (checkDisplayedName(item.getString("displayedName"), portCodeEn) && item.getString("countryCode").equalsIgnoreCase(countryCode)) {
-                    return item;
+    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode, String proxy)
+    {
+        int count = 0;
+        while (count < Constant.MAX_REQ_COUNT) {
+            String api = "https://ecomm.one-line.com/api/v1/quotation/locations?location=" + portCodeEn + "&orgDest=origin";
+            Map<String, String> header = getHeader();
+            try {
+                TimeUnit.MILLISECONDS.sleep(500L);
+                HttpResp resp = HttpUtil.get(api, header, proxy);
+                String bodyJson = resp.getBodyJson();
+                JSONObject retObj = JSONObject.parseObject(bodyJson);
+                JSONArray arr = retObj.getJSONArray("data");
+                for (Object o : arr) {
+                    JSONObject item = (JSONObject) o;
+                    if (checkDisplayedName(item.getString("displayedName"), portCodeEn) && item.getString("countryCode").equalsIgnoreCase(countryCode)) {
+                        return item;
+                    }
                 }
+            } catch (Exception e) {
+                log.error(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 查询港口代码出错,\n" + api + "\n" + JSONObject.toJSONString(header));
+                log.error(ExceptionUtil.getMessage(e));
+                log.error(ExceptionUtil.stacktraceToString(e));
             }
-        } catch (Exception e) {
-            log.error(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 查询港口代码出错,\n" + api + "\n" + JSONObject.toJSONString(header));
-            log.error(ExceptionUtil.getMessage(e));
-            log.error(ExceptionUtil.stacktraceToString(e));
+            count++;
         }
-        throw new RuntimeException(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 网站未查询到港口代码信息: " + portCodeEn + ", 请检查base_port的" + this.getHostCode() + "_code信息");
+        throw new RuntimeException(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + "查询港口代码出错： ");
     }
 
-    private boolean checkDisplayedName(String displayedName, String portCodeEn) {
+    private boolean checkDisplayedName(String displayedName, String portCodeEn)
+    {
         String[] split = displayedName.split(",");
         for (String str : split) {
             if (str.toLowerCase().contains(portCodeEn.toLowerCase())) {
@@ -328,7 +348,8 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
      *
      * @return
      */
-    public String getFreeFee(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String fromCode, String toCode, String arriveTime, ContainerDist containerDist, String spotRateOfferingId, String proxy) {
+    public String getFreeFee(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String fromCode, String toCode, String arriveTime, ContainerDist containerDist, String spotRateOfferingId, String proxy)
+    {
         String jsonParam = "{" +
                 "    \"originUNLocationCode\": \"" + fromCode + "\",\n" +
                 "    \"destinationUNLocationCode\": \"" + toCode + "\",\n" +

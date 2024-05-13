@@ -226,6 +226,66 @@ public class ProductFeeItemExample {
             return (Criteria) this;
         }
 
+        public Criteria andFeeIdIsNull() {
+            addCriterion("fee_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeIdIsNotNull() {
+            addCriterion("fee_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeIdEqualTo(Long value) {
+            addCriterion("fee_id =", value, "feeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeIdNotEqualTo(Long value) {
+            addCriterion("fee_id <>", value, "feeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeIdGreaterThan(Long value) {
+            addCriterion("fee_id >", value, "feeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("fee_id >=", value, "feeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeIdLessThan(Long value) {
+            addCriterion("fee_id <", value, "feeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeIdLessThanOrEqualTo(Long value) {
+            addCriterion("fee_id <=", value, "feeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeIdIn(List<Long> values) {
+            addCriterion("fee_id in", values, "feeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeIdNotIn(List<Long> values) {
+            addCriterion("fee_id not in", values, "feeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeIdBetween(Long value1, Long value2) {
+            addCriterion("fee_id between", value1, value2, "feeId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFeeIdNotBetween(Long value1, Long value2) {
+            addCriterion("fee_id not between", value1, value2, "feeId");
+            return (Criteria) this;
+        }
+
         public Criteria andFeeCnNameIsNull() {
             addCriterion("fee_cn_name is null");
             return (Criteria) this;
@@ -1363,6 +1423,66 @@ public class ProductFeeItemExample {
 
         public Criteria andPriceComputeTypeNotBetween(Integer value1, Integer value2) {
             addCriterion("price_compute_type not between", value1, value2, "priceComputeType");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdIsNull() {
+            addCriterion("shipping_company_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdIsNotNull() {
+            addCriterion("shipping_company_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdEqualTo(Long value) {
+            addCriterion("shipping_company_id =", value, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdNotEqualTo(Long value) {
+            addCriterion("shipping_company_id <>", value, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdGreaterThan(Long value) {
+            addCriterion("shipping_company_id >", value, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("shipping_company_id >=", value, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdLessThan(Long value) {
+            addCriterion("shipping_company_id <", value, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdLessThanOrEqualTo(Long value) {
+            addCriterion("shipping_company_id <=", value, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdIn(List<Long> values) {
+            addCriterion("shipping_company_id in", values, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdNotIn(List<Long> values) {
+            addCriterion("shipping_company_id not in", values, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdBetween(Long value1, Long value2) {
+            addCriterion("shipping_company_id between", value1, value2, "shippingCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andShippingCompanyIdNotBetween(Long value1, Long value2) {
+            addCriterion("shipping_company_id not between", value1, value2, "shippingCompanyId");
             return (Criteria) this;
         }
     }

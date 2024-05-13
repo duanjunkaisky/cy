@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.djk.core.model.ProductFeeItem">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="product_id" jdbcType="BIGINT" property="productId" />
+    <result column="fee_id" jdbcType="BIGINT" property="feeId" />
     <result column="fee_cn_name" jdbcType="VARCHAR" property="feeCnName" />
     <result column="fee_en_name" jdbcType="VARCHAR" property="feeEnName" />
     <result column="fee_unit" jdbcType="INTEGER" property="feeUnit" />
@@ -22,6 +23,7 @@
     <result column="deleted_by" jdbcType="VARCHAR" property="deletedBy" />
     <result column="deleted_time" jdbcType="TIMESTAMP" property="deletedTime" />
     <result column="price_compute_type" jdbcType="INTEGER" property="priceComputeType" />
+    <result column="shipping_company_id" jdbcType="BIGINT" property="shippingCompanyId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -82,9 +84,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, product_id, fee_cn_name, fee_en_name, fee_unit, container_type, fee_source, fee_cost_type, 
-    fee_currency, price, spot_id, creator, create_time, updater, update_time, deleted, 
-    tenant_id, deleted_by, deleted_time, price_compute_type
+    id, product_id, fee_id, fee_cn_name, fee_en_name, fee_unit, container_type, fee_source, 
+    fee_cost_type, fee_currency, price, spot_id, creator, create_time, updater, update_time, 
+    deleted, tenant_id, deleted_by, deleted_time, price_compute_type, shipping_company_id
   </sql>
   <select id="selectByExample" parameterType="com.djk.core.model.ProductFeeItemExample" resultMap="BaseResultMap">
     select
@@ -117,20 +119,22 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.djk.core.model.ProductFeeItem">
-    insert into product_fee_item (id, product_id, fee_cn_name, 
-      fee_en_name, fee_unit, container_type, 
-      fee_source, fee_cost_type, fee_currency, 
-      price, spot_id, creator, 
-      create_time, updater, update_time, 
-      deleted, tenant_id, deleted_by, 
-      deleted_time, price_compute_type)
-    values (#{id,jdbcType=BIGINT}, #{productId,jdbcType=BIGINT}, #{feeCnName,jdbcType=VARCHAR}, 
-      #{feeEnName,jdbcType=VARCHAR}, #{feeUnit,jdbcType=INTEGER}, #{containerType,jdbcType=INTEGER}, 
-      #{feeSource,jdbcType=INTEGER}, #{feeCostType,jdbcType=INTEGER}, #{feeCurrency,jdbcType=INTEGER}, 
-      #{price,jdbcType=DECIMAL}, #{spotId,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updater,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{deleted,jdbcType=BIT}, #{tenantId,jdbcType=BIGINT}, #{deletedBy,jdbcType=VARCHAR}, 
-      #{deletedTime,jdbcType=TIMESTAMP}, #{priceComputeType,jdbcType=INTEGER})
+    insert into product_fee_item (id, product_id, fee_id, 
+      fee_cn_name, fee_en_name, fee_unit, 
+      container_type, fee_source, fee_cost_type, 
+      fee_currency, price, spot_id, 
+      creator, create_time, updater, 
+      update_time, deleted, tenant_id, 
+      deleted_by, deleted_time, price_compute_type, 
+      shipping_company_id)
+    values (#{id,jdbcType=BIGINT}, #{productId,jdbcType=BIGINT}, #{feeId,jdbcType=BIGINT}, 
+      #{feeCnName,jdbcType=VARCHAR}, #{feeEnName,jdbcType=VARCHAR}, #{feeUnit,jdbcType=INTEGER}, 
+      #{containerType,jdbcType=INTEGER}, #{feeSource,jdbcType=INTEGER}, #{feeCostType,jdbcType=INTEGER}, 
+      #{feeCurrency,jdbcType=INTEGER}, #{price,jdbcType=DECIMAL}, #{spotId,jdbcType=VARCHAR}, 
+      #{creator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updater,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=BIT}, #{tenantId,jdbcType=BIGINT}, 
+      #{deletedBy,jdbcType=VARCHAR}, #{deletedTime,jdbcType=TIMESTAMP}, #{priceComputeType,jdbcType=INTEGER}, 
+      #{shippingCompanyId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.djk.core.model.ProductFeeItem">
     insert into product_fee_item
@@ -140,6 +144,9 @@
       </if>
       <if test="productId != null">
         product_id,
+      </if>
+      <if test="feeId != null">
+        fee_id,
       </if>
       <if test="feeCnName != null">
         fee_cn_name,
@@ -195,6 +202,9 @@
       <if test="priceComputeType != null">
         price_compute_type,
       </if>
+      <if test="shippingCompanyId != null">
+        shipping_company_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -202,6 +212,9 @@
       </if>
       <if test="productId != null">
         #{productId,jdbcType=BIGINT},
+      </if>
+      <if test="feeId != null">
+        #{feeId,jdbcType=BIGINT},
       </if>
       <if test="feeCnName != null">
         #{feeCnName,jdbcType=VARCHAR},
@@ -257,6 +270,9 @@
       <if test="priceComputeType != null">
         #{priceComputeType,jdbcType=INTEGER},
       </if>
+      <if test="shippingCompanyId != null">
+        #{shippingCompanyId,jdbcType=BIGINT},
+      </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.djk.core.model.ProductFeeItemExample" resultType="java.lang.Long">
@@ -273,6 +289,9 @@
       </if>
       <if test="record.productId != null">
         product_id = #{record.productId,jdbcType=BIGINT},
+      </if>
+      <if test="record.feeId != null">
+        fee_id = #{record.feeId,jdbcType=BIGINT},
       </if>
       <if test="record.feeCnName != null">
         fee_cn_name = #{record.feeCnName,jdbcType=VARCHAR},
@@ -328,6 +347,9 @@
       <if test="record.priceComputeType != null">
         price_compute_type = #{record.priceComputeType,jdbcType=INTEGER},
       </if>
+      <if test="record.shippingCompanyId != null">
+        shipping_company_id = #{record.shippingCompanyId,jdbcType=BIGINT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -337,6 +359,7 @@
     update product_fee_item
     set id = #{record.id,jdbcType=BIGINT},
       product_id = #{record.productId,jdbcType=BIGINT},
+      fee_id = #{record.feeId,jdbcType=BIGINT},
       fee_cn_name = #{record.feeCnName,jdbcType=VARCHAR},
       fee_en_name = #{record.feeEnName,jdbcType=VARCHAR},
       fee_unit = #{record.feeUnit,jdbcType=INTEGER},
@@ -354,7 +377,8 @@
       tenant_id = #{record.tenantId,jdbcType=BIGINT},
       deleted_by = #{record.deletedBy,jdbcType=VARCHAR},
       deleted_time = #{record.deletedTime,jdbcType=TIMESTAMP},
-      price_compute_type = #{record.priceComputeType,jdbcType=INTEGER}
+      price_compute_type = #{record.priceComputeType,jdbcType=INTEGER},
+      shipping_company_id = #{record.shippingCompanyId,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -364,6 +388,9 @@
     <set>
       <if test="productId != null">
         product_id = #{productId,jdbcType=BIGINT},
+      </if>
+      <if test="feeId != null">
+        fee_id = #{feeId,jdbcType=BIGINT},
       </if>
       <if test="feeCnName != null">
         fee_cn_name = #{feeCnName,jdbcType=VARCHAR},
@@ -419,12 +446,16 @@
       <if test="priceComputeType != null">
         price_compute_type = #{priceComputeType,jdbcType=INTEGER},
       </if>
+      <if test="shippingCompanyId != null">
+        shipping_company_id = #{shippingCompanyId,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.djk.core.model.ProductFeeItem">
     update product_fee_item
     set product_id = #{productId,jdbcType=BIGINT},
+      fee_id = #{feeId,jdbcType=BIGINT},
       fee_cn_name = #{feeCnName,jdbcType=VARCHAR},
       fee_en_name = #{feeEnName,jdbcType=VARCHAR},
       fee_unit = #{feeUnit,jdbcType=INTEGER},
@@ -442,27 +473,30 @@
       tenant_id = #{tenantId,jdbcType=BIGINT},
       deleted_by = #{deletedBy,jdbcType=VARCHAR},
       deleted_time = #{deletedTime,jdbcType=TIMESTAMP},
-      price_compute_type = #{priceComputeType,jdbcType=INTEGER}
+      price_compute_type = #{priceComputeType,jdbcType=INTEGER},
+      shipping_company_id = #{shippingCompanyId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <insert id="batchInsert">
     <if test="items.get(0) != null">
-            insert into product_fee_item  (id, product_id, fee_cn_name, 
-        fee_en_name, fee_unit, container_type, 
-        fee_source, fee_cost_type, fee_currency, 
-        price, spot_id, creator, 
-        create_time, updater, update_time, 
-        deleted, tenant_id, deleted_by, 
-        deleted_time, price_compute_type)
+            insert into product_fee_item  (id, product_id, fee_id, 
+        fee_cn_name, fee_en_name, fee_unit, 
+        container_type, fee_source, fee_cost_type, 
+        fee_currency, price, spot_id, 
+        creator, create_time, updater, 
+        update_time, deleted, tenant_id, 
+        deleted_by, deleted_time, price_compute_type, 
+        shipping_company_id)
       values
       <foreach collection="items" item="item" index="index" separator=",">
-      (#{item.id,jdbcType=BIGINT}, #{item.productId,jdbcType=BIGINT}, #{item.feeCnName,jdbcType=VARCHAR}, 
-        #{item.feeEnName,jdbcType=VARCHAR}, #{item.feeUnit,jdbcType=INTEGER}, #{item.containerType,jdbcType=INTEGER}, 
-        #{item.feeSource,jdbcType=INTEGER}, #{item.feeCostType,jdbcType=INTEGER}, #{item.feeCurrency,jdbcType=INTEGER}, 
-        #{item.price,jdbcType=DECIMAL}, #{item.spotId,jdbcType=VARCHAR}, #{item.creator,jdbcType=VARCHAR}, 
-        #{item.createTime,jdbcType=TIMESTAMP}, #{item.updater,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP}, 
-        #{item.deleted,jdbcType=BIT}, #{item.tenantId,jdbcType=BIGINT}, #{item.deletedBy,jdbcType=VARCHAR}, 
-        #{item.deletedTime,jdbcType=TIMESTAMP}, #{item.priceComputeType,jdbcType=INTEGER})
+      (#{item.id,jdbcType=BIGINT}, #{item.productId,jdbcType=BIGINT}, #{item.feeId,jdbcType=BIGINT}, 
+        #{item.feeCnName,jdbcType=VARCHAR}, #{item.feeEnName,jdbcType=VARCHAR}, #{item.feeUnit,jdbcType=INTEGER}, 
+        #{item.containerType,jdbcType=INTEGER}, #{item.feeSource,jdbcType=INTEGER}, #{item.feeCostType,jdbcType=INTEGER}, 
+        #{item.feeCurrency,jdbcType=INTEGER}, #{item.price,jdbcType=DECIMAL}, #{item.spotId,jdbcType=VARCHAR}, 
+        #{item.creator,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updater,jdbcType=VARCHAR}, 
+        #{item.updateTime,jdbcType=TIMESTAMP}, #{item.deleted,jdbcType=BIT}, #{item.tenantId,jdbcType=BIGINT}, 
+        #{item.deletedBy,jdbcType=VARCHAR}, #{item.deletedTime,jdbcType=TIMESTAMP}, #{item.priceComputeType,jdbcType=INTEGER}, 
+        #{item.shippingCompanyId,jdbcType=BIGINT})
       </foreach>
     </if>
   </insert>
