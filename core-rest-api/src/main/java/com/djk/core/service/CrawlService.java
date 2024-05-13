@@ -5,6 +5,7 @@ import com.djk.core.model.BasePortExample;
 import com.djk.core.vo.QueryRouteVo;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author duanjunkai
@@ -21,5 +22,5 @@ public interface CrawlService
      * @return xxx
      * @throws InterruptedException
      */
-    String queryData(QueryRouteVo queryRouteVo, String hostCode) throws InterruptedException;
+    String queryData(QueryRouteVo queryRouteVo, String hostCode) throws Exception;
 }

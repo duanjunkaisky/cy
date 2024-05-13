@@ -11,6 +11,9 @@ import com.djk.core.utils.HttpResp;
 import com.djk.core.utils.HttpUtil;
 import com.djk.core.vo.ContainerDist;
 import com.djk.core.vo.QueryRouteVo;
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
@@ -25,6 +28,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -75,7 +79,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     }
 
     @Override
-    public String queryData(QueryRouteVo queryRouteVo, String hostCode)
+    public String queryData(QueryRouteVo queryRouteVo, String hostCode) throws Exception
     {
         String proxy = null;
 //        String proxy = MyProxyUtil.getProxy();
@@ -100,21 +104,23 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         Date queryTime = instance.getTime();
 
         List<ContainerDist> realList = containerList.stream().filter(i -> i.getFlag().equalsIgnoreCase(queryRouteVo.getContainerType())).collect(Collectors.toList());
+        List<ListenableFuture<String>> futureList = new ArrayList<>();
         for (ContainerDist container : realList) {
             boolean hasMore = true;
             for (int i = 1; i <= 4; i++) {
                 final int page = i;
-                new Thread()
-                {
-                    @Override
-                    public void run()
-                    {
-                        getDataPerPage(queryRouteVo, proxy, fromPort, toPort, portInfoFrom, portInfoTo, baseShippingCompany, existMap, productInfoList, productContainerList, productFeeItemList, format, queryTime, container, page);
-                    }
-                }.start();
+                futureList.add(CrawlChain.EXECUTOR_SERVICE.submit(() -> {
+                    getDataPerPage(queryRouteVo, proxy, fromPort, toPort, portInfoFrom, portInfoTo, baseShippingCompany, existMap, productInfoList, productContainerList, productFeeItemList, format, queryTime, container, page);
+                    return getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页请求成功";
+                }));
             }
-//            rocketMQTemplate.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(queryRouteVo)).build());
         }
+
+        ListenableFuture<List<String>> listListenableFuture = Futures.allAsList(Lists.newArrayList(futureList));
+        List<String> implNameList = listListenableFuture.get();
+        implNameList.forEach(item -> {
+            log.info(item);
+        });
 
         return String.valueOf(productInfoList.size());
     }

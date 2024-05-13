@@ -68,7 +68,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
     }
 
     @Override
-    public String queryData(QueryRouteVo queryRouteVo, String hostCode)
+    public String queryData(QueryRouteVo queryRouteVo, String hostCode) throws Exception
     {
         this.setHostCode(hostCode);
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + null);
