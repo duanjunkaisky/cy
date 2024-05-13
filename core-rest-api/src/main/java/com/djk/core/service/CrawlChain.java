@@ -76,7 +76,7 @@ public class CrawlChain
                 requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
                 requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
 
-                log.info(str);
+                log.info("---> " + queryRouteVo.getSpotId() + " - " + str);
 
                 crawlRequestStatusExample = new CrawlRequestStatusExample();
                 crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId());
@@ -102,7 +102,7 @@ public class CrawlChain
                 requestStatus.setMsg(ExceptionUtil.stacktraceToString(e));
                 requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
             }
-            return queryRouteVo.getHostCode() + " -> 0";
+            return "---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getHostCode() + " -> 0";
         }));
     }
 
