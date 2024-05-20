@@ -1,11 +1,6 @@
 package com.djk.core.service;
 
-import com.djk.core.model.BasePort;
-import com.djk.core.model.BasePortExample;
 import com.djk.core.vo.QueryRouteVo;
-
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author duanjunkai
