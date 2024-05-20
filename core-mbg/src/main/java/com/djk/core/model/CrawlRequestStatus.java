@@ -17,7 +17,7 @@ public class CrawlRequestStatus implements Serializable {
     private Long startTime;
 
     @ApiModelProperty(value = "出发港口代码")
-    private String fromProt;
+    private String fromPort;
 
     @ApiModelProperty(value = "到达港口代码")
     private String toPort;
@@ -71,12 +71,12 @@ public class CrawlRequestStatus implements Serializable {
         this.startTime = startTime;
     }
 
-    public String getFromProt() {
-        return fromProt;
+    public String getFromPort() {
+        return fromPort;
     }
 
-    public void setFromProt(String fromProt) {
-        this.fromProt = fromProt;
+    public void setFromPort(String fromPort) {
+        this.fromPort = fromPort;
     }
 
     public String getToPort() {
@@ -137,7 +137,7 @@ public class CrawlRequestStatus implements Serializable {
         sb.append(", spotId=").append(spotId);
         sb.append(", requestParams=").append(requestParams);
         sb.append(", startTime=").append(startTime);
-        sb.append(", fromProt=").append(fromProt);
+        sb.append(", fromPort=").append(fromPort);
         sb.append(", toPort=").append(toPort);
         sb.append(", hostCode=").append(hostCode);
         sb.append(", status=").append(status);

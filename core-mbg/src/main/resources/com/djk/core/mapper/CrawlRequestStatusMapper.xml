@@ -6,7 +6,7 @@
     <result column="spot_id" jdbcType="VARCHAR" property="spotId" />
     <result column="request_params" jdbcType="VARCHAR" property="requestParams" />
     <result column="start_time" jdbcType="BIGINT" property="startTime" />
-    <result column="from_prot" jdbcType="VARCHAR" property="fromProt" />
+    <result column="from_port" jdbcType="VARCHAR" property="fromPort" />
     <result column="to_port" jdbcType="VARCHAR" property="toPort" />
     <result column="host_code" jdbcType="VARCHAR" property="hostCode" />
     <result column="status" jdbcType="INTEGER" property="status" />
@@ -75,7 +75,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, spot_id, request_params, start_time, from_prot, to_port, host_code, status, create_time, 
+    id, spot_id, request_params, start_time, from_port, to_port, host_code, status, create_time, 
     update_time
   </sql>
   <sql id="Blob_Column_List">
@@ -131,11 +131,11 @@
   </delete>
   <insert id="insert" parameterType="com.djk.core.model.CrawlRequestStatus">
     insert into crawl_request_status (id, spot_id, request_params, 
-      start_time, from_prot, to_port, 
+      start_time, from_port, to_port, 
       host_code, status, create_time, 
       update_time, msg)
     values (#{id,jdbcType=BIGINT}, #{spotId,jdbcType=VARCHAR}, #{requestParams,jdbcType=VARCHAR}, 
-      #{startTime,jdbcType=BIGINT}, #{fromProt,jdbcType=VARCHAR}, #{toPort,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=BIGINT}, #{fromPort,jdbcType=VARCHAR}, #{toPort,jdbcType=VARCHAR}, 
       #{hostCode,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{msg,jdbcType=LONGVARCHAR})
   </insert>
@@ -154,8 +154,8 @@
       <if test="startTime != null">
         start_time,
       </if>
-      <if test="fromProt != null">
-        from_prot,
+      <if test="fromPort != null">
+        from_port,
       </if>
       <if test="toPort != null">
         to_port,
@@ -189,8 +189,8 @@
       <if test="startTime != null">
         #{startTime,jdbcType=BIGINT},
       </if>
-      <if test="fromProt != null">
-        #{fromProt,jdbcType=VARCHAR},
+      <if test="fromPort != null">
+        #{fromPort,jdbcType=VARCHAR},
       </if>
       <if test="toPort != null">
         #{toPort,jdbcType=VARCHAR},
@@ -233,8 +233,8 @@
       <if test="record.startTime != null">
         start_time = #{record.startTime,jdbcType=BIGINT},
       </if>
-      <if test="record.fromProt != null">
-        from_prot = #{record.fromProt,jdbcType=VARCHAR},
+      <if test="record.fromPort != null">
+        from_port = #{record.fromPort,jdbcType=VARCHAR},
       </if>
       <if test="record.toPort != null">
         to_port = #{record.toPort,jdbcType=VARCHAR},
@@ -265,7 +265,7 @@
       spot_id = #{record.spotId,jdbcType=VARCHAR},
       request_params = #{record.requestParams,jdbcType=VARCHAR},
       start_time = #{record.startTime,jdbcType=BIGINT},
-      from_prot = #{record.fromProt,jdbcType=VARCHAR},
+      from_port = #{record.fromPort,jdbcType=VARCHAR},
       to_port = #{record.toPort,jdbcType=VARCHAR},
       host_code = #{record.hostCode,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=INTEGER},
@@ -282,7 +282,7 @@
       spot_id = #{record.spotId,jdbcType=VARCHAR},
       request_params = #{record.requestParams,jdbcType=VARCHAR},
       start_time = #{record.startTime,jdbcType=BIGINT},
-      from_prot = #{record.fromProt,jdbcType=VARCHAR},
+      from_port = #{record.fromPort,jdbcType=VARCHAR},
       to_port = #{record.toPort,jdbcType=VARCHAR},
       host_code = #{record.hostCode,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=INTEGER},
@@ -304,8 +304,8 @@
       <if test="startTime != null">
         start_time = #{startTime,jdbcType=BIGINT},
       </if>
-      <if test="fromProt != null">
-        from_prot = #{fromProt,jdbcType=VARCHAR},
+      <if test="fromPort != null">
+        from_port = #{fromPort,jdbcType=VARCHAR},
       </if>
       <if test="toPort != null">
         to_port = #{toPort,jdbcType=VARCHAR},
@@ -333,7 +333,7 @@
     set spot_id = #{spotId,jdbcType=VARCHAR},
       request_params = #{requestParams,jdbcType=VARCHAR},
       start_time = #{startTime,jdbcType=BIGINT},
-      from_prot = #{fromProt,jdbcType=VARCHAR},
+      from_port = #{fromPort,jdbcType=VARCHAR},
       to_port = #{toPort,jdbcType=VARCHAR},
       host_code = #{hostCode,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
@@ -347,7 +347,7 @@
     set spot_id = #{spotId,jdbcType=VARCHAR},
       request_params = #{requestParams,jdbcType=VARCHAR},
       start_time = #{startTime,jdbcType=BIGINT},
-      from_prot = #{fromProt,jdbcType=VARCHAR},
+      from_port = #{fromPort,jdbcType=VARCHAR},
       to_port = #{toPort,jdbcType=VARCHAR},
       host_code = #{hostCode,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},
@@ -358,13 +358,13 @@
   <insert id="batchInsert">
     <if test="items.get(0) != null">
             insert into crawl_request_status  (id, spot_id, request_params, 
-        start_time, from_prot, to_port, 
+        start_time, from_port, to_port, 
         host_code, status, create_time, 
         update_time, msg)
       values
       <foreach collection="items" item="item" index="index" separator=",">
       (#{item.id,jdbcType=BIGINT}, #{item.spotId,jdbcType=VARCHAR}, #{item.requestParams,jdbcType=VARCHAR}, 
-        #{item.startTime,jdbcType=BIGINT}, #{item.fromProt,jdbcType=VARCHAR}, #{item.toPort,jdbcType=VARCHAR}, 
+        #{item.startTime,jdbcType=BIGINT}, #{item.fromPort,jdbcType=VARCHAR}, #{item.toPort,jdbcType=VARCHAR}, 
         #{item.hostCode,jdbcType=VARCHAR}, #{item.status,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, 
         #{item.updateTime,jdbcType=TIMESTAMP}, #{item.msg,jdbcType=LONGVARCHAR})
       </foreach>

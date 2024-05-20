@@ -59,24 +59,21 @@ public class CrawlChain
             CrawlService crawlService = (CrawlService) SpringUtil.getBean(queryRouteVo.getBeanName());
             try {
                 CrawlRequestStatus requestStatus = new CrawlRequestStatus();
-                requestStatus.setSpotId(String.valueOf(queryRouteVo.getSpotId()));
-                requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
-                requestStatus.setStartTime(queryRouteVo.getStartTime());
-                requestStatus.setFromProt(queryRouteVo.getDeparturePortEn());
-                requestStatus.setToPort(queryRouteVo.getDestinationPortEn());
+                CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
+                crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
                 requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
-                requestStatus.setHostCode(queryRouteVo.getHostCode());
-                requestStatusMapper.insertSelective(requestStatus);
+                requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
 
                 String str = queryRouteVo.getHostCode() + " -> " + crawlService.queryData(queryRouteVo, queryRouteVo.getHostCode());
 
-                CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
-                crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
-                requestStatus = new CrawlRequestStatus();
-                requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
-                requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
+                if (!"cosco".equalsIgnoreCase(queryRouteVo.getHostCode())) {
+                    crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
+                    requestStatus = new CrawlRequestStatus();
+                    requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
+                    requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
 
-                log.info("---> " + queryRouteVo.getSpotId() + " - " + str);
+                    log.info("---> " + queryRouteVo.getSpotId() + " - " + str);
+                }
 
                 crawlRequestStatusExample = new CrawlRequestStatusExample();
                 crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId());

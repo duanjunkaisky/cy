@@ -18,7 +18,7 @@ public class ProductFeeItem implements Serializable {
     @ApiModelProperty(value = "费项中文名称")
     private String feeCnName;
 
-    @ApiModelProperty(value = "费项英文名称")
+    @ApiModelProperty(value = "费项英文名称 ，多个逗号分隔")
     private String feeEnName;
 
     @ApiModelProperty(value = "单位  字典配置（1.箱/2.柜）")
@@ -41,6 +41,30 @@ public class ProductFeeItem implements Serializable {
 
     @ApiModelProperty(value = "爬虫字段唯一标识")
     private String spotId;
+
+    @ApiModelProperty(value = "船公司id")
+    private Long shippingCompanyId;
+
+    @ApiModelProperty(value = "船公司中文全称")
+    private String cnFullName;
+
+    @ApiModelProperty(value = "船公司中文简称")
+    private String cnAbbreviation;
+
+    @ApiModelProperty(value = "起运港 英文名称")
+    private String departurePortEn;
+
+    @ApiModelProperty(value = "起运港 中文名称")
+    private String departurePortZh;
+
+    @ApiModelProperty(value = "目的港 中文名称")
+    private String destinationPortZh;
+
+    @ApiModelProperty(value = "目的港 英文名称")
+    private String destinationPortEn;
+
+    @ApiModelProperty(value = "产品类型 C:自营产品 K:快捷报价 S:供应商产品 P:SPOT产品")
+    private String productType;
 
     @ApiModelProperty(value = "创建者")
     private String creator;
@@ -68,8 +92,6 @@ public class ProductFeeItem implements Serializable {
 
     @ApiModelProperty(value = "单价计算方式：0:有多个箱子时需要乘以个数,1:固定单价,与箱子个数无关")
     private Integer priceComputeType;
-
-    private Long shippingCompanyId;
 
     private static final long serialVersionUID = 1L;
 
@@ -169,6 +191,70 @@ public class ProductFeeItem implements Serializable {
         this.spotId = spotId;
     }
 
+    public Long getShippingCompanyId() {
+        return shippingCompanyId;
+    }
+
+    public void setShippingCompanyId(Long shippingCompanyId) {
+        this.shippingCompanyId = shippingCompanyId;
+    }
+
+    public String getCnFullName() {
+        return cnFullName;
+    }
+
+    public void setCnFullName(String cnFullName) {
+        this.cnFullName = cnFullName;
+    }
+
+    public String getCnAbbreviation() {
+        return cnAbbreviation;
+    }
+
+    public void setCnAbbreviation(String cnAbbreviation) {
+        this.cnAbbreviation = cnAbbreviation;
+    }
+
+    public String getDeparturePortEn() {
+        return departurePortEn;
+    }
+
+    public void setDeparturePortEn(String departurePortEn) {
+        this.departurePortEn = departurePortEn;
+    }
+
+    public String getDeparturePortZh() {
+        return departurePortZh;
+    }
+
+    public void setDeparturePortZh(String departurePortZh) {
+        this.departurePortZh = departurePortZh;
+    }
+
+    public String getDestinationPortZh() {
+        return destinationPortZh;
+    }
+
+    public void setDestinationPortZh(String destinationPortZh) {
+        this.destinationPortZh = destinationPortZh;
+    }
+
+    public String getDestinationPortEn() {
+        return destinationPortEn;
+    }
+
+    public void setDestinationPortEn(String destinationPortEn) {
+        this.destinationPortEn = destinationPortEn;
+    }
+
+    public String getProductType() {
+        return productType;
+    }
+
+    public void setProductType(String productType) {
+        this.productType = productType;
+    }
+
     public String getCreator() {
         return creator;
     }
@@ -241,14 +327,6 @@ public class ProductFeeItem implements Serializable {
         this.priceComputeType = priceComputeType;
     }
 
-    public Long getShippingCompanyId() {
-        return shippingCompanyId;
-    }
-
-    public void setShippingCompanyId(Long shippingCompanyId) {
-        this.shippingCompanyId = shippingCompanyId;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -267,6 +345,14 @@ public class ProductFeeItem implements Serializable {
         sb.append(", feeCurrency=").append(feeCurrency);
         sb.append(", price=").append(price);
         sb.append(", spotId=").append(spotId);
+        sb.append(", shippingCompanyId=").append(shippingCompanyId);
+        sb.append(", cnFullName=").append(cnFullName);
+        sb.append(", cnAbbreviation=").append(cnAbbreviation);
+        sb.append(", departurePortEn=").append(departurePortEn);
+        sb.append(", departurePortZh=").append(departurePortZh);
+        sb.append(", destinationPortZh=").append(destinationPortZh);
+        sb.append(", destinationPortEn=").append(destinationPortEn);
+        sb.append(", productType=").append(productType);
         sb.append(", creator=").append(creator);
         sb.append(", createTime=").append(createTime);
         sb.append(", updater=").append(updater);
@@ -276,7 +362,6 @@ public class ProductFeeItem implements Serializable {
         sb.append(", deletedBy=").append(deletedBy);
         sb.append(", deletedTime=").append(deletedTime);
         sb.append(", priceComputeType=").append(priceComputeType);
-        sb.append(", shippingCompanyId=").append(shippingCompanyId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

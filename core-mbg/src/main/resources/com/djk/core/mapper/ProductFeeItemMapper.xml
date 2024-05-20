@@ -14,6 +14,14 @@
     <result column="fee_currency" jdbcType="INTEGER" property="feeCurrency" />
     <result column="price" jdbcType="DECIMAL" property="price" />
     <result column="spot_id" jdbcType="VARCHAR" property="spotId" />
+    <result column="shipping_company_id" jdbcType="BIGINT" property="shippingCompanyId" />
+    <result column="cn_full_name" jdbcType="VARCHAR" property="cnFullName" />
+    <result column="cn_abbreviation" jdbcType="VARCHAR" property="cnAbbreviation" />
+    <result column="departure_port_en" jdbcType="VARCHAR" property="departurePortEn" />
+    <result column="departure_port_zh" jdbcType="VARCHAR" property="departurePortZh" />
+    <result column="destination_port_zh" jdbcType="VARCHAR" property="destinationPortZh" />
+    <result column="destination_port_en" jdbcType="VARCHAR" property="destinationPortEn" />
+    <result column="product_type" jdbcType="VARCHAR" property="productType" />
     <result column="creator" jdbcType="VARCHAR" property="creator" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="updater" jdbcType="VARCHAR" property="updater" />
@@ -23,7 +31,6 @@
     <result column="deleted_by" jdbcType="VARCHAR" property="deletedBy" />
     <result column="deleted_time" jdbcType="TIMESTAMP" property="deletedTime" />
     <result column="price_compute_type" jdbcType="INTEGER" property="priceComputeType" />
-    <result column="shipping_company_id" jdbcType="BIGINT" property="shippingCompanyId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -85,8 +92,10 @@
   </sql>
   <sql id="Base_Column_List">
     id, product_id, fee_id, fee_cn_name, fee_en_name, fee_unit, container_type, fee_source, 
-    fee_cost_type, fee_currency, price, spot_id, creator, create_time, updater, update_time, 
-    deleted, tenant_id, deleted_by, deleted_time, price_compute_type, shipping_company_id
+    fee_cost_type, fee_currency, price, spot_id, shipping_company_id, cn_full_name, cn_abbreviation, 
+    departure_port_en, departure_port_zh, destination_port_zh, destination_port_en, product_type, 
+    creator, create_time, updater, update_time, deleted, tenant_id, deleted_by, deleted_time, 
+    price_compute_type
   </sql>
   <select id="selectByExample" parameterType="com.djk.core.model.ProductFeeItemExample" resultMap="BaseResultMap">
     select
@@ -123,18 +132,22 @@
       fee_cn_name, fee_en_name, fee_unit, 
       container_type, fee_source, fee_cost_type, 
       fee_currency, price, spot_id, 
-      creator, create_time, updater, 
-      update_time, deleted, tenant_id, 
-      deleted_by, deleted_time, price_compute_type, 
-      shipping_company_id)
+      shipping_company_id, cn_full_name, cn_abbreviation, 
+      departure_port_en, departure_port_zh, destination_port_zh, 
+      destination_port_en, product_type, creator, 
+      create_time, updater, update_time, 
+      deleted, tenant_id, deleted_by, 
+      deleted_time, price_compute_type)
     values (#{id,jdbcType=BIGINT}, #{productId,jdbcType=BIGINT}, #{feeId,jdbcType=BIGINT}, 
       #{feeCnName,jdbcType=VARCHAR}, #{feeEnName,jdbcType=VARCHAR}, #{feeUnit,jdbcType=INTEGER}, 
       #{containerType,jdbcType=INTEGER}, #{feeSource,jdbcType=INTEGER}, #{feeCostType,jdbcType=INTEGER}, 
       #{feeCurrency,jdbcType=INTEGER}, #{price,jdbcType=DECIMAL}, #{spotId,jdbcType=VARCHAR}, 
-      #{creator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updater,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=BIT}, #{tenantId,jdbcType=BIGINT}, 
-      #{deletedBy,jdbcType=VARCHAR}, #{deletedTime,jdbcType=TIMESTAMP}, #{priceComputeType,jdbcType=INTEGER}, 
-      #{shippingCompanyId,jdbcType=BIGINT})
+      #{shippingCompanyId,jdbcType=BIGINT}, #{cnFullName,jdbcType=VARCHAR}, #{cnAbbreviation,jdbcType=VARCHAR}, 
+      #{departurePortEn,jdbcType=VARCHAR}, #{departurePortZh,jdbcType=VARCHAR}, #{destinationPortZh,jdbcType=VARCHAR}, 
+      #{destinationPortEn,jdbcType=VARCHAR}, #{productType,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updater,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{deleted,jdbcType=BIT}, #{tenantId,jdbcType=BIGINT}, #{deletedBy,jdbcType=VARCHAR}, 
+      #{deletedTime,jdbcType=TIMESTAMP}, #{priceComputeType,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.djk.core.model.ProductFeeItem">
     insert into product_fee_item
@@ -175,6 +188,30 @@
       <if test="spotId != null">
         spot_id,
       </if>
+      <if test="shippingCompanyId != null">
+        shipping_company_id,
+      </if>
+      <if test="cnFullName != null">
+        cn_full_name,
+      </if>
+      <if test="cnAbbreviation != null">
+        cn_abbreviation,
+      </if>
+      <if test="departurePortEn != null">
+        departure_port_en,
+      </if>
+      <if test="departurePortZh != null">
+        departure_port_zh,
+      </if>
+      <if test="destinationPortZh != null">
+        destination_port_zh,
+      </if>
+      <if test="destinationPortEn != null">
+        destination_port_en,
+      </if>
+      <if test="productType != null">
+        product_type,
+      </if>
       <if test="creator != null">
         creator,
       </if>
@@ -201,9 +238,6 @@
       </if>
       <if test="priceComputeType != null">
         price_compute_type,
-      </if>
-      <if test="shippingCompanyId != null">
-        shipping_company_id,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -243,6 +277,30 @@
       <if test="spotId != null">
         #{spotId,jdbcType=VARCHAR},
       </if>
+      <if test="shippingCompanyId != null">
+        #{shippingCompanyId,jdbcType=BIGINT},
+      </if>
+      <if test="cnFullName != null">
+        #{cnFullName,jdbcType=VARCHAR},
+      </if>
+      <if test="cnAbbreviation != null">
+        #{cnAbbreviation,jdbcType=VARCHAR},
+      </if>
+      <if test="departurePortEn != null">
+        #{departurePortEn,jdbcType=VARCHAR},
+      </if>
+      <if test="departurePortZh != null">
+        #{departurePortZh,jdbcType=VARCHAR},
+      </if>
+      <if test="destinationPortZh != null">
+        #{destinationPortZh,jdbcType=VARCHAR},
+      </if>
+      <if test="destinationPortEn != null">
+        #{destinationPortEn,jdbcType=VARCHAR},
+      </if>
+      <if test="productType != null">
+        #{productType,jdbcType=VARCHAR},
+      </if>
       <if test="creator != null">
         #{creator,jdbcType=VARCHAR},
       </if>
@@ -269,9 +327,6 @@
       </if>
       <if test="priceComputeType != null">
         #{priceComputeType,jdbcType=INTEGER},
-      </if>
-      <if test="shippingCompanyId != null">
-        #{shippingCompanyId,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -320,6 +375,30 @@
       <if test="record.spotId != null">
         spot_id = #{record.spotId,jdbcType=VARCHAR},
       </if>
+      <if test="record.shippingCompanyId != null">
+        shipping_company_id = #{record.shippingCompanyId,jdbcType=BIGINT},
+      </if>
+      <if test="record.cnFullName != null">
+        cn_full_name = #{record.cnFullName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cnAbbreviation != null">
+        cn_abbreviation = #{record.cnAbbreviation,jdbcType=VARCHAR},
+      </if>
+      <if test="record.departurePortEn != null">
+        departure_port_en = #{record.departurePortEn,jdbcType=VARCHAR},
+      </if>
+      <if test="record.departurePortZh != null">
+        departure_port_zh = #{record.departurePortZh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.destinationPortZh != null">
+        destination_port_zh = #{record.destinationPortZh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.destinationPortEn != null">
+        destination_port_en = #{record.destinationPortEn,jdbcType=VARCHAR},
+      </if>
+      <if test="record.productType != null">
+        product_type = #{record.productType,jdbcType=VARCHAR},
+      </if>
       <if test="record.creator != null">
         creator = #{record.creator,jdbcType=VARCHAR},
       </if>
@@ -347,9 +426,6 @@
       <if test="record.priceComputeType != null">
         price_compute_type = #{record.priceComputeType,jdbcType=INTEGER},
       </if>
-      <if test="record.shippingCompanyId != null">
-        shipping_company_id = #{record.shippingCompanyId,jdbcType=BIGINT},
-      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -369,6 +445,14 @@
       fee_currency = #{record.feeCurrency,jdbcType=INTEGER},
       price = #{record.price,jdbcType=DECIMAL},
       spot_id = #{record.spotId,jdbcType=VARCHAR},
+      shipping_company_id = #{record.shippingCompanyId,jdbcType=BIGINT},
+      cn_full_name = #{record.cnFullName,jdbcType=VARCHAR},
+      cn_abbreviation = #{record.cnAbbreviation,jdbcType=VARCHAR},
+      departure_port_en = #{record.departurePortEn,jdbcType=VARCHAR},
+      departure_port_zh = #{record.departurePortZh,jdbcType=VARCHAR},
+      destination_port_zh = #{record.destinationPortZh,jdbcType=VARCHAR},
+      destination_port_en = #{record.destinationPortEn,jdbcType=VARCHAR},
+      product_type = #{record.productType,jdbcType=VARCHAR},
       creator = #{record.creator,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       updater = #{record.updater,jdbcType=VARCHAR},
@@ -377,8 +461,7 @@
       tenant_id = #{record.tenantId,jdbcType=BIGINT},
       deleted_by = #{record.deletedBy,jdbcType=VARCHAR},
       deleted_time = #{record.deletedTime,jdbcType=TIMESTAMP},
-      price_compute_type = #{record.priceComputeType,jdbcType=INTEGER},
-      shipping_company_id = #{record.shippingCompanyId,jdbcType=BIGINT}
+      price_compute_type = #{record.priceComputeType,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -419,6 +502,30 @@
       <if test="spotId != null">
         spot_id = #{spotId,jdbcType=VARCHAR},
       </if>
+      <if test="shippingCompanyId != null">
+        shipping_company_id = #{shippingCompanyId,jdbcType=BIGINT},
+      </if>
+      <if test="cnFullName != null">
+        cn_full_name = #{cnFullName,jdbcType=VARCHAR},
+      </if>
+      <if test="cnAbbreviation != null">
+        cn_abbreviation = #{cnAbbreviation,jdbcType=VARCHAR},
+      </if>
+      <if test="departurePortEn != null">
+        departure_port_en = #{departurePortEn,jdbcType=VARCHAR},
+      </if>
+      <if test="departurePortZh != null">
+        departure_port_zh = #{departurePortZh,jdbcType=VARCHAR},
+      </if>
+      <if test="destinationPortZh != null">
+        destination_port_zh = #{destinationPortZh,jdbcType=VARCHAR},
+      </if>
+      <if test="destinationPortEn != null">
+        destination_port_en = #{destinationPortEn,jdbcType=VARCHAR},
+      </if>
+      <if test="productType != null">
+        product_type = #{productType,jdbcType=VARCHAR},
+      </if>
       <if test="creator != null">
         creator = #{creator,jdbcType=VARCHAR},
       </if>
@@ -446,9 +553,6 @@
       <if test="priceComputeType != null">
         price_compute_type = #{priceComputeType,jdbcType=INTEGER},
       </if>
-      <if test="shippingCompanyId != null">
-        shipping_company_id = #{shippingCompanyId,jdbcType=BIGINT},
-      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -465,6 +569,14 @@
       fee_currency = #{feeCurrency,jdbcType=INTEGER},
       price = #{price,jdbcType=DECIMAL},
       spot_id = #{spotId,jdbcType=VARCHAR},
+      shipping_company_id = #{shippingCompanyId,jdbcType=BIGINT},
+      cn_full_name = #{cnFullName,jdbcType=VARCHAR},
+      cn_abbreviation = #{cnAbbreviation,jdbcType=VARCHAR},
+      departure_port_en = #{departurePortEn,jdbcType=VARCHAR},
+      departure_port_zh = #{departurePortZh,jdbcType=VARCHAR},
+      destination_port_zh = #{destinationPortZh,jdbcType=VARCHAR},
+      destination_port_en = #{destinationPortEn,jdbcType=VARCHAR},
+      product_type = #{productType,jdbcType=VARCHAR},
       creator = #{creator,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       updater = #{updater,jdbcType=VARCHAR},
@@ -473,8 +585,7 @@
       tenant_id = #{tenantId,jdbcType=BIGINT},
       deleted_by = #{deletedBy,jdbcType=VARCHAR},
       deleted_time = #{deletedTime,jdbcType=TIMESTAMP},
-      price_compute_type = #{priceComputeType,jdbcType=INTEGER},
-      shipping_company_id = #{shippingCompanyId,jdbcType=BIGINT}
+      price_compute_type = #{priceComputeType,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <insert id="batchInsert">
@@ -483,20 +594,24 @@
         fee_cn_name, fee_en_name, fee_unit, 
         container_type, fee_source, fee_cost_type, 
         fee_currency, price, spot_id, 
-        creator, create_time, updater, 
-        update_time, deleted, tenant_id, 
-        deleted_by, deleted_time, price_compute_type, 
-        shipping_company_id)
+        shipping_company_id, cn_full_name, cn_abbreviation, 
+        departure_port_en, departure_port_zh, destination_port_zh, 
+        destination_port_en, product_type, creator, 
+        create_time, updater, update_time, 
+        deleted, tenant_id, deleted_by, 
+        deleted_time, price_compute_type)
       values
       <foreach collection="items" item="item" index="index" separator=",">
       (#{item.id,jdbcType=BIGINT}, #{item.productId,jdbcType=BIGINT}, #{item.feeId,jdbcType=BIGINT}, 
         #{item.feeCnName,jdbcType=VARCHAR}, #{item.feeEnName,jdbcType=VARCHAR}, #{item.feeUnit,jdbcType=INTEGER}, 
         #{item.containerType,jdbcType=INTEGER}, #{item.feeSource,jdbcType=INTEGER}, #{item.feeCostType,jdbcType=INTEGER}, 
         #{item.feeCurrency,jdbcType=INTEGER}, #{item.price,jdbcType=DECIMAL}, #{item.spotId,jdbcType=VARCHAR}, 
-        #{item.creator,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updater,jdbcType=VARCHAR}, 
-        #{item.updateTime,jdbcType=TIMESTAMP}, #{item.deleted,jdbcType=BIT}, #{item.tenantId,jdbcType=BIGINT}, 
-        #{item.deletedBy,jdbcType=VARCHAR}, #{item.deletedTime,jdbcType=TIMESTAMP}, #{item.priceComputeType,jdbcType=INTEGER}, 
-        #{item.shippingCompanyId,jdbcType=BIGINT})
+        #{item.shippingCompanyId,jdbcType=BIGINT}, #{item.cnFullName,jdbcType=VARCHAR}, #{item.cnAbbreviation,jdbcType=VARCHAR}, 
+        #{item.departurePortEn,jdbcType=VARCHAR}, #{item.departurePortZh,jdbcType=VARCHAR}, #{item.destinationPortZh,jdbcType=VARCHAR}, 
+        #{item.destinationPortEn,jdbcType=VARCHAR}, #{item.productType,jdbcType=VARCHAR}, #{item.creator,jdbcType=VARCHAR}, 
+        #{item.createTime,jdbcType=TIMESTAMP}, #{item.updater,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP}, 
+        #{item.deleted,jdbcType=BIT}, #{item.tenantId,jdbcType=BIGINT}, #{item.deletedBy,jdbcType=VARCHAR}, 
+        #{item.deletedTime,jdbcType=TIMESTAMP}, #{item.priceComputeType,jdbcType=INTEGER})
       </foreach>
     </if>
   </insert>

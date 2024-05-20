@@ -13,6 +13,7 @@ public class Constant
      */
     public enum CRAWL_STATUS
     {
+        WAITING,
         RUNNING,
         SUCCESS,
         ERROR
