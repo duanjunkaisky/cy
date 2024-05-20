@@ -134,7 +134,6 @@ public class ConsumerPull implements CommandLineRunner
                                             Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:crawl_" + queryRouteVo.getSpotId() + "_" + queryRouteVo.getHostCode(), System.currentTimeMillis(), FREE_TIME, TimeUnit.MILLISECONDS);
                                             if (aBoolean) {
                                                 BaseShippingCompany baseShippingCompany = crawlServiceFroMsk.getShipCompany(queryRouteVo.getHostCode());
-                                                customDao.executeSql("delete from crawl_request_status where spot_id ='" + queryRouteVo.getSpotId() + "' and host_code='" + queryRouteVo.getHostCode() + "'");
                                                 customDao.executeSql("delete from product_info where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + baseShippingCompany.getId());
                                                 customDao.executeSql("delete from product_container where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + baseShippingCompany.getId());
                                                 customDao.executeSql("delete from product_fee_item where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + baseShippingCompany.getId());
