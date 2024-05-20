@@ -97,15 +97,24 @@ public class ApiController
             String hostCode = getHostCode(beanName);
             queryRouteVo.setHostCode(hostCode);
 
+            CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
+            crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId()).andHostCodeEqualTo(queryRouteVo.getHostCode());
+            List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
             CrawlRequestStatus requestStatus = new CrawlRequestStatus();
-            requestStatus.setSpotId(String.valueOf(queryRouteVo.getSpotId()));
-            requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
-            requestStatus.setStartTime(queryRouteVo.getStartTime());
-            requestStatus.setFromPort(queryRouteVo.getDeparturePortEn());
-            requestStatus.setToPort(queryRouteVo.getDestinationPortEn());
-            requestStatus.setStatus(Constant.CRAWL_STATUS.WAITING.ordinal());
-            requestStatus.setHostCode(queryRouteVo.getHostCode());
-            requestStatusMapper.insertSelective(requestStatus);
+            if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
+                requestStatus.setId(crawlRequestStatuses.get(0).getId());
+                requestStatus.setStatus(Constant.CRAWL_STATUS.WAITING.ordinal());
+                requestStatusMapper.updateByPrimaryKeySelective(requestStatus);
+            } else {
+                requestStatus.setSpotId(String.valueOf(queryRouteVo.getSpotId()));
+                requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
+                requestStatus.setStartTime(queryRouteVo.getStartTime());
+                requestStatus.setFromPort(queryRouteVo.getDeparturePortEn());
+                requestStatus.setToPort(queryRouteVo.getDestinationPortEn());
+                requestStatus.setStatus(Constant.CRAWL_STATUS.WAITING.ordinal());
+                requestStatus.setHostCode(queryRouteVo.getHostCode());
+                requestStatusMapper.insertSelective(requestStatus);
+            }
 
             rocketMQTemplate.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(queryRouteVo)).build());
             log.info("推送到消息->\n topic: " + topic + ",\n " + JSONObject.toJSONString(queryRouteVo));

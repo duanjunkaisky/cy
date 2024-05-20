@@ -143,6 +143,7 @@ public class ConsumerPull implements CommandLineRunner
                                                 currentJobs.put(String.valueOf(queryRouteVo.getSpotId()), queryRouteVo);
                                                 crawlChain.doBusiness(queryRouteVo);
                                             } else {
+                                                customDao.executeSql("update crawl_request_status set status = " + Constant.CRAWL_STATUS.ERROR.ordinal() + ", msg = '已经存在正在爬取的请求，忽略该请求' where spot_id = '" + queryRouteVo.getSpotId() + "' and host_code='" + queryRouteVo.getHostCode() + "'");
                                                 log.info(queryRouteVo.getSpotId() + " - 拉取消息: 已经存在正在爬取的请求，忽略该请求\n" + JSONObject.toJSONString(queryRouteVo));
                                             }
                                         } else {
