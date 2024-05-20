@@ -153,6 +153,7 @@ public class ConsumerPull implements CommandLineRunner
                                                 customDao.executeSql("update crawl_request_status set status = " + Constant.CRAWL_STATUS.ERROR.ordinal() + ", msg = '" + ExceptionUtil.getMessage(e) + "' where spot_id = '" + queryRouteVo.getSpotId() + "' and host_code='" + queryRouteVo.getHostCode() + "'");
                                             }
                                         } else {
+                                            log.info("正在处理的拉取消息数量大于: " + maxCrawlCount + "\n" + JSONObject.toJSONString(currentJobs));
                                             i--;
                                             Thread.sleep(500L);
                                         }
