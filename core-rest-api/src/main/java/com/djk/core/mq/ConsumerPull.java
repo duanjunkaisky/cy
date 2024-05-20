@@ -121,7 +121,7 @@ public class ConsumerPull implements CommandLineRunner
                                             String errorMsg = "爬取超过[" + maxCrawlTime / 1000 + "秒] -> \n" + JSONObject.toJSONString(job);
                                             log.error(errorMsg);
                                             String spotId = job.getSpotId();
-                                            customDao.executeSql("update crawl_request_status set status = " + Constant.CRAWL_STATUS.ERROR.ordinal() + ", msg = '" + errorMsg + "' where spot_id = '" + spotId + "'");
+                                            customDao.executeSql("update crawl_request_status set status = " + Constant.CRAWL_STATUS.ERROR.ordinal() + ", msg = '" + errorMsg + "' where spot_id = '" + spotId + "' and host_code='" + job.getHostCode() + "'");
                                             currentJobs.remove(key);
                                             break;
                                         }
@@ -131,19 +131,26 @@ public class ConsumerPull implements CommandLineRunner
                                             MessageExt message = pullResult.getMsgFoundList().get(i);
                                             QueryRouteVo queryRouteVo = JSON.parseObject(message.getBody(), QueryRouteVo.class);
 
-                                            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:crawl_" + queryRouteVo.getSpotId() + "_" + queryRouteVo.getHostCode(), System.currentTimeMillis(), FREE_TIME, TimeUnit.MILLISECONDS);
-                                            if (aBoolean) {
-                                                BaseShippingCompany baseShippingCompany = crawlServiceFroMsk.getShipCompany(queryRouteVo.getHostCode());
-                                                customDao.executeSql("delete from product_info where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + baseShippingCompany.getId());
-                                                customDao.executeSql("delete from product_container where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + baseShippingCompany.getId());
-                                                customDao.executeSql("delete from product_fee_item where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + baseShippingCompany.getId());
+                                            try {
+                                                Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:crawl_" + queryRouteVo.getSpotId() + "_" + queryRouteVo.getHostCode(), System.currentTimeMillis(), FREE_TIME, TimeUnit.MILLISECONDS);
+                                                if (aBoolean) {
+                                                    BaseShippingCompany baseShippingCompany = crawlServiceFroMsk.getShipCompany(queryRouteVo.getHostCode());
+                                                    customDao.executeSql("delete from product_info where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + baseShippingCompany.getId());
+                                                    customDao.executeSql("delete from product_container where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + baseShippingCompany.getId());
+                                                    customDao.executeSql("delete from product_fee_item where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + baseShippingCompany.getId());
 
-                                                log.info(queryRouteVo.getSpotId() + " - 消费消息,开始爬取: \n " + JSONObject.toJSONString(queryRouteVo));
-                                                currentJobs.put(String.valueOf(queryRouteVo.getSpotId()), queryRouteVo);
-                                                crawlChain.doBusiness(queryRouteVo);
-                                            } else {
-                                                customDao.executeSql("update crawl_request_status set status = " + Constant.CRAWL_STATUS.ERROR.ordinal() + ", msg = '已经存在正在爬取的请求，忽略该请求' where spot_id = '" + queryRouteVo.getSpotId() + "' and host_code='" + queryRouteVo.getHostCode() + "'");
-                                                log.info(queryRouteVo.getSpotId() + " - 拉取消息: 已经存在正在爬取的请求，忽略该请求\n" + JSONObject.toJSONString(queryRouteVo));
+                                                    log.info(queryRouteVo.getSpotId() + " - 消费消息,开始爬取: \n " + JSONObject.toJSONString(queryRouteVo));
+                                                    currentJobs.put(queryRouteVo.getSpotId() + queryRouteVo.getHostCode(), queryRouteVo);
+                                                    crawlChain.doBusiness(queryRouteVo);
+                                                } else {
+                                                    customDao.executeSql("update crawl_request_status set status = " + Constant.CRAWL_STATUS.ERROR.ordinal() + ", msg = '已经存在正在爬取的请求，忽略该请求' where spot_id = '" + queryRouteVo.getSpotId() + "' and host_code='" + queryRouteVo.getHostCode() + "'");
+                                                    log.info(queryRouteVo.getSpotId() + " - 拉取消息: 已经存在正在爬取的请求，忽略该请求\n" + JSONObject.toJSONString(queryRouteVo));
+                                                }
+                                            } catch (Exception e) {
+                                                log.error("消费发生异常");
+                                                log.error(ExceptionUtil.getMessage(e));
+                                                log.error(ExceptionUtil.stacktraceToString(e));
+                                                customDao.executeSql("update crawl_request_status set status = " + Constant.CRAWL_STATUS.ERROR.ordinal() + ", msg = '" + ExceptionUtil.getMessage(e) + "' where spot_id = '" + queryRouteVo.getSpotId() + "' and host_code='" + queryRouteVo.getHostCode() + "'");
                                             }
                                         } else {
                                             i--;

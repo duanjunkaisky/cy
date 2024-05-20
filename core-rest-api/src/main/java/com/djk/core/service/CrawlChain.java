@@ -82,7 +82,6 @@ public class CrawlChain
                             .filter(item -> item.getStatus() == Constant.CRAWL_STATUS.RUNNING.ordinal())
                             .collect(Collectors.toList());
                     if (null == mergeList || mergeList.isEmpty()) {
-                        ConsumerPull.currentJobs.remove(String.valueOf(queryRouteVo.getSpotId()));
                         log.info("---> " + queryRouteVo.getSpotId() + " - 本次请求爬取结束!");
                     }
                 }
@@ -97,6 +96,8 @@ public class CrawlChain
                 requestStatus.setStatus(Constant.CRAWL_STATUS.ERROR.ordinal());
                 requestStatus.setMsg(ExceptionUtil.stacktraceToString(e));
                 requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
+            } finally {
+                ConsumerPull.currentJobs.remove(queryRouteVo.getSpotId() + queryRouteVo.getHostCode());
             }
             return "---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getHostCode() + " -> 0";
         }));
