@@ -197,12 +197,18 @@ public class ApiController
                     return ret;
                 }).filter(item -> {
                     Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:cosco:query_status_id:" + item.get("id"), 1, ConsumerPull.FREE_TIME, TimeUnit.MILLISECONDS);
-                    if (aBoolean) {
+                    if (aBoolean && !StringUtils.isEmpty(item.get("fromPortQueryId")) && !StringUtils.isEmpty(item.get("toPortQueryId"))) {
                         CrawlRequestStatus requestStatus = new CrawlRequestStatus();
                         requestStatus.setId(Long.parseLong(item.get("id")));
                         requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
                         requestStatusMapper.updateByPrimaryKeySelective(requestStatus);
                         return true;
+                    } else if (StringUtils.isEmpty(item.get("fromPortQueryId")) || StringUtils.isEmpty(item.get("toPortQueryId"))) {
+                        CrawlRequestStatus requestStatus = new CrawlRequestStatus();
+                        requestStatus.setId(Long.parseLong(item.get("id")));
+                        requestStatus.setStatus(Constant.CRAWL_STATUS.ERROR.ordinal());
+                        requestStatus.setMsg("base_port表未配置coscoCode");
+                        requestStatusMapper.updateByPrimaryKeySelective(requestStatus);
                     }
                     return false;
                 }).collect(Collectors.toList());
