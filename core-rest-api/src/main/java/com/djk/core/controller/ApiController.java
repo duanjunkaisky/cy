@@ -1,5 +1,6 @@
 package com.djk.core.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.djk.core.api.CommonResult;
 import com.djk.core.config.Constant;
@@ -12,6 +13,7 @@ import com.djk.core.model.CrawlRequestStatus;
 import com.djk.core.model.CrawlRequestStatusExample;
 import com.djk.core.mq.ConsumerPull;
 import com.djk.core.service.*;
+import com.djk.core.utils.FreeMakerUtil;
 import com.djk.core.vo.QueryRouteVo;
 import io.swagger.annotations.Api;
 import lombok.Data;
@@ -26,10 +28,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -85,6 +84,8 @@ public class ApiController
     {
         if (StringUtils.isEmpty(queryRouteVo.getDeparturePortEn())
                 || StringUtils.isEmpty(queryRouteVo.getDestinationPortEn())
+                || StringUtils.isEmpty(queryRouteVo.getDepartureCountryCode())
+                || StringUtils.isEmpty(queryRouteVo.getDestinationCountryCode())
                 || StringUtils.isEmpty(queryRouteVo.getDepartureDate())
                 || StringUtils.isEmpty(queryRouteVo.getContainerType())) {
             return CommonResult.failed("参数不能为空");
@@ -116,8 +117,12 @@ public class ApiController
                 requestStatusMapper.insertSelective(requestStatus);
             }
 
-            rocketMQTemplate.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(queryRouteVo)).build());
-            log.info("推送到消息->\n topic: " + topic + ",\n " + JSONObject.toJSONString(queryRouteVo));
+            if (!"cosco".equalsIgnoreCase(queryRouteVo.getHostCode())) {
+                rocketMQTemplate.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(queryRouteVo)).build());
+                log.info("推送到消息->\n topic: " + topic + ",\n " + JSONObject.toJSONString(queryRouteVo));
+            }
+
+
         }
 
         JSONObject retObj = new JSONObject();
@@ -170,26 +175,25 @@ public class ApiController
             List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
             if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
                 List<Map<String, String>> collect = crawlRequestStatuses.stream().map(item -> {
-                    List<String> portCodeList = new ArrayList<>();
-                    String fromPort = item.getFromPort();
-                    String toPort = item.getToPort();
-                    portCodeList.add(fromPort);
-                    portCodeList.add(toPort);
-                    BasePortExample basePortExample = new BasePortExample();
-                    basePortExample.createCriteria().andPortCodeIn(portCodeList).andStatusEqualTo((byte) 0);
-                    List<BasePort> basePorts = basePortMapper.selectByExample(basePortExample);
+                    String requestParams = item.getRequestParams();
+
                     Map<String, String> ret = new HashMap<>(6);
                     ret.put("id", String.valueOf(item.getId()));
-                    for (int i = 0; i < basePorts.size(); i++) {
-                        BasePort basePort = basePorts.get(i);
-                        String key = "from";
-                        if (toPort.equalsIgnoreCase(basePort.getPortCode())) {
-                            key = "to";
-                        }
-                        ret.put(key + "PortName", basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getPortNameZh() : basePort.getPortNameEn());
-                        ret.put(key + "PortCountryName", basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCountryNameZh() : basePort.getCountryNameEn());
-                        ret.put(key + "PortQueryId", basePort.getCoscoCode());
-                    }
+                    QueryRouteVo queryRouteVo = JSONObject.parseObject(requestParams, QueryRouteVo.class);
+                    BasePortExample basePortExample = new BasePortExample();
+                    basePortExample.createCriteria().andPortCodeEqualTo(queryRouteVo.getDeparturePortEn()).andCountryCodeEqualTo(queryRouteVo.getDepartureCountryCode()).andStatusEqualTo((byte) 0);
+                    List<BasePort> basePorts = basePortMapper.selectByExample(basePortExample);
+                    BasePort basePort = basePorts.get(0);
+                    ret.put("fromPortName", basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getPortNameZh() : basePort.getPortNameEn());
+                    ret.put("fromPortCountryName", basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCountryNameZh() : basePort.getCountryNameEn());
+                    ret.put("fromPortQueryId", basePort.getCoscoCode());
+                    basePortExample = new BasePortExample();
+                    basePortExample.createCriteria().andPortCodeEqualTo(queryRouteVo.getDestinationPortEn()).andCountryCodeEqualTo(queryRouteVo.getDestinationCountryCode()).andStatusEqualTo((byte) 0);
+                    basePorts = basePortMapper.selectByExample(basePortExample);
+                    basePort = basePorts.get(0);
+                    ret.put("toPortName", basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getPortNameZh() : basePort.getPortNameEn());
+                    ret.put("toPortCountryName", basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCountryNameZh() : basePort.getCountryNameEn());
+                    ret.put("toPortQueryId", basePort.getCoscoCode());
                     return ret;
                 }).filter(item -> {
                     Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:cosco:query_status_id:" + item.get("id"), 1, ConsumerPull.FREE_TIME, TimeUnit.MILLISECONDS);
@@ -218,6 +222,57 @@ public class ApiController
     {
         //需要增加一个字段：是否是最后一条数据,然后更新本次爬取结束的状态
         log.info(JSONObject.toJSONString(jsonObject));
+        return CommonResult.success("操作成功");
+    }
+
+    @RequestMapping(value = "/initPort", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult initPort()
+    {
+        String byTemplate = FreeMakerUtil.createByTemplate("1.ftl", null);
+        JSONArray array = JSONArray.parseArray(byTemplate);
+        for (int i = 0; i < array.size(); i++) {
+            JSONObject o = array.getJSONObject(i);
+            BasePort basePort = new BasePort();
+            basePort.setPortNameEn(o.getString("enName"));
+            basePort.setPortNameZh(o.getString("name"));
+            basePort.setPortCode(basePort.getPortNameEn().split(",")[0]);
+            basePort.setCountryNameEn(o.getString("countryNameEn"));
+            basePort.setCountryNameZh(o.getString("countryName"));
+            basePort.setCountryCode(o.getString("countryCode"));
+            basePort.setProvinceEn(o.getString("stateNameEn"));
+            basePort.setProvinceZh(o.getString("stateName"));
+            basePort.setStateEn(o.getString("stateNameEn"));
+            basePort.setStateZh(o.getString("stateName"));
+            basePort.setCityEn(o.getString("cityNameEn"));
+            basePort.setCityZh(o.getString("cityName"));
+            basePort.setPortType(2);
+            basePort.setRegion(34L);
+            basePort.setArea(35L);
+            basePort.setStatus((byte) 0);
+            basePort.setNotes(o.getString("remark"));
+            basePort.setCoscoCode(o.getString("coscoCode"));
+            basePort.setOoclCode(o.getString("ooclCode"));
+            basePort.setEmcCode(o.getString("emcCode"));
+            basePort.setMskCode(o.getString("mskCode"));
+            basePort.setMskRkstCode(o.getString("mskRkstCode"));
+            basePort.setMccCode(o.getString("mccCode"));
+            basePort.setMccRkstCode(o.getString("mccRkstCode"));
+            basePort.setOneCode(o.getString("oneCode"));
+            basePort.setMscCode(o.getString("mscCode"));
+            basePort.setMscLocalCode(o.getString("mscLocalCode"));
+            basePort.setZimCode(o.getString("zimCode"));
+            basePort.setHmmCode(o.getString("hmmCode"));
+            basePort.setCmaCode(o.getString("cmaCode"));
+            basePort.setCncCode(o.getString("cncCode"));
+            basePort.setHplCode(o.getString("hplCode"));
+            basePort.setHplPostalCode(o.getString("hplPostalCode"));
+            basePort.setCreateTime(new Date());
+            basePort.setUpdateTime(new Date());
+            basePort.setTenantId(0L);
+            basePort.setDeleted(false);
+            basePortMapper.insertSelective(basePort);
+        }
         return CommonResult.success("操作成功");
     }
 
