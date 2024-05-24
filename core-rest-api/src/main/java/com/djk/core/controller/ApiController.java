@@ -177,6 +177,7 @@ public class ApiController
             crawlRequestStatusExample.createCriteria().andHostCodeEqualTo("cosco").andStatusEqualTo(Constant.CRAWL_STATUS.WAITING.ordinal());
             List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
             if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
+                List<String> existList = new ArrayList<>(1);
                 List<Map<String, String>> collect = crawlRequestStatuses.stream().map(item -> {
                     String requestParams = item.getRequestParams();
 
@@ -201,7 +202,8 @@ public class ApiController
                 }).filter(item -> {
                     Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:cosco:query_status_id:" + item.get("id"), 1, maxCrawlTime, TimeUnit.MILLISECONDS);
                     item.put("maxCrawlTime", String.valueOf(maxCrawlTime));
-                    if (aBoolean && !StringUtils.isEmpty(item.get("fromPortQueryId")) && !StringUtils.isEmpty(item.get("toPortQueryId"))) {
+                    if (existList.isEmpty() && aBoolean && !StringUtils.isEmpty(item.get("fromPortQueryId")) && !StringUtils.isEmpty(item.get("toPortQueryId"))) {
+                        existList.add(item.get("id"));
                         CrawlRequestStatus requestStatus = new CrawlRequestStatus();
                         requestStatus.setId(Long.parseLong(item.get("id")));
                         requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
