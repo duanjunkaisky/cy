@@ -59,21 +59,18 @@ public class CrawlChain
             try {
                 CrawlRequestStatus requestStatus = new CrawlRequestStatus();
                 CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
-                if (!"cosco".equalsIgnoreCase(queryRouteVo.getHostCode())) {
-                    crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
-                    requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
-                    requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
-                }
+                crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
+                requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
+                requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
 
                 String str = queryRouteVo.getHostCode() + " -> " + crawlService.queryData(queryRouteVo, queryRouteVo.getHostCode());
-                if (!"cosco".equalsIgnoreCase(queryRouteVo.getHostCode())) {
-                    crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
-                    requestStatus = new CrawlRequestStatus();
-                    requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
-                    requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
 
-                    log.info("---> " + queryRouteVo.getSpotId() + " - " + str);
-                }
+                crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
+                requestStatus = new CrawlRequestStatus();
+                requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
+                requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
+
+                log.info("---> " + queryRouteVo.getSpotId() + " - " + str);
 
                 crawlRequestStatusExample = new CrawlRequestStatusExample();
                 crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId());

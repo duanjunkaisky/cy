@@ -61,8 +61,16 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
         productInfo.setCourse(productInfo.getDeparturePortZh() + " - " + productInfo.getDestinationPortZh());
         productInfo.setArrivalTime(sdf.parse(order.getString("lta")));
         productInfo.setProductExpiryDate(sdf.parse(order.getString("effectiveEndDate").split("T")[0] + " 23:59"));
-        productInfo.setShipName(legs.getJSONObject(0).getJSONObject("vessel").getString("vesselName"));
-        productInfo.setVoyageNumber(legs.getJSONObject(0).getString("externalVoyageNumber"));
+        try {
+            productInfo.setShipName(legs.getJSONObject(0).getJSONObject("vessel").getString("vesselName"));
+        } catch (Exception e) {
+            productInfo.setShipName("");
+        }
+        try {
+            productInfo.setVoyageNumber(legs.getJSONObject(0).getString("externalVoyageNumber"));
+        } catch (Exception e) {
+            productInfo.setVoyageNumber("");
+        }
         productInfo.setDistance(order.getString("estimatedTransitTimeInDays"));
         productInfo.setCargoType("G");
         productInfo.setProductType("P");

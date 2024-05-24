@@ -40,7 +40,7 @@ public class ConsumerPull implements CommandLineRunner
 {
 
     //    相同的爬取请求前后2次需要间隔
-    public static final Long FREE_TIME = 60 * 1000 * 5L;
+    public static final Long FREE_TIME = 60 * 1000 * 10L;
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
