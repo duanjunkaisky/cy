@@ -184,15 +184,15 @@ public class ApiController
                     basePortExample.createCriteria().andPortCodeEqualTo(queryRouteVo.getDeparturePortEn()).andCountryCodeEqualTo(queryRouteVo.getDepartureCountryCode()).andStatusEqualTo((byte) 0);
                     List<BasePort> basePorts = basePortMapper.selectByExample(basePortExample);
                     BasePort basePort = basePorts.get(0);
-                    ret.put("fromPortName", basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getPortNameZh() : basePort.getPortNameEn());
-                    ret.put("fromPortCountryName", basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCountryNameZh() : basePort.getCountryNameEn());
+                    ret.put("fromPortName", checkPortName(basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCityZh() : basePort.getCityEn()));
+                    ret.put("fromPortCountryName", checkPortName(basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCountryNameZh() : basePort.getCountryNameEn()));
                     ret.put("fromPortQueryId", basePort.getCoscoCode());
                     basePortExample = new BasePortExample();
                     basePortExample.createCriteria().andPortCodeEqualTo(queryRouteVo.getDestinationPortEn()).andCountryCodeEqualTo(queryRouteVo.getDestinationCountryCode()).andStatusEqualTo((byte) 0);
                     basePorts = basePortMapper.selectByExample(basePortExample);
                     basePort = basePorts.get(0);
-                    ret.put("toPortName", basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getPortNameZh() : basePort.getPortNameEn());
-                    ret.put("toPortCountryName", basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCountryNameZh() : basePort.getCountryNameEn());
+                    ret.put("toPortName", checkPortName(basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCityZh() : basePort.getCityEn()));
+                    ret.put("toPortCountryName", checkPortName(basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCountryNameZh() : basePort.getCountryNameEn()));
                     ret.put("toPortQueryId", basePort.getCoscoCode());
                     return ret;
                 }).filter(item -> {
@@ -222,12 +222,36 @@ public class ApiController
         return CommonResult.success(null);
     }
 
+    private String checkPortName(String portName)
+    {
+        String now = "";
+        portName = portName.replaceAll("市", "");
+        String[] arr = portName.toLowerCase().split(" ");
+        for (int i = 0; i < arr.length; i++) {
+            String substring = arr[i].substring(0, 1);
+            now += substring.toUpperCase() + arr[i].substring(1) + " ";
+        }
+        return now.trim();
+    }
+
     @RequestMapping(value = "/insertCoscoData", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult insertCoscoData(@RequestBody JSONObject jsonObject)
     {
         //需要增加一个字段：是否是最后一条数据,然后更新本次爬取结束的状态
         log.info(JSONObject.toJSONString(jsonObject));
+        return CommonResult.success("操作成功");
+    }
+
+    @RequestMapping(value = "/updateCoscoStatus", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateCoscoStatus(@RequestBody JSONObject jsonObject)
+    {
+        Long id = jsonObject.getLong("id");
+        CrawlRequestStatus requestStatus = new CrawlRequestStatus();
+        requestStatus.setId(id);
+        requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
+        requestStatusMapper.updateByPrimaryKeySelective(requestStatus);
         return CommonResult.success("操作成功");
     }
 
