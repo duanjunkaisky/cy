@@ -200,6 +200,7 @@ public class ApiController
                     return ret;
                 }).filter(item -> {
                     Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:cosco:query_status_id:" + item.get("id"), 1, maxCrawlTime, TimeUnit.MILLISECONDS);
+                    item.put("maxCrawlTime", String.valueOf(maxCrawlTime));
                     if (aBoolean && !StringUtils.isEmpty(item.get("fromPortQueryId")) && !StringUtils.isEmpty(item.get("toPortQueryId"))) {
                         CrawlRequestStatus requestStatus = new CrawlRequestStatus();
                         requestStatus.setId(Long.parseLong(item.get("id")));
