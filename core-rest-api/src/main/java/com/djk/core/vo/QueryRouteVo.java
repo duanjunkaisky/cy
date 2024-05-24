@@ -1,5 +1,6 @@
 package com.djk.core.vo;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
 /**
@@ -37,4 +38,6 @@ public class QueryRouteVo
     private String hostCode;
 
     private String beanName;
+
+    private JSONObject otherData;
 }

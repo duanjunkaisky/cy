@@ -59,12 +59,13 @@ public class CrawlChain
             try {
                 CrawlRequestStatus requestStatus = new CrawlRequestStatus();
                 CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
-                crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
-                requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
-                requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
+                if (!"cosco".equalsIgnoreCase(queryRouteVo.getHostCode())) {
+                    crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
+                    requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
+                    requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
+                }
 
                 String str = queryRouteVo.getHostCode() + " -> " + crawlService.queryData(queryRouteVo, queryRouteVo.getHostCode());
-
                 if (!"cosco".equalsIgnoreCase(queryRouteVo.getHostCode())) {
                     crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
                     requestStatus = new CrawlRequestStatus();
@@ -79,13 +80,12 @@ public class CrawlChain
                 List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
                 if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
                     List<CrawlRequestStatus> mergeList = crawlRequestStatuses.stream()
-                            .filter(item -> item.getStatus() == Constant.CRAWL_STATUS.RUNNING.ordinal())
+                            .filter(item -> item.getStatus() <= Constant.CRAWL_STATUS.RUNNING.ordinal())
                             .collect(Collectors.toList());
                     if (null == mergeList || mergeList.isEmpty()) {
                         log.info("---> " + queryRouteVo.getSpotId() + " - 本次请求爬取结束!");
                     }
                 }
-
                 return str;
             } catch (Exception e) {
                 log.error(ExceptionUtil.getMessage(e));

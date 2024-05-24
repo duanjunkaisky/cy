@@ -66,7 +66,7 @@ public class ApiController
     CrawlMetadataWebsiteConfigMapper metadataWebsiteConfigMapper;
 
     @Autowired
-    CrawlServiceFroCmaImpl crawlService;
+    CrawlServiceFroCoscoImpl coscoCrawlService;
 
     @Autowired
     CrawlChain crawlChain;
@@ -95,7 +95,7 @@ public class ApiController
         }
 
         queryRouteVo.setStartTime(System.currentTimeMillis());
-        queryRouteVo.setSpotId(crawlService.createSpotId(queryRouteVo.getDeparturePortEn(), queryRouteVo.getDestinationPortEn()));
+        queryRouteVo.setSpotId(coscoCrawlService.createSpotId(queryRouteVo.getDeparturePortEn(), queryRouteVo.getDestinationPortEn()));
         for (String beanName : target) {
             queryRouteVo.setBeanName(beanName);
             String hostCode = getHostCode(beanName);
@@ -120,12 +120,8 @@ public class ApiController
                 requestStatusMapper.insertSelective(requestStatus);
             }
 
-            if (!"cosco".equalsIgnoreCase(queryRouteVo.getHostCode())) {
-                rocketMQTemplate.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(queryRouteVo)).build());
-                log.info("推送到消息->\n topic: " + topic + ",\n " + JSONObject.toJSONString(queryRouteVo));
-            }
-
-
+            rocketMQTemplate.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(queryRouteVo)).build());
+            log.info("推送到消息->\n topic: " + topic + ",\n " + JSONObject.toJSONString(queryRouteVo));
         }
 
         JSONObject retObj = new JSONObject();
@@ -137,7 +133,7 @@ public class ApiController
     @ResponseBody
     public CommonResult productNumber()
     {
-        String productNumber = crawlService.getProductNumber();
+        String productNumber = coscoCrawlService.getProductNumber();
         return CommonResult.success(productNumber, "操作成功");
     }
 
@@ -147,7 +143,7 @@ public class ApiController
     {
         try {
             queryRouteVo.setStartTime(System.currentTimeMillis());
-            queryRouteVo.setSpotId(crawlService.createSpotId(queryRouteVo.getDeparturePortEn(), queryRouteVo.getDestinationPortEn()));
+            queryRouteVo.setSpotId(coscoCrawlService.createSpotId(queryRouteVo.getDeparturePortEn(), queryRouteVo.getDestinationPortEn()));
             crawlChain.doBusiness(queryRouteVo);
         } catch (Exception e) {
             e.printStackTrace();
@@ -160,7 +156,7 @@ public class ApiController
     public CommonResult getToken(@RequestBody QueryRouteVo queryRouteVo)
     {
         try {
-            JSONObject token = crawlService.getToken(queryRouteVo.getHostCode(), 1);
+            JSONObject token = coscoCrawlService.getToken(queryRouteVo.getHostCode(), 1);
             return CommonResult.success(token);
         } catch (Exception e) {
             e.printStackTrace();
@@ -243,10 +239,13 @@ public class ApiController
 
     @RequestMapping(value = "/insertCoscoData", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult insertCoscoData(@RequestBody JSONObject jsonObject)
+    public CommonResult insertCoscoData(@RequestBody JSONObject data) throws Exception
     {
-        //需要增加一个字段：是否是最后一条数据,然后更新本次爬取结束的状态
-        log.info(JSONObject.toJSONString(jsonObject));
+        Long id = data.getLong("id");
+        CrawlRequestStatus requestStatus = requestStatusMapper.selectByPrimaryKey(id);
+        QueryRouteVo queryRouteVo = JSONObject.parseObject(requestStatus.getRequestParams(), QueryRouteVo.class);
+        queryRouteVo.setOtherData(data);
+        coscoCrawlService.queryData(queryRouteVo, "cosco");
         return CommonResult.success("操作成功");
     }
 
