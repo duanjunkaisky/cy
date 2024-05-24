@@ -48,6 +48,9 @@ public class ApiController
     @Value("${rocketmq.producer.topic}")
     private String topic;
 
+    @Value("${rocketmq.maxCrawlTime}")
+    private int maxCrawlTime;
+
     private List<String> target;
 
     @Autowired
@@ -196,7 +199,7 @@ public class ApiController
                     ret.put("toPortQueryId", basePort.getCoscoCode());
                     return ret;
                 }).filter(item -> {
-                    Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:cosco:query_status_id:" + item.get("id"), 1, ConsumerPull.FREE_TIME, TimeUnit.MILLISECONDS);
+                    Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:cosco:query_status_id:" + item.get("id"), 1, maxCrawlTime, TimeUnit.MILLISECONDS);
                     if (aBoolean && !StringUtils.isEmpty(item.get("fromPortQueryId")) && !StringUtils.isEmpty(item.get("toPortQueryId"))) {
                         CrawlRequestStatus requestStatus = new CrawlRequestStatus();
                         requestStatus.setId(Long.parseLong(item.get("id")));
