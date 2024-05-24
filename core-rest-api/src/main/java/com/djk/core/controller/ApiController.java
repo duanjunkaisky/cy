@@ -177,12 +177,12 @@ public class ApiController
             crawlRequestStatusExample.createCriteria().andHostCodeEqualTo("cosco").andStatusEqualTo(Constant.CRAWL_STATUS.WAITING.ordinal());
             List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
             if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
-                List<String> existList = new ArrayList<>(1);
                 List<Map<String, String>> collect = crawlRequestStatuses.stream().map(item -> {
                     String requestParams = item.getRequestParams();
 
                     Map<String, String> ret = new HashMap<>(6);
                     ret.put("id", String.valueOf(item.getId()));
+                    ret.put("maxCrawlTime", String.valueOf(maxCrawlTime));
                     QueryRouteVo queryRouteVo = JSONObject.parseObject(requestParams, QueryRouteVo.class);
                     BasePortExample basePortExample = new BasePortExample();
                     basePortExample.createCriteria().andPortCodeEqualTo(queryRouteVo.getDeparturePortEn()).andCountryCodeEqualTo(queryRouteVo.getDepartureCountryCode()).andStatusEqualTo((byte) 0);
@@ -200,27 +200,28 @@ public class ApiController
                     ret.put("toPortQueryId", basePort.getCoscoCode());
                     return ret;
                 }).filter(item -> {
-                    Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:cosco:query_status_id:" + item.get("id"), 1, maxCrawlTime, TimeUnit.MILLISECONDS);
-                    item.put("maxCrawlTime", String.valueOf(maxCrawlTime));
-                    if (existList.isEmpty() && aBoolean && !StringUtils.isEmpty(item.get("fromPortQueryId")) && !StringUtils.isEmpty(item.get("toPortQueryId"))) {
-                        existList.add(item.get("id"));
-                        CrawlRequestStatus requestStatus = new CrawlRequestStatus();
-                        requestStatus.setId(Long.parseLong(item.get("id")));
-                        requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
-                        requestStatusMapper.updateByPrimaryKeySelective(requestStatus);
-                        return true;
-                    } else if (StringUtils.isEmpty(item.get("fromPortQueryId")) || StringUtils.isEmpty(item.get("toPortQueryId"))) {
+                    if (StringUtils.isEmpty(item.get("fromPortQueryId")) || StringUtils.isEmpty(item.get("toPortQueryId"))) {
                         CrawlRequestStatus requestStatus = new CrawlRequestStatus();
                         requestStatus.setId(Long.parseLong(item.get("id")));
                         requestStatus.setStatus(Constant.CRAWL_STATUS.ERROR.ordinal());
                         requestStatus.setMsg("base_port表未配置coscoCode");
                         requestStatusMapper.updateByPrimaryKeySelective(requestStatus);
+                        return false;
                     }
-                    return false;
+                    return true;
                 }).collect(Collectors.toList());
-
-                Map<String, String> stringStringMap = collect.get(0);
-                return CommonResult.success(stringStringMap);
+                for (Map<String, String> item : collect) {
+                    long id = Long.parseLong(item.get("id"));
+                    Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:cosco:query_status_id:" + id, 1, maxCrawlTime, TimeUnit.MILLISECONDS);
+                    if (aBoolean) {
+                        CrawlRequestStatus requestStatus = new CrawlRequestStatus();
+                        requestStatus.setId(id);
+                        requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
+                        requestStatusMapper.updateByPrimaryKeySelective(requestStatus);
+                        return CommonResult.success(item);
+                    }
+                }
+                return CommonResult.success(null);
             }
         } catch (Exception e) {
             e.printStackTrace();
