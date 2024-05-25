@@ -13,6 +13,7 @@
         <module>core-mbg</module>
         <module>core-common</module>
         <module>core-rest-api</module>
+        <module>win-tool</module>
     </modules>
 
     <parent>
