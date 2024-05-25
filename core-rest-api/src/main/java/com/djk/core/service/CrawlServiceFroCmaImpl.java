@@ -37,7 +37,8 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Data
-public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements CrawlService {
+public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements CrawlService
+{
     private static int reqCount = 0;
     private static int tokenIndex = 0;
 
@@ -61,13 +62,14 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
     public static List<ContainerDist> containerList = new ArrayList<>(3);
 
     static {
-        containerList.add(ContainerDist.builder().containerCode("20ST").containerType("22G1").build());
-        containerList.add(ContainerDist.builder().containerCode("40ST").containerType("42G1").build());
-        containerList.add(ContainerDist.builder().containerCode("45HC").containerType("45G1").build());
+        containerList.add(ContainerDist.builder().flag("1").containerCode("20ST").containerType("22G1").build());
+        containerList.add(ContainerDist.builder().flag("2").containerCode("40ST").containerType("42G1").build());
+        containerList.add(ContainerDist.builder().flag("3").containerCode("45HC").containerType("45G1").build());
     }
 
     @Override
-    public String queryData(QueryRouteVo queryRouteVo, String hostCode) {
+    public String queryData(QueryRouteVo queryRouteVo, String hostCode) throws Exception
+    {
         this.setHostCode(hostCode);
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + null);
         BasePort fromPort = getFromPort(queryRouteVo);
@@ -82,7 +84,8 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
         List<ProductContainer> productContainerList = new ArrayList<>();
         List<ProductFeeItem> productFeeItemList = new ArrayList<>();
 
-        for (ContainerDist container : containerList) {
+        List<ContainerDist> realList = containerList.stream().filter(i -> i.getFlag().equalsIgnoreCase(queryRouteVo.getContainerType())).collect(Collectors.toList());
+        for (ContainerDist container : realList) {
             while (reqCount < Constant.MAX_REQ_COUNT) {
                 try {
                     reqCount++;
@@ -155,19 +158,22 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
             reqCount = 0;
         }
 
-        return insertData(queryRouteVo, hostCode, productInfoList, productContainerList, productFeeItemList);
+        return String.valueOf(productInfoList.size());
     }
 
 
-    private void parseData(BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap) throws ParseException {
+    private void parseData(BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap) throws ParseException
+    {
         int containerType = computeContainerType(container.getContainerType());
 
         for (Object o : offers) {
+            productFeeItemList = new ArrayList<>();
             JSONObject item = (JSONObject) o;
             JSONArray routingDetails = item.getJSONArray("RoutingDetails");
             JSONObject departureStart = routingDetails.getJSONObject(0);
             JSONObject departureEnd = routingDetails.getJSONObject(routingDetails.size() - 1);
             ProductInfo productInfo = new ProductInfo();
+            productInfo.setProductNumber(getProductNumber());
             productInfo.setDeparturePortZh(fromPort.getPortNameZh());
             productInfo.setDeparturePortEn(fromPort.getPortCode());
             productInfo.setDestinationPortZh(toPort.getPortNameZh());
@@ -214,6 +220,8 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
                 ProductInfo existProduct = existMap.get(existKey);
                 productInfo.setId(existProduct.getId());
             }
+            productInfoMapper.insertSelective(productInfo);
+
 
             JSONObject fee = item.getJSONObject("fee");
             JSONObject chargeDetail = fee.getJSONArray("ChargeDetails").getJSONObject(0);
@@ -230,9 +238,12 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
             productContainer.setUpdateTime(new Date());
             productContainer.setDeleted(false);
             productContainer.setTenantId(0L);
+            productContainer.setShippingCompanyId(productInfo.getShippingCompanyId());
             productContainerList.add(productContainer);
+            productContainerMapper.insertSelective(productContainer);
 
             ProductFeeItem productFeeItem = new ProductFeeItem();
+            productFeeItem.setShippingCompanyId(productInfo.getShippingCompanyId());
             productFeeItem.setContainerType(containerType);
             productFeeItem.setSpotId(productInfo.getSpotId());
             productFeeItem.setProductId(productInfo.getId());
@@ -271,11 +282,13 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
 
             getOtherFee3(productFeeItemList, productFeeItem, item.getString("traceId"), item.getString("OfferId"));
 
+            productFeeItemMapper.batchInsert(productFeeItemList);
         }
 
     }
 
-    private void parseFeeIntoList(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, JSONObject feeItem, int costType) {
+    private void parseFeeIntoList(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, JSONObject feeItem, int costType)
+    {
         JSONObject price = feeItem.getJSONObject("Price");
         BigDecimal amount = price.getBigDecimal("Amount");
         String currency = price.getJSONObject("Currency").getString("Code");
@@ -297,7 +310,8 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
         productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
     }
 
-    private Map<String, String> getHeader() {
+    private Map<String, String> getHeader()
+    {
         JSONObject tokenBean = getToken(this.getHostCode().toLowerCase(), tokenIndex++);
         Map<String, String> header = new HashMap<>(3);
         tokenBean.keySet().stream().forEach(key -> {
@@ -307,33 +321,40 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
         return header;
     }
 
-    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode) {
-        String api = "https://www.cma-cgm.com/api/Ports/Get?id=" + portCodeEn + "&manageChinaCountryCode=true";
-        try {
-            TimeUnit.MILLISECONDS.sleep(SLEEP_REQUEST_TIME);
-            HttpResp resp = HttpUtil.get(api, null, MyProxyUtil.getProxy());
-            String bodyJson = resp.getBodyJson();
-            JSONArray arr = JSONObject.parseArray(bodyJson);
-            for (Object o : arr) {
-                JSONObject item = (JSONObject) o;
-                String actualName = item.getString("ActualName");
-                String[] split = actualName.split(";");
-                String shortName = split[0].split(",")[0];
-                if (split[1].trim().equalsIgnoreCase(countryCode) && shortName.trim().equalsIgnoreCase(portCodeEn)) {
-                    JSONObject ret = new JSONObject();
-                    ret.put("portCode", split[2].trim());
-                    return ret;
+    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode)
+    {
+        int count = 0;
+        while (count < Constant.MAX_REQ_COUNT) {
+            String api = "https://www.cma-cgm.com/api/Ports/Get?id=" + portCodeEn + "&manageChinaCountryCode=true";
+            try {
+                TimeUnit.MILLISECONDS.sleep(SLEEP_REQUEST_TIME);
+                HttpResp resp = HttpUtil.get(api, null, MyProxyUtil.getProxy());
+                String bodyJson = resp.getBodyJson();
+                JSONArray arr = JSONObject.parseArray(bodyJson);
+                for (Object o : arr) {
+                    JSONObject item = (JSONObject) o;
+                    String actualName = item.getString("ActualName");
+                    String[] split = actualName.split(";");
+                    String shortName = split[0].split(",")[0];
+                    if (split[1].trim().equalsIgnoreCase(countryCode) && shortName.trim().equalsIgnoreCase(portCodeEn)) {
+                        JSONObject ret = new JSONObject();
+                        ret.put("portCode", split[2].trim());
+                        return ret;
+                    }
                 }
+            } catch (Exception e) {
+                log.error(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 查询港口代码出错,\n" + api);
+                log.error(ExceptionUtil.getMessage(e));
+                log.error(ExceptionUtil.stacktraceToString(e));
             }
-        } catch (Exception e) {
-            log.error(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 查询港口代码出错,\n" + api);
-            log.error(ExceptionUtil.getMessage(e));
-            log.error(ExceptionUtil.stacktraceToString(e));
+            count++;
         }
-        throw new RuntimeException(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 网站未查询到港口代码信息: " + portCodeEn + ", 请检查base_port的" + this.getHostCode() + "_code信息");
+
+        throw new RuntimeException(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + "查询港口代码出错： ");
     }
 
-    private JSONObject getProductStatus(QueryRouteVo queryRouteVo, String loggedId, int solutionNumber, int ScheduleNumber, String offerId, String traceId) {
+    private JSONObject getProductStatus(QueryRouteVo queryRouteVo, String loggedId, int solutionNumber, int ScheduleNumber, String offerId, String traceId)
+    {
         int count = 0;
         while (count < Constant.MAX_REQ_COUNT) {
             count++;
@@ -378,7 +399,8 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
         return null;
     }
 
-    public void getFreeFee(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String traceId, String offerId) {
+    public void getFreeFee(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String traceId, String offerId)
+    {
         int count = 0;
         while (count < Constant.MAX_REQ_COUNT) {
             count++;
@@ -433,7 +455,8 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
 
     }
 
-    public void getOtherFee3(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String traceId, String offerId) {
+    public void getOtherFee3(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String traceId, String offerId)
+    {
         int count = 0;
         while (count < Constant.MAX_REQ_COUNT) {
             count++;
@@ -476,7 +499,8 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
 
     }
 
-    public void getRequestToken(Map<String, String> header) {
+    public void getRequestToken(Map<String, String> header)
+    {
 //        int count = 0;
 //        while (count < Constant.MAX_REQ_COUNT) {
 //            count++;
@@ -537,7 +561,8 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
         throw new RuntimeException("时间解析出错: " + dateString);
     }
 
-    public String parsePartnerCode(String cookie) {
+    public String parsePartnerCode(String cookie)
+    {
         String[] split = cookie.split(";");
         List<String> strings = Arrays.asList(split);
         List<String> partnerCode = strings.stream().filter(i -> i.contains("partnerCode")).collect(Collectors.toList());

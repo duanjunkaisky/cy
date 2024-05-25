@@ -22,7 +22,8 @@ import java.util.stream.Collectors;
 
 @Data
 @Slf4j
-abstract class BaseSimpleCrawlService implements CrawlService {
+abstract class BaseSimpleCrawlService implements CrawlService
+{
     @Autowired
     BasePortMapper basePortMapper;
 
@@ -52,19 +53,22 @@ abstract class BaseSimpleCrawlService implements CrawlService {
     @Value("${redis.database}")
     public String REDIS_DATABASE;
 
-    public BasePort getFromPort(QueryRouteVo queryRouteVo) {
+    public BasePort getFromPort(QueryRouteVo queryRouteVo)
+    {
         String formCode = queryRouteVo.getDeparturePortEn();
         List<BasePort> basePorts = getBasePorts(formCode);
         return basePorts.get(0);
     }
 
-    public BasePort getToPort(QueryRouteVo queryRouteVo) {
+    public BasePort getToPort(QueryRouteVo queryRouteVo)
+    {
         String toCode = queryRouteVo.getDestinationPortEn();
         List<BasePort> basePorts = getBasePorts(toCode);
         return basePorts.get(0);
     }
 
-    private List<BasePort> getBasePorts(String toCode) {
+    private List<BasePort> getBasePorts(String toCode)
+    {
         BasePortExample basePortExample = new BasePortExample();
         //0正常,1停用
         basePortExample.createCriteria().andPortCodeEqualTo(toCode).andStatusEqualTo((byte) 0);
@@ -75,7 +79,8 @@ abstract class BaseSimpleCrawlService implements CrawlService {
         return basePorts;
     }
 
-    public String getProductNumber() {
+    public String getProductNumber()
+    {
         final int numLength = 6;
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyMM");
@@ -92,7 +97,8 @@ abstract class BaseSimpleCrawlService implements CrawlService {
         return "CGP" + start + String.format("%0" + numLength + "d", number);
     }
 
-    public JSONObject getToken(String hostCode, int tokenIndex) {
+    public JSONObject getToken(String hostCode, int tokenIndex)
+    {
         CrawlMetadataWebsiteConfigExample crawlMetadataWebsiteConfigExample = new CrawlMetadataWebsiteConfigExample();
         crawlMetadataWebsiteConfigExample.createCriteria().andHostCodeEqualTo(hostCode.toLowerCase());
         List<CrawlMetadataWebsiteConfig> crawlMetadataWebsiteConfigs = crawlMetadataWebsiteConfigMapper.selectByExampleWithBLOBs(crawlMetadataWebsiteConfigExample);
@@ -106,7 +112,8 @@ abstract class BaseSimpleCrawlService implements CrawlService {
         return tokenBean;
     }
 
-    public BaseShippingCompany getShipCompany(String hostCode) {
+    public BaseShippingCompany getShipCompany(String hostCode)
+    {
         BaseShippingCompanyExample baseShippingCompanyExample = new BaseShippingCompanyExample();
         baseShippingCompanyExample.createCriteria().andEnAbbreviationEqualTo(hostCode.toUpperCase());
         List<BaseShippingCompany> baseShippingCompanies = shippingCompanyMapper.selectByExample(baseShippingCompanyExample);
@@ -117,7 +124,8 @@ abstract class BaseSimpleCrawlService implements CrawlService {
         return baseShippingCompany;
     }
 
-    public int computeContainerType(String code) {
+    public int computeContainerType(String code)
+    {
         if ("22G1".equals(code)) {
             return 1;
         } else if ("42G1".equals(code)) {
@@ -128,13 +136,15 @@ abstract class BaseSimpleCrawlService implements CrawlService {
         throw new RuntimeException("箱型解析出错");
     }
 
-    public String createSpotId(String departurePortEn, String destinationPortEn) {
+    public String createSpotId(String departurePortEn, String destinationPortEn)
+    {
         String spotIdStr = departurePortEn.toUpperCase() + destinationPortEn.toUpperCase();
         return DigestUtils.md5DigestAsHex(spotIdStr.getBytes());
     }
 
     @Transactional(readOnly = true)
-    public String insertData(QueryRouteVo queryRouteVo, String hostCode, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList) {
+    public String insertData(QueryRouteVo queryRouteVo, String hostCode, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList)
+    {
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " -爬取有效数据数量: " + productInfoList.size());
         if (!productInfoList.isEmpty()) {
             ProductInfo productInfo = productInfoList.get(0);
@@ -213,22 +223,27 @@ abstract class BaseSimpleCrawlService implements CrawlService {
         return String.valueOf(productInfoList.size());
     }
 
-    public int parseCurrentCy(String currency) {
+    public int parseCurrentCy(String currency)
+    {
         if ("USD".equalsIgnoreCase(currency)) {
             return 2;
         } else if ("CNY".equalsIgnoreCase(currency)) {
             return 1;
         } else if ("EUR".equalsIgnoreCase(currency)) {
             return 3;
+        } else if ("THB".equalsIgnoreCase(currency)) {
+            return 4;
         }
-        throw new RuntimeException("解析币种出错, 不在 USD、CNY、EUR之内");
+        throw new RuntimeException(currency + "解析币种出错,无法适配当前的币种信息");
     }
 
-    public String getLogPrefix(String spotId, String hostCode) {
+    public String getLogPrefix(String spotId, String hostCode)
+    {
         return spotId + " - " + hostCode + " - ";
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         System.out.println(new Date(1715061600000L));
     }
 }

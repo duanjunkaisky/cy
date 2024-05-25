@@ -1,0 +1,12 @@
+{
+  "beanName": "crawlServiceFroCoscoImpl",
+  "containerType": "1",
+  "departureCountryCode": "CN",
+  "departureDate": "2024-05-04",
+  "departurePortEn": "SHANGHAI",
+  "destinationCountryCode": "NL",
+  "destinationPortEn": "ROTTERDAM",
+  "hostCode": "cosco",
+  "spotId": "6d84d144fb6eed2616f08bd1143ad2f5",
+  "startTime": 1716473569728
+}

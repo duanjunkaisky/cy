@@ -18,6 +18,7 @@
     <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
     <result column="deleted_by" jdbcType="VARCHAR" property="deletedBy" />
     <result column="deleted_time" jdbcType="TIMESTAMP" property="deletedTime" />
+    <result column="shipping_company_id" jdbcType="BIGINT" property="shippingCompanyId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -79,7 +80,8 @@
   </sql>
   <sql id="Base_Column_List">
     id, product_id, container_type, selling_price, cost, fee_currency, sell_out, spot_id, 
-    creator, create_time, updater, update_time, deleted, tenant_id, deleted_by, deleted_time
+    creator, create_time, updater, update_time, deleted, tenant_id, deleted_by, deleted_time, 
+    shipping_company_id
   </sql>
   <select id="selectByExample" parameterType="com.djk.core.model.ProductContainerExample" resultMap="BaseResultMap">
     select
@@ -117,13 +119,13 @@
       sell_out, spot_id, creator, 
       create_time, updater, update_time, 
       deleted, tenant_id, deleted_by, 
-      deleted_time)
+      deleted_time, shipping_company_id)
     values (#{id,jdbcType=BIGINT}, #{productId,jdbcType=BIGINT}, #{containerType,jdbcType=INTEGER}, 
       #{sellingPrice,jdbcType=DECIMAL}, #{cost,jdbcType=DECIMAL}, #{feeCurrency,jdbcType=INTEGER}, 
       #{sellOut,jdbcType=BIT}, #{spotId,jdbcType=VARCHAR}, #{creator,jdbcType=VARCHAR}, 
       #{createTime,jdbcType=TIMESTAMP}, #{updater,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{deleted,jdbcType=BIT}, #{tenantId,jdbcType=BIGINT}, #{deletedBy,jdbcType=VARCHAR}, 
-      #{deletedTime,jdbcType=TIMESTAMP})
+      #{deletedTime,jdbcType=TIMESTAMP}, #{shippingCompanyId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.djk.core.model.ProductContainer">
     insert into product_container
@@ -176,6 +178,9 @@
       <if test="deletedTime != null">
         deleted_time,
       </if>
+      <if test="shippingCompanyId != null">
+        shipping_company_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -225,6 +230,9 @@
       </if>
       <if test="deletedTime != null">
         #{deletedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="shippingCompanyId != null">
+        #{shippingCompanyId,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -285,6 +293,9 @@
       <if test="record.deletedTime != null">
         deleted_time = #{record.deletedTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.shippingCompanyId != null">
+        shipping_company_id = #{record.shippingCompanyId,jdbcType=BIGINT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -307,7 +318,8 @@
       deleted = #{record.deleted,jdbcType=BIT},
       tenant_id = #{record.tenantId,jdbcType=BIGINT},
       deleted_by = #{record.deletedBy,jdbcType=VARCHAR},
-      deleted_time = #{record.deletedTime,jdbcType=TIMESTAMP}
+      deleted_time = #{record.deletedTime,jdbcType=TIMESTAMP},
+      shipping_company_id = #{record.shippingCompanyId,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -360,6 +372,9 @@
       <if test="deletedTime != null">
         deleted_time = #{deletedTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="shippingCompanyId != null">
+        shipping_company_id = #{shippingCompanyId,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -379,7 +394,8 @@
       deleted = #{deleted,jdbcType=BIT},
       tenant_id = #{tenantId,jdbcType=BIGINT},
       deleted_by = #{deletedBy,jdbcType=VARCHAR},
-      deleted_time = #{deletedTime,jdbcType=TIMESTAMP}
+      deleted_time = #{deletedTime,jdbcType=TIMESTAMP},
+      shipping_company_id = #{shippingCompanyId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <insert id="batchInsert">
@@ -389,7 +405,7 @@
         sell_out, spot_id, creator, 
         create_time, updater, update_time, 
         deleted, tenant_id, deleted_by, 
-        deleted_time)
+        deleted_time, shipping_company_id)
       values
       <foreach collection="items" item="item" index="index" separator=",">
       (#{item.id,jdbcType=BIGINT}, #{item.productId,jdbcType=BIGINT}, #{item.containerType,jdbcType=INTEGER}, 
@@ -397,7 +413,7 @@
         #{item.sellOut,jdbcType=BIT}, #{item.spotId,jdbcType=VARCHAR}, #{item.creator,jdbcType=VARCHAR}, 
         #{item.createTime,jdbcType=TIMESTAMP}, #{item.updater,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP}, 
         #{item.deleted,jdbcType=BIT}, #{item.tenantId,jdbcType=BIGINT}, #{item.deletedBy,jdbcType=VARCHAR}, 
-        #{item.deletedTime,jdbcType=TIMESTAMP})
+        #{item.deletedTime,jdbcType=TIMESTAMP}, #{item.shippingCompanyId,jdbcType=BIGINT})
       </foreach>
     </if>
   </insert>
