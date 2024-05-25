@@ -9,17 +9,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author duanjunkai
  * @date 2024/05/25
  */
 @Component
-public class CommandLine {
-    public static final String CHROME_PATH = "C:\\Program Files\\Google\\Chrome\\Application";
-    public static final String CHROME_PLUGIN_PATH = "D:\\chrome_plugin";
+public class CommandLine
+{
+    public static final String CHROME_PATH = "C:\\Program Files\\Google\\Chrome\\Application\\";
+    public static final String CHROME_PLUGIN_PATH = "C:\\chrome_plugin";
     public static final String CHROME_STARTUP_TIME = "05:00:00";
-    public static final String CHROME_SHUTDOWN_TIME = "17:34:00";
+    public static final String CHROME_SHUTDOWN_TIME = "20:34:00";
 
     public static boolean hasShutDown = false;
     public static boolean hasStartup = false;
@@ -28,7 +30,8 @@ public class CommandLine {
      *
      */
     @Scheduled(cron = "0/5 * * * * ?")
-    private void checkChrome() throws Exception {
+    private void checkChrome() throws Exception
+    {
         long currentTimeMillis = System.currentTimeMillis();
         SimpleDateFormat sdfDay = new SimpleDateFormat("yyyy-MM-dd");
         String format = sdfDay.format(new Date());
@@ -63,20 +66,30 @@ public class CommandLine {
                 }
 
                 killTask(target);
+                int k = 0;
+                int y = 0;
                 for (int i = 0; i < urlList.size(); i++) {
+                    if (i > 0 && i % 5 == 0) {
+                        k = 0;
+                        y += 100;
+                    }
+                    int x = k * 200;
                     String url = urlList.get(i);
-                    Process process = Runtime.getRuntime().exec(
-                            CHROME_PATH + "\\chrome.exe --remote-allow-file-access-from-files --user-data-dir=\\\"D:\\\\chrome_plugin\\\\temp\\\" --start-maximized");
-                    process.getOutputStream().write(("cmd /c start chrome " + url).getBytes());
-                    process.getOutputStream().flush();
+                    Runtime.getRuntime().exec(
+                            CHROME_PATH + "\\chrome.exe --remote-allow-file-access-from-files --window-size=600,450 --window-position=" + x + "," + y + " --new-window " + url);
+                    TimeUnit.SECONDS.sleep(10L);
+                    k++;
                 }
+                Runtime.getRuntime().exec(
+                        CHROME_PATH + "\\chrome.exe --remote-allow-file-access-from-files --window-size=600,450 --window-position=500,500 --new-window https://124.223.114.215/rest-api/productNumber");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void killTask(String target) {
+    private void killTask(String target)
+    {
         String line;
         //shutDown
         try {
@@ -94,7 +107,8 @@ public class CommandLine {
         }
     }
 
-    public static boolean isProcessRunning(String processName) {
+    public static boolean isProcessRunning(String processName)
+    {
         try {
             String taskLineCommand = "tasklist.exe";
             Process process = new ProcessBuilder(taskLineCommand).start();
