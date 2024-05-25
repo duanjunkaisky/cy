@@ -234,7 +234,7 @@ abstract class BaseSimpleCrawlService implements CrawlService
         } else if ("THB".equalsIgnoreCase(currency)) {
             return 4;
         }
-        throw new RuntimeException("解析币种出错, 不在 USD、CNY、EUR之内");
+        throw new RuntimeException(currency + "解析币种出错,无法适配当前的币种信息");
     }
 
     public String getLogPrefix(String spotId, String hostCode)
