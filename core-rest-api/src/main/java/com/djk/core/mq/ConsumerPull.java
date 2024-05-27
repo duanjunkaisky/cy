@@ -211,7 +211,7 @@ public class ConsumerPull implements CommandLineRunner {
     /**
      * 30秒检查一次crawl_request_status
      */
-    @Scheduled(cron = "0/1 * * * * ?")
+    @Scheduled(cron = "0/30 * * * * ?")
     public void checkRequestStatus() {
         CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
         crawlRequestStatusExample.createCriteria().andStatusLessThanOrEqualTo(Constant.CRAWL_STATUS.RUNNING.ordinal());
