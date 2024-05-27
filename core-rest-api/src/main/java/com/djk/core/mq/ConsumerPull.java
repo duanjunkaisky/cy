@@ -7,6 +7,8 @@ import com.djk.core.config.Constant;
 import com.djk.core.dao.CustomDao;
 import com.djk.core.mapper.CrawlRequestStatusMapper;
 import com.djk.core.model.BaseShippingCompany;
+import com.djk.core.model.CrawlRequestStatus;
+import com.djk.core.model.CrawlRequestStatusExample;
 import com.djk.core.service.CrawlChain;
 import com.djk.core.service.CrawlServiceFroMskImpl;
 import com.djk.core.utils.MyProxyUtil;
@@ -26,6 +28,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -36,8 +39,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 @Slf4j
-public class ConsumerPull implements CommandLineRunner
-{
+public class ConsumerPull implements CommandLineRunner {
 
     //    相同的爬取请求前后2次需要间隔
     public static final Long FREE_TIME = 60 * 1000 * 10L;
@@ -86,8 +88,7 @@ public class ConsumerPull implements CommandLineRunner
     /**
      * @throws MQClientException
      */
-    public void consumeMessage() throws MQClientException
-    {
+    public void consumeMessage() throws MQClientException {
         // 1. 实例化对象
         final MQPullConsumerScheduleService scheduleService = new MQPullConsumerScheduleService(group);
         // 2. 设置NameServer
@@ -96,11 +97,9 @@ public class ConsumerPull implements CommandLineRunner
         scheduleService.setMessageModel(MessageModel.CLUSTERING);
         scheduleService.getDefaultMQPullConsumer().setInstanceName("consumerPull");
         // 4. 注册拉取回调函数
-        scheduleService.registerPullTaskCallback(topic, new PullTaskCallback()
-        {
+        scheduleService.registerPullTaskCallback(topic, new PullTaskCallback() {
             @Override
-            public void doPullTask(MessageQueue mq, PullTaskContext context)
-            {
+            public void doPullTask(MessageQueue mq, PullTaskContext context) {
                 if (isPull) {
                     // 5.从上下文中获取MQPullConsumer对象，此处其实就是DefaultMQPullConsumer。
                     MQPullConsumer consumer = context.getPullConsumer();
@@ -186,8 +185,7 @@ public class ConsumerPull implements CommandLineRunner
      * @throws Exception
      */
     @Override
-    public void run(String... args) throws Exception
-    {
+    public void run(String... args) throws Exception {
         consumeMessage();
     }
 
@@ -195,8 +193,7 @@ public class ConsumerPull implements CommandLineRunner
      * 每天12点触发
      */
     @Scheduled(cron = "0 0 23 * * ?")
-    public void delRequestStatus()
-    {
+    public void delRequestStatus() {
         //删除5天前的
         log.info("清除crawl_request_status 5天前的数据");
         String delSql = "delete from crawl_request_status where ( UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(create_time) ) / (60*60)  > (24*5)";
@@ -207,9 +204,29 @@ public class ConsumerPull implements CommandLineRunner
      * 每3分钟清空一次ip代理，重新获取
      */
     @Scheduled(cron = "0 0/3 * * * ?")
-    public void refreshProxy()
-    {
+    public void refreshProxy() {
         MyProxyUtil.proxyMap.clear();
+    }
+
+    /**
+     * 30秒检查一次crawl_request_status
+     */
+    @Scheduled(cron = "0/30 * * * * ?")
+    public void checkRequestStatus() {
+        CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
+        crawlRequestStatusExample.createCriteria().andStatusLessThan(Constant.CRAWL_STATUS.RUNNING.ordinal());
+        List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
+        if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
+            for (CrawlRequestStatus requestStatus : crawlRequestStatuses) {
+                if (System.currentTimeMillis() - requestStatus.getStartTime() > maxCrawlTime) {
+                    requestStatus.setStatus(Constant.CRAWL_STATUS.ERROR.ordinal());
+                    requestStatus.setEndTime(System.currentTimeMillis());
+                    requestStatus.setUseTime(null);
+                    requestStatus.setMsg("爬取超过[" + maxCrawlTime / 1000 + "秒] -> \n" + requestStatus.getRequestParams());
+                    requestStatusMapper.updateByPrimaryKey(requestStatus);
+                }
+            }
+        }
     }
 
 }
