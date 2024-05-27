@@ -113,7 +113,7 @@ public class ApiController {
                     requestStatus.setUseTime(null);
                     requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
                     requestStatus.setMsg(ConsumerPull.FREE_TIME + " 之间忽略该请求");
-                    requestStatusMapper.updateByPrimaryKey(requestStatus);
+                    requestStatusMapper.updateByPrimaryKeyWithBLOBs(requestStatus);
                 } else {
                     requestStatus.setSpotId(String.valueOf(queryRouteVo.getSpotId()));
                     requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
@@ -132,8 +132,9 @@ public class ApiController {
                     requestStatus.setStartTime(queryRouteVo.getStartTime());
                     requestStatus.setEndTime(null);
                     requestStatus.setUseTime(null);
+                    requestStatus.setMsg(null);
                     requestStatus.setStatus(Constant.CRAWL_STATUS.WAITING.ordinal());
-                    requestStatusMapper.updateByPrimaryKey(requestStatus);
+                    requestStatusMapper.updateByPrimaryKeyWithBLOBs(requestStatus);
                 } else {
                     requestStatus.setSpotId(String.valueOf(queryRouteVo.getSpotId()));
                     requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));

@@ -211,7 +211,7 @@ public class ConsumerPull implements CommandLineRunner {
     /**
      * 30秒检查一次crawl_request_status
      */
-    @Scheduled(cron = "0/30 * * * * ?")
+    @Scheduled(cron = "0/1 * * * * ?")
     public void checkRequestStatus() {
         CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
         crawlRequestStatusExample.createCriteria().andStatusLessThanOrEqualTo(Constant.CRAWL_STATUS.RUNNING.ordinal());
@@ -223,7 +223,7 @@ public class ConsumerPull implements CommandLineRunner {
                     requestStatus.setEndTime(System.currentTimeMillis());
                     requestStatus.setUseTime(null);
                     requestStatus.setMsg("爬取超过[" + maxCrawlTime / 1000 + "秒] -> \n" + requestStatus.getRequestParams());
-                    requestStatusMapper.updateByPrimaryKey(requestStatus);
+                    requestStatusMapper.updateByPrimaryKeyWithBLOBs(requestStatus);
                 }
             }
         }
