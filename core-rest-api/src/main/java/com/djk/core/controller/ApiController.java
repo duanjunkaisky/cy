@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author duanjunkai
@@ -40,7 +41,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/")
 @Data
 @ConfigurationProperties(prefix = "crawl")
-public class ApiController {
+public class ApiController
+{
     @Autowired
     CustomDao customDao;
 
@@ -82,7 +84,8 @@ public class ApiController {
      */
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult query(@RequestBody QueryRouteVo queryRouteVo) {
+    public CommonResult query(@RequestBody QueryRouteVo queryRouteVo)
+    {
         if (StringUtils.isEmpty(queryRouteVo.getDeparturePortEn())
                 || StringUtils.isEmpty(queryRouteVo.getDestinationPortEn())
                 || StringUtils.isEmpty(queryRouteVo.getDepartureCountryCode())
@@ -160,15 +163,19 @@ public class ApiController {
 
     @RequestMapping(value = "/productNumber", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult productNumber() {
+    public CommonResult productNumber()
+    {
         String productNumber = coscoCrawlService.getProductNumber();
         return CommonResult.success(productNumber, "操作成功");
     }
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult test(@RequestBody QueryRouteVo queryRouteVo) {
+    public CommonResult test(@RequestBody QueryRouteVo queryRouteVo)
+    {
         try {
+            List<String> beanNames = target.stream().filter(item -> item.toLowerCase().contains(queryRouteVo.getHostCode())).collect(Collectors.toList());
+            queryRouteVo.setBeanName(beanNames.get(0));
             queryRouteVo.setStartTime(System.currentTimeMillis());
             queryRouteVo.setSpotId(coscoCrawlService.createSpotId(queryRouteVo.getDeparturePortEn(), queryRouteVo.getDestinationPortEn()));
             crawlChain.doBusiness(queryRouteVo);
@@ -180,7 +187,8 @@ public class ApiController {
 
     @RequestMapping(value = "/getToken", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult getToken(@RequestBody QueryRouteVo queryRouteVo) {
+    public CommonResult getToken(@RequestBody QueryRouteVo queryRouteVo)
+    {
         try {
             JSONObject token = coscoCrawlService.getToken(queryRouteVo.getHostCode(), 1);
             return CommonResult.success(token);
@@ -192,7 +200,8 @@ public class ApiController {
 
     @RequestMapping(value = "/getCoscoParam", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult getCoscoParam() {
+    public CommonResult getCoscoParam()
+    {
         try {
             CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
             crawlRequestStatusExample.createCriteria().andHostCodeEqualTo("cosco").andStatusEqualTo(Constant.CRAWL_STATUS.WAITING.ordinal());
@@ -211,15 +220,15 @@ public class ApiController {
                     basePortExample.createCriteria().andPortCodeEqualTo(queryRouteVo.getDeparturePortEn()).andCountryCodeEqualTo(queryRouteVo.getDepartureCountryCode()).andStatusEqualTo((byte) 0);
                     List<BasePort> basePorts = basePortMapper.selectByExample(basePortExample);
                     BasePort basePort = basePorts.get(0);
-                    ret.put("fromPortName", checkPortName(basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCityZh() : basePort.getCityEn()));
-                    ret.put("fromPortCountryName", checkPortName(basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCountryNameZh() : basePort.getCountryNameEn()));
+                    ret.put("fromPortName", coscoCrawlService.checkPortName(basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCityZh() : basePort.getCityEn()));
+                    ret.put("fromPortCountryName", coscoCrawlService.checkPortName(basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCountryNameZh() : basePort.getCountryNameEn()));
                     ret.put("fromPortQueryId", basePort.getCoscoCode());
                     basePortExample = new BasePortExample();
                     basePortExample.createCriteria().andPortCodeEqualTo(queryRouteVo.getDestinationPortEn()).andCountryCodeEqualTo(queryRouteVo.getDestinationCountryCode()).andStatusEqualTo((byte) 0);
                     basePorts = basePortMapper.selectByExample(basePortExample);
                     basePort = basePorts.get(0);
-                    ret.put("toPortName", checkPortName(basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCityZh() : basePort.getCityEn()));
-                    ret.put("toPortCountryName", checkPortName(basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCountryNameZh() : basePort.getCountryNameEn()));
+                    ret.put("toPortName", coscoCrawlService.checkPortName(basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCityZh() : basePort.getCityEn()));
+                    ret.put("toPortCountryName", coscoCrawlService.checkPortName(basePort.getCountryCode().equalsIgnoreCase("CN") ? basePort.getCountryNameZh() : basePort.getCountryNameEn()));
                     ret.put("toPortQueryId", basePort.getCoscoCode());
                     return ret;
                 }).filter(item -> {
@@ -257,31 +266,25 @@ public class ApiController {
         return CommonResult.success(null);
     }
 
-    private String checkPortName(String portName) {
-        String now = "";
-        portName = portName.replaceAll("市", "");
-        String[] arr = portName.toLowerCase().split(" ");
-        for (int i = 0; i < arr.length; i++) {
-            String substring = arr[i].substring(0, 1);
-            now += substring.toUpperCase() + arr[i].substring(1) + " ";
-        }
-        return now.trim();
-    }
-
     @RequestMapping(value = "/insertCoscoData", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult insertCoscoData(@RequestBody JSONObject data) throws Exception {
+    public CommonResult insertCoscoData(@RequestBody JSONObject data) throws Exception
+    {
         Long id = data.getLong("id");
         CrawlRequestStatus requestStatus = requestStatusMapper.selectByPrimaryKey(id);
         QueryRouteVo queryRouteVo = JSONObject.parseObject(requestStatus.getRequestParams(), QueryRouteVo.class);
         queryRouteVo.setOtherData(data);
-        coscoCrawlService.queryData(queryRouteVo, "cosco");
+        BaseShippingCompany baseShippingCompany = coscoCrawlService.getShipCompany(queryRouteVo.getHostCode());
+        BasePort fromPort = coscoCrawlService.getFromPort(queryRouteVo);
+        BasePort toPort = coscoCrawlService.getToPort(queryRouteVo);
+        coscoCrawlService.queryData(baseShippingCompany, fromPort, toPort, queryRouteVo, "cosco");
         return CommonResult.success("操作成功");
     }
 
     @RequestMapping(value = "/updateCoscoStatus", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult updateCoscoStatus(@RequestBody JSONObject jsonObject) {
+    public CommonResult updateCoscoStatus(@RequestBody JSONObject jsonObject)
+    {
         Long id = jsonObject.getLong("id");
         CrawlRequestStatus requestStatus = requestStatusMapper.selectByPrimaryKey(id);
         requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
@@ -292,7 +295,8 @@ public class ApiController {
 
     @RequestMapping(value = "/initPort", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult initPort() {
+    public CommonResult initPort()
+    {
         String byTemplate = FreeMakerUtil.createByTemplate("1.ftl", null);
         JSONArray array = JSONArray.parseArray(byTemplate);
         for (int i = 0; i < array.size(); i++) {
@@ -340,7 +344,8 @@ public class ApiController {
         return CommonResult.success("操作成功");
     }
 
-    private static String getHostCode(String beanName) {
+    private static String getHostCode(String beanName)
+    {
         String str = beanName.toLowerCase();
         return str.replaceAll("crawlservicefro", "").replaceAll("impl", "");
     }

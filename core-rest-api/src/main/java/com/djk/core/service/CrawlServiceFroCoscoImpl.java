@@ -21,12 +21,14 @@ import java.util.Date;
 @Service
 @Slf4j
 @Data
-public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements CrawlService {
+public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements CrawlService
+{
     @Autowired
     CrawlRequestStatusMapper requestStatusMapper;
 
     @Override
-    public String queryData(QueryRouteVo queryRouteVo, String hostCode) throws Exception {
+    public String queryData(BaseShippingCompany shippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo, String hostCode) throws Exception
+    {
         if (null != queryRouteVo.getOtherData() && !queryRouteVo.getOtherData().isEmpty()) {
             BaseShippingCompany shipCompany = getShipCompany(hostCode);
             parseData(queryRouteVo, shipCompany);
@@ -34,7 +36,8 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
         return "0";
     }
 
-    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany) throws ParseException {
+    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany) throws ParseException
+    {
         JSONObject otherData = queryRouteVo.getOtherData();
         Long id = otherData.getLong("id");
         JSONObject order = otherData.getJSONObject("order");
@@ -183,7 +186,8 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
         }
     }
 
-    private int getContainerType(String cntrType) {
+    private int getContainerType(String cntrType)
+    {
         if ("20GP".equalsIgnoreCase(cntrType)) {
             return 1;
         } else if ("40GP".equalsIgnoreCase(cntrType)) {

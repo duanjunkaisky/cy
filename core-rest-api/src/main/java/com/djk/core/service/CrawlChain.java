@@ -5,6 +5,8 @@ import com.djk.core.config.Constant;
 import com.djk.core.config.SpringUtil;
 import com.djk.core.dao.CustomDao;
 import com.djk.core.mapper.CrawlRequestStatusMapper;
+import com.djk.core.model.BasePort;
+import com.djk.core.model.BaseShippingCompany;
 import com.djk.core.model.CrawlRequestStatus;
 import com.djk.core.model.CrawlRequestStatusExample;
 import com.djk.core.mq.ConsumerPull;
@@ -15,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +34,8 @@ import java.util.stream.Collectors;
 @Data
 @Slf4j
 @ConfigurationProperties(prefix = "crawl")
-public class CrawlChain {
+public class CrawlChain
+{
     public static ListeningExecutorService EXECUTOR_SERVICE = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
 
     @Autowired
@@ -49,11 +53,16 @@ public class CrawlChain {
     RedisService redisService;
 
     @Async("asyncServiceExecutor")
-    public void doBusiness(QueryRouteVo queryRouteVo) {
+    public void doBusiness(QueryRouteVo queryRouteVo)
+    {
+        CrawlService crawlService = (CrawlService) SpringUtil.getBean(queryRouteVo.getBeanName());
         List<ListenableFuture<String>> futureList = new ArrayList<>();
 
+        BaseShippingCompany baseShippingCompany = crawlService.getShipCompany(queryRouteVo.getHostCode());
+        BasePort fromPort = crawlService.getFromPort(queryRouteVo);
+        BasePort toPort = crawlService.getToPort(queryRouteVo);
+
         futureList.add(EXECUTOR_SERVICE.submit(() -> {
-            CrawlService crawlService = (CrawlService) SpringUtil.getBean(queryRouteVo.getBeanName());
             try {
                 CrawlRequestStatus requestStatus = new CrawlRequestStatus();
                 CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
@@ -61,7 +70,7 @@ public class CrawlChain {
                 requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
                 requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
 
-                String str = queryRouteVo.getHostCode() + " -> " + crawlService.queryData(queryRouteVo, queryRouteVo.getHostCode());
+                String str = queryRouteVo.getHostCode() + " -> " + crawlService.queryData(baseShippingCompany, fromPort, toPort, queryRouteVo, queryRouteVo.getHostCode());
 
                 crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
                 requestStatus = new CrawlRequestStatus();

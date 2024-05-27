@@ -25,6 +25,9 @@ import java.util.stream.Collectors;
 @Slf4j
 abstract class BaseSimpleCrawlService implements CrawlService
 {
+    public static final String FROM_FLAG = "from";
+    public static final String TO_FLAG = "to";
+
     @Autowired
     BasePortMapper basePortMapper;
 
@@ -57,28 +60,34 @@ abstract class BaseSimpleCrawlService implements CrawlService
     @Value("${redis.database}")
     public String REDIS_DATABASE;
 
+    @Override
     public BasePort getFromPort(QueryRouteVo queryRouteVo)
     {
-        String formCode = queryRouteVo.getDeparturePortEn();
-        List<BasePort> basePorts = getBasePorts(formCode);
+        List<BasePort> basePorts = getBasePorts(queryRouteVo, FROM_FLAG);
         return basePorts.get(0);
     }
 
+    @Override
     public BasePort getToPort(QueryRouteVo queryRouteVo)
     {
-        String toCode = queryRouteVo.getDestinationPortEn();
-        List<BasePort> basePorts = getBasePorts(toCode);
+        List<BasePort> basePorts = getBasePorts(queryRouteVo, TO_FLAG);
         return basePorts.get(0);
     }
 
-    private List<BasePort> getBasePorts(String toCode)
+    private List<BasePort> getBasePorts(QueryRouteVo queryRouteVo, String flag)
     {
+        String portCode = queryRouteVo.getDestinationPortEn();
+        String countryCode = queryRouteVo.getDestinationCountryCode();
+        if (FROM_FLAG.equalsIgnoreCase(flag)) {
+            portCode = queryRouteVo.getDeparturePortEn();
+            countryCode = queryRouteVo.getDepartureCountryCode();
+        }
         BasePortExample basePortExample = new BasePortExample();
         //0正常,1停用
-        basePortExample.createCriteria().andPortCodeEqualTo(toCode).andStatusEqualTo((byte) 0);
+        basePortExample.createCriteria().andPortCodeEqualTo(portCode).andCountryCodeEqualTo(countryCode).andStatusEqualTo((byte) 0);
         List<BasePort> basePorts = basePortMapper.selectByExample(basePortExample);
         if (null == basePorts || basePorts.isEmpty()) {
-            throw new RuntimeException("base_port未找到 " + toCode + "的配置信息");
+            throw new RuntimeException("base_port未找到, portCode=" + portCode + ", countryCode=" + countryCode + " 的配置信息");
         }
         return basePorts;
     }
@@ -116,6 +125,7 @@ abstract class BaseSimpleCrawlService implements CrawlService
         return tokenBean;
     }
 
+    @Override
     public BaseShippingCompany getShipCompany(String hostCode)
     {
         BaseShippingCompanyExample baseShippingCompanyExample = new BaseShippingCompanyExample();
@@ -239,6 +249,18 @@ abstract class BaseSimpleCrawlService implements CrawlService
             return 4;
         }
         throw new RuntimeException(currency + "解析币种出错,无法适配当前的币种信息");
+    }
+
+    public String checkPortName(String portName)
+    {
+        String now = "";
+        portName = portName.replaceAll("市", "").replaceAll("Shi", "").replaceAll("shi", "");
+        String[] arr = portName.toLowerCase().split(" ");
+        for (int i = 0; i < arr.length; i++) {
+            String substring = arr[i].substring(0, 1);
+            now += substring.toUpperCase() + arr[i].substring(1) + " ";
+        }
+        return now.trim();
     }
 
     public String getLogPrefix(String spotId, String hostCode)

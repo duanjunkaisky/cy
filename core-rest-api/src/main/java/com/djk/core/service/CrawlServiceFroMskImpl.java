@@ -75,23 +75,13 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     }
 
     @Override
-    public String queryData(QueryRouteVo queryRouteVo, String hostCode) throws Exception
+    public String queryData(BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo, String hostCode) throws Exception
     {
         String proxy = null;
-//        String proxy = MyProxyUtil.getProxy();
         this.setHostCode(hostCode);
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + proxy);
-        BasePort fromPort = getFromPort(queryRouteVo);
-        BasePort toPort = getToPort(queryRouteVo);
-        JSONObject portInfoFrom = getPortInfo(queryRouteVo, fromPort.getMskCode(), fromPort.getCountryCode(), proxy);
-        JSONObject portInfoTo = getPortInfo(queryRouteVo, toPort.getMskCode(), toPort.getCountryCode(), proxy);
 
-        BaseShippingCompany baseShippingCompany = getShipCompany(hostCode);
-
-        Map<String, ProductInfo> existMap = new HashMap<>();
         List<ProductInfo> productInfoList = new ArrayList<>();
-        List<ProductContainer> productContainerList = new ArrayList<>();
-        List<ProductFeeItem> productFeeItemList = new ArrayList<>();
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Calendar instance = Calendar.getInstance();
@@ -100,28 +90,16 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         Date queryTime = instance.getTime();
 
         List<ContainerDist> realList = containerList.stream().filter(i -> i.getFlag().equalsIgnoreCase(queryRouteVo.getContainerType())).collect(Collectors.toList());
-        List<ListenableFuture<String>> futureList = new ArrayList<>();
-        for (ContainerDist container : realList) {
-            boolean hasMore = true;
-            for (int i = 1; i <= 4; i++) {
-                final int page = i;
-                futureList.add(CrawlChain.EXECUTOR_SERVICE.submit(() -> {
-                    getDataPerPage(queryRouteVo, proxy, fromPort, toPort, portInfoFrom, portInfoTo, baseShippingCompany, existMap, productInfoList, productContainerList, productFeeItemList, format, queryTime, container, page);
-                    return getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页请求成功";
-                }));
-            }
+        boolean hasMore = true;
+        int page = 1;
+        while (hasMore) {
+            hasMore = getDataPerPage(queryRouteVo, proxy, fromPort, toPort, baseShippingCompany, productInfoList, format, queryTime, realList.get(0), page);
+            page++;
         }
-
-        ListenableFuture<List<String>> listListenableFuture = Futures.allAsList(Lists.newArrayList(futureList));
-        List<String> implNameList = listListenableFuture.get();
-        implNameList.forEach(item -> {
-            log.info(item);
-        });
-
         return String.valueOf(productInfoList.size());
     }
 
-    private void getDataPerPage(QueryRouteVo queryRouteVo, String proxy, BasePort fromPort, BasePort toPort, JSONObject portInfoFrom, JSONObject portInfoTo, BaseShippingCompany baseShippingCompany, Map<String, ProductInfo> existMap, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, SimpleDateFormat format, Date queryTime, ContainerDist container, int page)
+    private boolean getDataPerPage(QueryRouteVo queryRouteVo, String proxy, BasePort fromPort, BasePort toPort, BaseShippingCompany baseShippingCompany, List<ProductInfo> productInfoList, SimpleDateFormat format, Date queryTime, ContainerDist container, int page)
     {
         reqCount = 0;
         String hostCode = queryRouteVo.getHostCode();
@@ -130,15 +108,15 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 reqCount++;
                 Map<String, String> header = getRemoteSensorData(queryRouteVo, proxy);
                 Map<String, Object> fillData = new HashMap<>(1);
-                fillData.put("fromPortId", portInfoFrom.getString("maerskGeoLocationId"));
-                fillData.put("fromPortCode", portInfoFrom.getString("maerskRkstCode"));
+                fillData.put("fromPortId", fromPort.getMskCode());
+                fillData.put("fromPortCode", fromPort.getMskRkstCode());
                 fillData.put("fromPortCountry", fromPort.getCountryCode());
-                fillData.put("fromPortFullName", portInfoFrom.getString("maerskRkstCode") + " (" + portInfoFrom.getString("maerskRkstCode") + "), " + portInfoFrom.getString("maerskRkstCode"));
+                fillData.put("fromPortFullName", checkPortName(fromPort.getPortCode()) + " (" + checkPortName(fromPort.getStateEn()) + "), " + checkPortName(fromPort.getCountryNameEn()));
 
-                fillData.put("toPortId", portInfoTo.getString("maerskGeoLocationId"));
-                fillData.put("toPortCode", portInfoTo.getString("maerskRkstCode"));
+                fillData.put("toPortId", toPort.getMskCode());
+                fillData.put("toPortCode", toPort.getMskRkstCode());
                 fillData.put("toPortCountry", toPort.getCountryCode());
-                fillData.put("toPortFullName", portInfoTo.getString("maerskRkstCode") + " (" + portInfoTo.getString("maerskRkstCode") + "), " + portInfoTo.getString("maerskRkstCode"));
+                fillData.put("toPortFullName", checkPortName(toPort.getPortCode()) + " (" + checkPortName(toPort.getStateEn()) + "), " + checkPortName(toPort.getCountryNameEn()));
 
                 fillData.put("containerCode", container.getContainerCode());
                 fillData.put("containerSize", container.getContainerSize());
@@ -150,7 +128,6 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
-                TimeUnit.MILLISECONDS.sleep(500L);
                 HttpResp resp = HttpUtil.postBody("https://api.maersk.com/productoffer/v2/productoffers", header, jsonParam, proxy);
                 Response response = resp.getResponse();
                 String bodyJson = resp.getBodyJson();
@@ -165,24 +142,26 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 boolean hasMore = retObj.getBoolean("loadMore");
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求返回成功, hasMore: " + hasMore);
 
-                //开始处理入库
                 JSONArray offers = retObj.getJSONArray("offers");
-                parseData(queryRouteVo, baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap);
+                parseData(queryRouteVo, baseShippingCompany, container, offers, fromPort, toPort, productInfoList);
+
+                return hasMore;
             } catch (Exception e) {
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求出错");
                 log.error(ExceptionUtil.getMessage(e));
                 log.error(ExceptionUtil.stacktraceToString(e));
             }
         }
+        return false;
     }
 
-    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap) throws ParseException
+    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList) throws ParseException
     {
         int containerType = computeContainerType(container.getContainerCode());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         for (Object o : offers) {
-            productFeeItemList = new ArrayList<>();
+            List<ProductFeeItem> productFeeItemList = new ArrayList<>();
             JSONObject item = (JSONObject) o;
             JSONObject productOffer = item.getJSONObject("productOffer");
             if (!StringUtils.isEmpty(productOffer)) {
@@ -236,21 +215,8 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 productInfo.setTenantId(0L);
 
                 productInfo.setSpotId(queryRouteVo.getSpotId());
-
-                String existKey = productInfo.getDeparturePortEn()
-                        + productInfo.getDestinationPortEn()
-                        + productInfo.getShippingCompanyId()
-                        + productInfo.getEstimatedDepartureDate()
-                        + productInfo.getShipName()
-                        + productInfo.getVoyageNumber();
-                if (!existMap.containsKey(existKey)) {
-                    productInfo.setId(Generator.nextId());
-                    productInfoList.add(productInfo);
-                    existMap.put(existKey, productInfo);
-                } else {
-                    ProductInfo existProduct = existMap.get(existKey);
-                    productInfo.setId(existProduct.getId());
-                }
+                productInfo.setId(Generator.nextId());
+                productInfoList.add(productInfo);
                 productInfoMapper.insertSelective(productInfo);
 
                 ProductContainer productContainer = new ProductContainer();
@@ -265,7 +231,6 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 productContainer.setDeleted(false);
                 productContainer.setTenantId(0L);
                 productContainer.setShippingCompanyId(productInfo.getShippingCompanyId());
-                productContainerList.add(productContainer);
                 productContainerMapper.insertSelective(productContainer);
 
                 ProductFeeItem productFeeItem = new ProductFeeItem();
@@ -415,38 +380,6 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         header.put("Akamai-Bm-Telemetry", akaSign);
 
         return header;
-    }
-
-    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode, String proxy)
-    {
-        int count = 0;
-        while (count < Constant.MAX_REQ_COUNT) {
-            String api = "https://api.maersk.com.cn/synergy/reference-data/geography/locations?cityName=" + portCodeEn + "&pageSize=30&sort=cityName&type=city";
-            Map<String, String> header = new HashMap<>(3);
-            header.put("Consumer-Key", "Q09VmiYvj4ifBOa72Z0ekxkq9tLZCVYI");
-            //header不能有host和useragent
-            header.put("Host", "del");
-            header.put("user-agent", "del");
-            try {
-                TimeUnit.MILLISECONDS.sleep(500L);
-                HttpResp resp = HttpUtil.get(api, header, proxy);
-                String bodyJson = resp.getBodyJson();
-                JSONArray arr = JSONArray.parseArray(bodyJson);
-                for (Object o : arr) {
-                    JSONObject item = (JSONObject) o;
-                    if (item.getString("localityName").equalsIgnoreCase(portCodeEn) && item.getString("countryCode").equalsIgnoreCase(countryCode)) {
-                        return item;
-                    }
-                }
-            } catch (Exception e) {
-                log.error(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 查询港口代码出错,\n" + api + "\n" + JSONObject.toJSONString(header));
-                log.error(ExceptionUtil.getMessage(e));
-                log.error(ExceptionUtil.stacktraceToString(e));
-            }
-            count++;
-        }
-
-        throw new RuntimeException(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + "查询港口代码出错： ");
     }
 
 }

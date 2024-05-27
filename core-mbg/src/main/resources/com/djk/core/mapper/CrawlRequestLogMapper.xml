@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.djk.core.mapper.CrawlRequestLogMapper">
+  <resultMap id="BaseResultMap" type="com.djk.core.model.CrawlRequestLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="log_id" jdbcType="BIGINT" property="logId" />
+    <result column="spot_id" jdbcType="VARCHAR" property="spotId" />
+    <result column="data_id" jdbcType="BIGINT" property="dataId" />
+    <result column="business_name" jdbcType="VARCHAR" property="businessName" />
+    <result column="step_name" jdbcType="VARCHAR" property="stepName" />
+    <result column="start_time" jdbcType="BIGINT" property="startTime" />
+    <result column="end_time" jdbcType="BIGINT" property="endTime" />
+    <result column="use_time" jdbcType="BIGINT" property="useTime" />
+    <result column="from_port" jdbcType="VARCHAR" property="fromPort" />
+    <result column="to_port" jdbcType="VARCHAR" property="toPort" />
+    <result column="departure_date" jdbcType="VARCHAR" property="departureDate" />
+    <result column="host_code" jdbcType="VARCHAR" property="hostCode" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.djk.core.model.CrawlRequestLog">
+    <result column="msg" jdbcType="LONGVARCHAR" property="msg" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, log_id, spot_id, data_id, business_name, step_name, start_time, end_time, use_time, 
+    from_port, to_port, departure_date, host_code, create_time, update_time
+  </sql>
+  <sql id="Blob_Column_List">
+    msg
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.djk.core.model.CrawlRequestLogExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from crawl_request_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.djk.core.model.CrawlRequestLogExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from crawl_request_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from crawl_request_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from crawl_request_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.djk.core.model.CrawlRequestLogExample">
+    delete from crawl_request_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.djk.core.model.CrawlRequestLog">
+    insert into crawl_request_log (id, log_id, spot_id, 
+      data_id, business_name, step_name, 
+      start_time, end_time, use_time, 
+      from_port, to_port, departure_date, 
+      host_code, create_time, update_time, 
+      msg)
+    values (#{id,jdbcType=BIGINT}, #{logId,jdbcType=BIGINT}, #{spotId,jdbcType=VARCHAR}, 
+      #{dataId,jdbcType=BIGINT}, #{businessName,jdbcType=VARCHAR}, #{stepName,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, #{useTime,jdbcType=BIGINT}, 
+      #{fromPort,jdbcType=VARCHAR}, #{toPort,jdbcType=VARCHAR}, #{departureDate,jdbcType=VARCHAR}, 
+      #{hostCode,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{msg,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.djk.core.model.CrawlRequestLog">
+    insert into crawl_request_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="logId != null">
+        log_id,
+      </if>
+      <if test="spotId != null">
+        spot_id,
+      </if>
+      <if test="dataId != null">
+        data_id,
+      </if>
+      <if test="businessName != null">
+        business_name,
+      </if>
+      <if test="stepName != null">
+        step_name,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="useTime != null">
+        use_time,
+      </if>
+      <if test="fromPort != null">
+        from_port,
+      </if>
+      <if test="toPort != null">
+        to_port,
+      </if>
+      <if test="departureDate != null">
+        departure_date,
+      </if>
+      <if test="hostCode != null">
+        host_code,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="msg != null">
+        msg,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="logId != null">
+        #{logId,jdbcType=BIGINT},
+      </if>
+      <if test="spotId != null">
+        #{spotId,jdbcType=VARCHAR},
+      </if>
+      <if test="dataId != null">
+        #{dataId,jdbcType=BIGINT},
+      </if>
+      <if test="businessName != null">
+        #{businessName,jdbcType=VARCHAR},
+      </if>
+      <if test="stepName != null">
+        #{stepName,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=BIGINT},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=BIGINT},
+      </if>
+      <if test="useTime != null">
+        #{useTime,jdbcType=BIGINT},
+      </if>
+      <if test="fromPort != null">
+        #{fromPort,jdbcType=VARCHAR},
+      </if>
+      <if test="toPort != null">
+        #{toPort,jdbcType=VARCHAR},
+      </if>
+      <if test="departureDate != null">
+        #{departureDate,jdbcType=VARCHAR},
+      </if>
+      <if test="hostCode != null">
+        #{hostCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="msg != null">
+        #{msg,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.djk.core.model.CrawlRequestLogExample" resultType="java.lang.Long">
+    select count(*) from crawl_request_log
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update crawl_request_log
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.logId != null">
+        log_id = #{record.logId,jdbcType=BIGINT},
+      </if>
+      <if test="record.spotId != null">
+        spot_id = #{record.spotId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.dataId != null">
+        data_id = #{record.dataId,jdbcType=BIGINT},
+      </if>
+      <if test="record.businessName != null">
+        business_name = #{record.businessName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stepName != null">
+        step_name = #{record.stepName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.startTime != null">
+        start_time = #{record.startTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.endTime != null">
+        end_time = #{record.endTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.useTime != null">
+        use_time = #{record.useTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.fromPort != null">
+        from_port = #{record.fromPort,jdbcType=VARCHAR},
+      </if>
+      <if test="record.toPort != null">
+        to_port = #{record.toPort,jdbcType=VARCHAR},
+      </if>
+      <if test="record.departureDate != null">
+        departure_date = #{record.departureDate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hostCode != null">
+        host_code = #{record.hostCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.msg != null">
+        msg = #{record.msg,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update crawl_request_log
+    set id = #{record.id,jdbcType=BIGINT},
+      log_id = #{record.logId,jdbcType=BIGINT},
+      spot_id = #{record.spotId,jdbcType=VARCHAR},
+      data_id = #{record.dataId,jdbcType=BIGINT},
+      business_name = #{record.businessName,jdbcType=VARCHAR},
+      step_name = #{record.stepName,jdbcType=VARCHAR},
+      start_time = #{record.startTime,jdbcType=BIGINT},
+      end_time = #{record.endTime,jdbcType=BIGINT},
+      use_time = #{record.useTime,jdbcType=BIGINT},
+      from_port = #{record.fromPort,jdbcType=VARCHAR},
+      to_port = #{record.toPort,jdbcType=VARCHAR},
+      departure_date = #{record.departureDate,jdbcType=VARCHAR},
+      host_code = #{record.hostCode,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      msg = #{record.msg,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update crawl_request_log
+    set id = #{record.id,jdbcType=BIGINT},
+      log_id = #{record.logId,jdbcType=BIGINT},
+      spot_id = #{record.spotId,jdbcType=VARCHAR},
+      data_id = #{record.dataId,jdbcType=BIGINT},
+      business_name = #{record.businessName,jdbcType=VARCHAR},
+      step_name = #{record.stepName,jdbcType=VARCHAR},
+      start_time = #{record.startTime,jdbcType=BIGINT},
+      end_time = #{record.endTime,jdbcType=BIGINT},
+      use_time = #{record.useTime,jdbcType=BIGINT},
+      from_port = #{record.fromPort,jdbcType=VARCHAR},
+      to_port = #{record.toPort,jdbcType=VARCHAR},
+      departure_date = #{record.departureDate,jdbcType=VARCHAR},
+      host_code = #{record.hostCode,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.djk.core.model.CrawlRequestLog">
+    update crawl_request_log
+    <set>
+      <if test="logId != null">
+        log_id = #{logId,jdbcType=BIGINT},
+      </if>
+      <if test="spotId != null">
+        spot_id = #{spotId,jdbcType=VARCHAR},
+      </if>
+      <if test="dataId != null">
+        data_id = #{dataId,jdbcType=BIGINT},
+      </if>
+      <if test="businessName != null">
+        business_name = #{businessName,jdbcType=VARCHAR},
+      </if>
+      <if test="stepName != null">
+        step_name = #{stepName,jdbcType=VARCHAR},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=BIGINT},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=BIGINT},
+      </if>
+      <if test="useTime != null">
+        use_time = #{useTime,jdbcType=BIGINT},
+      </if>
+      <if test="fromPort != null">
+        from_port = #{fromPort,jdbcType=VARCHAR},
+      </if>
+      <if test="toPort != null">
+        to_port = #{toPort,jdbcType=VARCHAR},
+      </if>
+      <if test="departureDate != null">
+        departure_date = #{departureDate,jdbcType=VARCHAR},
+      </if>
+      <if test="hostCode != null">
+        host_code = #{hostCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="msg != null">
+        msg = #{msg,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.djk.core.model.CrawlRequestLog">
+    update crawl_request_log
+    set log_id = #{logId,jdbcType=BIGINT},
+      spot_id = #{spotId,jdbcType=VARCHAR},
+      data_id = #{dataId,jdbcType=BIGINT},
+      business_name = #{businessName,jdbcType=VARCHAR},
+      step_name = #{stepName,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=BIGINT},
+      end_time = #{endTime,jdbcType=BIGINT},
+      use_time = #{useTime,jdbcType=BIGINT},
+      from_port = #{fromPort,jdbcType=VARCHAR},
+      to_port = #{toPort,jdbcType=VARCHAR},
+      departure_date = #{departureDate,jdbcType=VARCHAR},
+      host_code = #{hostCode,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      msg = #{msg,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.djk.core.model.CrawlRequestLog">
+    update crawl_request_log
+    set log_id = #{logId,jdbcType=BIGINT},
+      spot_id = #{spotId,jdbcType=VARCHAR},
+      data_id = #{dataId,jdbcType=BIGINT},
+      business_name = #{businessName,jdbcType=VARCHAR},
+      step_name = #{stepName,jdbcType=VARCHAR},
+      start_time = #{startTime,jdbcType=BIGINT},
+      end_time = #{endTime,jdbcType=BIGINT},
+      use_time = #{useTime,jdbcType=BIGINT},
+      from_port = #{fromPort,jdbcType=VARCHAR},
+      to_port = #{toPort,jdbcType=VARCHAR},
+      departure_date = #{departureDate,jdbcType=VARCHAR},
+      host_code = #{hostCode,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <insert id="batchInsert">
+    <if test="items.get(0) != null">
+            insert into crawl_request_log  (id, log_id, spot_id, 
+        data_id, business_name, step_name, 
+        start_time, end_time, use_time, 
+        from_port, to_port, departure_date, 
+        host_code, create_time, update_time, 
+        msg)
+      values
+      <foreach collection="items" item="item" index="index" separator=",">
+      (#{item.id,jdbcType=BIGINT}, #{item.logId,jdbcType=BIGINT}, #{item.spotId,jdbcType=VARCHAR}, 
+        #{item.dataId,jdbcType=BIGINT}, #{item.businessName,jdbcType=VARCHAR}, #{item.stepName,jdbcType=VARCHAR}, 
+        #{item.startTime,jdbcType=BIGINT}, #{item.endTime,jdbcType=BIGINT}, #{item.useTime,jdbcType=BIGINT}, 
+        #{item.fromPort,jdbcType=VARCHAR}, #{item.toPort,jdbcType=VARCHAR}, #{item.departureDate,jdbcType=VARCHAR}, 
+        #{item.hostCode,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP}, 
+        #{item.msg,jdbcType=LONGVARCHAR})
+      </foreach>
+    </if>
+  </insert>
+</mapper>

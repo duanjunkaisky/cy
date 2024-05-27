@@ -3,5 +3,5 @@ crawl:
     # 将实现了的网站爬取service加入到这里,注意命名规则: crawlServiceFro + '网站简码' + Impl
     #    - crawlServiceFroOneImpl
     #    - crawlServiceFroCmaImpl
-    #    - crawlServiceFroMskImpl
+    - crawlServiceFroMskImpl
     - crawlServiceFroCoscoImpl

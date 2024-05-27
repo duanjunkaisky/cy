@@ -1,5 +1,7 @@
 package com.djk.core.service;
 
+import com.djk.core.model.BasePort;
+import com.djk.core.model.BaseShippingCompany;
 import com.djk.core.vo.QueryRouteVo;
 
 /**
@@ -9,13 +11,11 @@ import com.djk.core.vo.QueryRouteVo;
 public interface CrawlService
 {
 
-    /**
-     * 爬取
-     *
-     * @param queryRouteVo
-     * @param hostCode
-     * @return xxx
-     * @throws InterruptedException
-     */
-    String queryData(QueryRouteVo queryRouteVo, String hostCode) throws Exception;
+    String queryData(BaseShippingCompany shippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo, String hostCode) throws Exception;
+
+    BasePort getFromPort(QueryRouteVo queryRouteVo);
+
+    BasePort getToPort(QueryRouteVo queryRouteVo);
+
+    BaseShippingCompany getShipCompany(String hostCode);
 }

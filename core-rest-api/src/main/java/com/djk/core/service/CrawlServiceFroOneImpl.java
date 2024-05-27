@@ -61,16 +61,10 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
     }
 
     @Override
-    public String queryData(QueryRouteVo queryRouteVo, String hostCode) throws Exception
+    public String queryData(BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo, String hostCode)
     {
         this.setHostCode(hostCode);
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + null);
-        BasePort fromPort = getFromPort(queryRouteVo);
-        BasePort toPort = getToPort(queryRouteVo);
-        JSONObject portInfoFrom = getPortInfo(queryRouteVo, fromPort.getOneCode(), fromPort.getCountryCode(), null);
-        JSONObject portInfoTo = getPortInfo(queryRouteVo, toPort.getOneCode(), toPort.getCountryCode(), null);
-
-        BaseShippingCompany baseShippingCompany = getShipCompany(hostCode);
 
         Map<String, ProductInfo> existMap = new HashMap<>();
         List<ProductInfo> productInfoList = new ArrayList<>();
@@ -84,8 +78,8 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 try {
                     reqCount++;
                     Map<String, Object> fillData = new HashMap<>(1);
-                    fillData.put("fromPortCode", portInfoFrom.getString("locationCode"));
-                    fillData.put("toPortCode", portInfoTo.getString("locationCode"));
+                    fillData.put("fromPortCode", fromPort.getOneCode());
+                    fillData.put("toPortCode", toPort.getOneCode());
                     fillData.put("containerCode", container.getContainerCode());
                     String jsonParam = FreeMakerUtil.createByTemplate("real_oneQuery.ftl", fillData);
 
