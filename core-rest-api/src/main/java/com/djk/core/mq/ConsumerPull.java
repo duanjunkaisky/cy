@@ -214,7 +214,7 @@ public class ConsumerPull implements CommandLineRunner {
     @Scheduled(cron = "0/30 * * * * ?")
     public void checkRequestStatus() {
         CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
-        crawlRequestStatusExample.createCriteria().andStatusLessThan(Constant.CRAWL_STATUS.RUNNING.ordinal());
+        crawlRequestStatusExample.createCriteria().andStatusLessThanOrEqualTo(Constant.CRAWL_STATUS.RUNNING.ordinal());
         List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
         if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
             for (CrawlRequestStatus requestStatus : crawlRequestStatuses) {
