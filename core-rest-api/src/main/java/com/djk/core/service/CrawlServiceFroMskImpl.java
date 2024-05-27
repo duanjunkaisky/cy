@@ -350,6 +350,8 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 }
 
                 productFeeItemMapper.batchInsert(productFeeItemList);
+
+                customDao.executeSql("update crawl_request_status set use_time=" + System.currentTimeMillis() + "-start_time where spot_id='" + queryRouteVo.getSpotId() + "' and host_code='" + queryRouteVo.getHostCode() + "' and (use_time is null or use_time='')");
             }
         }
 

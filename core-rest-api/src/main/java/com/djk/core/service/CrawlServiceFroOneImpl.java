@@ -263,6 +263,8 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 getFreeFee(productFeeItemList, productFeeItem, departureStart.getString("departureLoc"), departureEnd.getString("arrivalLoc"), departureEnd.getString("arrivalDateEstimated"), container, freightInfo.getString("spotRateOfferingId"), proxy);
 
                 productFeeItemMapper.batchInsert(productFeeItemList);
+
+                customDao.executeSql("update crawl_request_status set use_time=" + System.currentTimeMillis() + "-start_time where spot_id='" + queryRouteVo.getSpotId() + "' and host_code='" + queryRouteVo.getHostCode() + "' and (use_time is null or use_time='')");
             }
         }
 

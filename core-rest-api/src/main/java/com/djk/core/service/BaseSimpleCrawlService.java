@@ -1,6 +1,7 @@
 package com.djk.core.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.djk.core.dao.CustomDao;
 import com.djk.core.mapper.*;
 import com.djk.core.model.*;
 import com.djk.core.vo.QueryRouteVo;
@@ -49,6 +50,9 @@ abstract class BaseSimpleCrawlService implements CrawlService
     ProductFeeItemMapper productFeeItemMapper;
 
     private String hostCode;
+
+    @Autowired
+    CustomDao customDao;
 
     @Value("${redis.database}")
     public String REDIS_DATABASE;

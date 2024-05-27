@@ -137,6 +137,9 @@ public class ProductInfo implements Serializable {
     @ApiModelProperty(value = "审核意见")
     private String approvalComment;
 
+    @ApiModelProperty(value = "产品标签 10.自营产品 11.秒杀 12.低价 ")
+    private String productLabels;
+
     @ApiModelProperty(value = "爬虫字段唯一标识")
     private String spotId;
 
@@ -518,6 +521,14 @@ public class ProductInfo implements Serializable {
         this.approvalComment = approvalComment;
     }
 
+    public String getProductLabels() {
+        return productLabels;
+    }
+
+    public void setProductLabels(String productLabels) {
+        this.productLabels = productLabels;
+    }
+
     public String getSpotId() {
         return spotId;
     }
@@ -640,6 +651,7 @@ public class ProductInfo implements Serializable {
         sb.append(", approver=").append(approver);
         sb.append(", approvalTime=").append(approvalTime);
         sb.append(", approvalComment=").append(approvalComment);
+        sb.append(", productLabels=").append(productLabels);
         sb.append(", spotId=").append(spotId);
         sb.append(", creator=").append(creator);
         sb.append(", createTime=").append(createTime);

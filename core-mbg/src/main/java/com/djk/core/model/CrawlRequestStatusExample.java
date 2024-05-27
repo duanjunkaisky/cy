@@ -365,6 +365,126 @@ public class CrawlRequestStatusExample {
             return (Criteria) this;
         }
 
+        public Criteria andEndTimeIsNull() {
+            addCriterion("end_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeIsNotNull() {
+            addCriterion("end_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeEqualTo(Long value) {
+            addCriterion("end_time =", value, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeNotEqualTo(Long value) {
+            addCriterion("end_time <>", value, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeGreaterThan(Long value) {
+            addCriterion("end_time >", value, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("end_time >=", value, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeLessThan(Long value) {
+            addCriterion("end_time <", value, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeLessThanOrEqualTo(Long value) {
+            addCriterion("end_time <=", value, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeIn(List<Long> values) {
+            addCriterion("end_time in", values, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeNotIn(List<Long> values) {
+            addCriterion("end_time not in", values, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeBetween(Long value1, Long value2) {
+            addCriterion("end_time between", value1, value2, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andEndTimeNotBetween(Long value1, Long value2) {
+            addCriterion("end_time not between", value1, value2, "endTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseTimeIsNull() {
+            addCriterion("use_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseTimeIsNotNull() {
+            addCriterion("use_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseTimeEqualTo(Long value) {
+            addCriterion("use_time =", value, "useTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseTimeNotEqualTo(Long value) {
+            addCriterion("use_time <>", value, "useTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseTimeGreaterThan(Long value) {
+            addCriterion("use_time >", value, "useTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("use_time >=", value, "useTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseTimeLessThan(Long value) {
+            addCriterion("use_time <", value, "useTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseTimeLessThanOrEqualTo(Long value) {
+            addCriterion("use_time <=", value, "useTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseTimeIn(List<Long> values) {
+            addCriterion("use_time in", values, "useTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseTimeNotIn(List<Long> values) {
+            addCriterion("use_time not in", values, "useTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseTimeBetween(Long value1, Long value2) {
+            addCriterion("use_time between", value1, value2, "useTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseTimeNotBetween(Long value1, Long value2) {
+            addCriterion("use_time not between", value1, value2, "useTime");
+            return (Criteria) this;
+        }
+
         public Criteria andFromPortIsNull() {
             addCriterion("from_port is null");
             return (Criteria) this;

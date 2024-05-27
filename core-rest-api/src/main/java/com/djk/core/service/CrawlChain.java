@@ -31,8 +31,7 @@ import java.util.stream.Collectors;
 @Data
 @Slf4j
 @ConfigurationProperties(prefix = "crawl")
-public class CrawlChain
-{
+public class CrawlChain {
     public static ListeningExecutorService EXECUTOR_SERVICE = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
 
     @Autowired
@@ -50,8 +49,7 @@ public class CrawlChain
     RedisService redisService;
 
     @Async("asyncServiceExecutor")
-    public void doBusiness(QueryRouteVo queryRouteVo)
-    {
+    public void doBusiness(QueryRouteVo queryRouteVo) {
         List<ListenableFuture<String>> futureList = new ArrayList<>();
 
         futureList.add(EXECUTOR_SERVICE.submit(() -> {
@@ -67,6 +65,7 @@ public class CrawlChain
 
                 crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
                 requestStatus = new CrawlRequestStatus();
+                requestStatus.setEndTime(System.currentTimeMillis());
                 requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
                 requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
 

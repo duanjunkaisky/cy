@@ -3035,6 +3035,76 @@ public class ProductInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andProductLabelsIsNull() {
+            addCriterion("product_labels is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductLabelsIsNotNull() {
+            addCriterion("product_labels is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductLabelsEqualTo(String value) {
+            addCriterion("product_labels =", value, "productLabels");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductLabelsNotEqualTo(String value) {
+            addCriterion("product_labels <>", value, "productLabels");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductLabelsGreaterThan(String value) {
+            addCriterion("product_labels >", value, "productLabels");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductLabelsGreaterThanOrEqualTo(String value) {
+            addCriterion("product_labels >=", value, "productLabels");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductLabelsLessThan(String value) {
+            addCriterion("product_labels <", value, "productLabels");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductLabelsLessThanOrEqualTo(String value) {
+            addCriterion("product_labels <=", value, "productLabels");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductLabelsLike(String value) {
+            addCriterion("product_labels like", value, "productLabels");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductLabelsNotLike(String value) {
+            addCriterion("product_labels not like", value, "productLabels");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductLabelsIn(List<String> values) {
+            addCriterion("product_labels in", values, "productLabels");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductLabelsNotIn(List<String> values) {
+            addCriterion("product_labels not in", values, "productLabels");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductLabelsBetween(String value1, String value2) {
+            addCriterion("product_labels between", value1, value2, "productLabels");
+            return (Criteria) this;
+        }
+
+        public Criteria andProductLabelsNotBetween(String value1, String value2) {
+            addCriterion("product_labels not between", value1, value2, "productLabels");
+            return (Criteria) this;
+        }
+
         public Criteria andSpotIdIsNull() {
             addCriterion("spot_id is null");
             return (Criteria) this;

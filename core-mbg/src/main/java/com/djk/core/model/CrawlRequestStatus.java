@@ -16,6 +16,12 @@ public class CrawlRequestStatus implements Serializable {
     @ApiModelProperty(value = "开始时间")
     private Long startTime;
 
+    @ApiModelProperty(value = "结束时间")
+    private Long endTime;
+
+    @ApiModelProperty(value = "耗时,此字段=第一条数据入库的时间-start_time的时间，全部入库的耗时=end_time-start_time")
+    private Long useTime;
+
     @ApiModelProperty(value = "出发港口代码")
     private String fromPort;
 
@@ -25,7 +31,7 @@ public class CrawlRequestStatus implements Serializable {
     @ApiModelProperty(value = "网站简码")
     private String hostCode;
 
-    @ApiModelProperty(value = "0:爬取中,1:爬取完成,2:爬取出错")
+    @ApiModelProperty(value = "0:等待爬取,1:爬取中,2:爬取完成,3:爬取出错")
     private Integer status;
 
     @ApiModelProperty(value = "创建时间")
@@ -69,6 +75,22 @@ public class CrawlRequestStatus implements Serializable {
 
     public void setStartTime(Long startTime) {
         this.startTime = startTime;
+    }
+
+    public Long getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Long endTime) {
+        this.endTime = endTime;
+    }
+
+    public Long getUseTime() {
+        return useTime;
+    }
+
+    public void setUseTime(Long useTime) {
+        this.useTime = useTime;
     }
 
     public String getFromPort() {
@@ -137,6 +159,8 @@ public class CrawlRequestStatus implements Serializable {
         sb.append(", spotId=").append(spotId);
         sb.append(", requestParams=").append(requestParams);
         sb.append(", startTime=").append(startTime);
+        sb.append(", endTime=").append(endTime);
+        sb.append(", useTime=").append(useTime);
         sb.append(", fromPort=").append(fromPort);
         sb.append(", toPort=").append(toPort);
         sb.append(", hostCode=").append(hostCode);

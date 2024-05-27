@@ -107,14 +107,18 @@ public class ApiController {
             CrawlRequestStatus requestStatus = new CrawlRequestStatus();
             if (null == aBoolean || !aBoolean) {
                 if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
-                    requestStatus.setId(crawlRequestStatuses.get(0).getId());
+                    requestStatus = crawlRequestStatuses.get(0);
+                    requestStatus.setStartTime(queryRouteVo.getStartTime());
+                    requestStatus.setEndTime(System.currentTimeMillis());
+                    requestStatus.setUseTime(null);
                     requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
                     requestStatus.setMsg(ConsumerPull.FREE_TIME + " 之间忽略该请求");
-                    requestStatusMapper.updateByPrimaryKeySelective(requestStatus);
+                    requestStatusMapper.updateByPrimaryKey(requestStatus);
                 } else {
                     requestStatus.setSpotId(String.valueOf(queryRouteVo.getSpotId()));
                     requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
                     requestStatus.setStartTime(queryRouteVo.getStartTime());
+                    requestStatus.setEndTime(System.currentTimeMillis());
                     requestStatus.setFromPort(queryRouteVo.getDeparturePortEn());
                     requestStatus.setToPort(queryRouteVo.getDestinationPortEn());
                     requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
@@ -124,10 +128,12 @@ public class ApiController {
                 }
             } else {
                 if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
-                    requestStatus.setId(crawlRequestStatuses.get(0).getId());
+                    requestStatus = crawlRequestStatuses.get(0);
                     requestStatus.setStartTime(queryRouteVo.getStartTime());
+                    requestStatus.setEndTime(null);
+                    requestStatus.setUseTime(null);
                     requestStatus.setStatus(Constant.CRAWL_STATUS.WAITING.ordinal());
-                    requestStatusMapper.updateByPrimaryKeySelective(requestStatus);
+                    requestStatusMapper.updateByPrimaryKey(requestStatus);
                 } else {
                     requestStatus.setSpotId(String.valueOf(queryRouteVo.getSpotId()));
                     requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
@@ -276,10 +282,10 @@ public class ApiController {
     @ResponseBody
     public CommonResult updateCoscoStatus(@RequestBody JSONObject jsonObject) {
         Long id = jsonObject.getLong("id");
-        CrawlRequestStatus requestStatus = new CrawlRequestStatus();
-        requestStatus.setId(id);
+        CrawlRequestStatus requestStatus = requestStatusMapper.selectByPrimaryKey(id);
         requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
-        requestStatusMapper.updateByPrimaryKeySelective(requestStatus);
+        requestStatus.setEndTime(System.currentTimeMillis());
+        requestStatusMapper.updateByPrimaryKey(requestStatus);
         return CommonResult.success("操作成功");
     }
 
