@@ -167,6 +167,7 @@ public class ApiController {
 
         JSONObject retObj = new JSONObject();
         retObj.put("spot_id", queryRouteVo.getSpotId());
+        retObj.put("log_id", queryRouteVo.getLogId());
         return CommonResult.success(retObj, "操作成功");
     }
 
