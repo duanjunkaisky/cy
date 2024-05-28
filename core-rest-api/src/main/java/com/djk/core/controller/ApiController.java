@@ -132,6 +132,8 @@ public class ApiController {
                     requestStatus.setHostCode(queryRouteVo.getHostCode());
                     requestStatusMapper.insertSelective(requestStatus);
                 }
+                coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "已经存在正在爬取的请求，忽略该请求", null, queryRouteVo);
+                log.info(queryRouteVo.getSpotId() + " - 拉取消息: 已经存在正在爬取的请求，忽略该请求\n" + JSONObject.toJSONString(queryRouteVo));
             } else {
                 if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
                     requestStatus = crawlRequestStatuses.get(0);
