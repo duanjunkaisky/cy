@@ -75,7 +75,7 @@ public class CrawlChain {
                 requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
                 requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
 
-                crawlService.addLog(null, BUSINESS_NAME_CRAWL, "数据全部入库完成", null, queryRouteVo);
+                crawlService.addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", null, queryRouteVo);
 
                 log.info("---> " + queryRouteVo.getSpotId() + " - " + str);
 
