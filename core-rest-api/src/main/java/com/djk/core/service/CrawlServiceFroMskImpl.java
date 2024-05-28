@@ -151,6 +151,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 fillData.put("authorization", header.get("Authorization"));
                 fillData.put("consumerKey", header.get("Consumer-Key"));
                 fillData.put("jsonParam", jsonParamInner.replaceAll("\"", "\\\\\"").replaceAll("\n", "").replaceAll(" ", "").replaceAll("\t", ""));
+                fillData.put("timeOut", 15);
                 fillData.put("ip", proxyIp);
                 fillData.put("port", proxyPort);
                 fillData.put("password", MyProxyUtil.PROXY_USERNAME + ":" + MyProxyUtil.PROXY_PASSWORD);
