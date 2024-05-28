@@ -158,17 +158,17 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
-                addLog(null, BUSINESS_NAME_CRAWL, "请求数据接口-分页:" + page, null, queryRouteVo);
+                addLog(null, BUSINESS_NAME_CRAWL, "请求数据接口-分页:" + page, "第" + reqCount + "次请求", queryRouteVo);
                 HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/tls/proxy", null, jsonParam, null);
                 String bodyJson = resp.getBodyJson();
                 try {
                     if (bodyJson.contains("Customer Segment limit for customer code")) {
-                        addLog(null, BUSINESS_NAME_CRAWL, "发生错误->请求数据接口-分页:" + page, "Customer Segment limit for customer code", queryRouteVo);
+                        addLog(null, BUSINESS_NAME_CRAWL, "发生错误->请求数据接口-分页:" + page, "第" + reqCount + "次请求: " + "Customer Segment limit for customer code", queryRouteVo);
                         continue;
                     } else {
                         JSONObject jsonObject = JSONObject.parseObject(bodyJson);
                         if (jsonObject.getBoolean("succ")) {
-                            addLog(null, BUSINESS_NAME_CRAWL, "成功->请求数据接口-分页:" + page, null, queryRouteVo);
+                            addLog(null, BUSINESS_NAME_CRAWL, "成功->请求数据接口-分页:" + page, "第" + reqCount + "次请求", queryRouteVo);
                             String data = jsonObject.getString("data");
                             JSONObject retObj = JSONObject.parseObject(data);
                             boolean hasMore = retObj.getBoolean("loadMore");
@@ -179,7 +179,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
                             return hasMore;
                         } else {
-                            addLog(null, BUSINESS_NAME_CRAWL, "鉴权失败->请求数据接口-分页:" + page, "发起请求鉴权失败", queryRouteVo);
+                            addLog(null, BUSINESS_NAME_CRAWL, "鉴权失败->请求数据接口-分页:" + page, "第" + reqCount + "次请求: " + "发起请求鉴权失败", queryRouteVo);
                             redisService.del(REDIS_DATABASE + ":MSK:sensorData");
                             redisService.del(REDIS_DATABASE + ":tmp:get-sensorData-api");
                             tokenIndex++;
@@ -194,7 +194,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 redisService.del(REDIS_DATABASE + ":MSK:sensorData");
                 redisService.del(REDIS_DATABASE + ":tmp:get-sensorData-api");
 
-                addLog(null, BUSINESS_NAME_CRAWL, "鉴权失败->请求数据接口-分页:" + page, ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
+                addLog(null, BUSINESS_NAME_CRAWL, "鉴权失败->请求数据接口-分页:" + page, "第" + reqCount + "次请求:\n" + ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
 
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求出错");
                 log.error(ExceptionUtil.getMessage(e));

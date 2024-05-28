@@ -565,63 +565,63 @@ public class CrawlRequestLogExample {
             return (Criteria) this;
         }
 
-        public Criteria andCurrentTimeIsNull() {
-            addCriterion("current_time is null");
+        public Criteria andTimePointIsNull() {
+            addCriterion("time_point is null");
             return (Criteria) this;
         }
 
-        public Criteria andCurrentTimeIsNotNull() {
-            addCriterion("current_time is not null");
+        public Criteria andTimePointIsNotNull() {
+            addCriterion("time_point is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCurrentTimeEqualTo(Long value) {
-            addCriterion("current_time =", value, "currentTime");
+        public Criteria andTimePointEqualTo(Long value) {
+            addCriterion("time_point =", value, "timePoint");
             return (Criteria) this;
         }
 
-        public Criteria andCurrentTimeNotEqualTo(Long value) {
-            addCriterion("current_time <>", value, "currentTime");
+        public Criteria andTimePointNotEqualTo(Long value) {
+            addCriterion("time_point <>", value, "timePoint");
             return (Criteria) this;
         }
 
-        public Criteria andCurrentTimeGreaterThan(Long value) {
-            addCriterion("current_time >", value, "currentTime");
+        public Criteria andTimePointGreaterThan(Long value) {
+            addCriterion("time_point >", value, "timePoint");
             return (Criteria) this;
         }
 
-        public Criteria andCurrentTimeGreaterThanOrEqualTo(Long value) {
-            addCriterion("current_time >=", value, "currentTime");
+        public Criteria andTimePointGreaterThanOrEqualTo(Long value) {
+            addCriterion("time_point >=", value, "timePoint");
             return (Criteria) this;
         }
 
-        public Criteria andCurrentTimeLessThan(Long value) {
-            addCriterion("current_time <", value, "currentTime");
+        public Criteria andTimePointLessThan(Long value) {
+            addCriterion("time_point <", value, "timePoint");
             return (Criteria) this;
         }
 
-        public Criteria andCurrentTimeLessThanOrEqualTo(Long value) {
-            addCriterion("current_time <=", value, "currentTime");
+        public Criteria andTimePointLessThanOrEqualTo(Long value) {
+            addCriterion("time_point <=", value, "timePoint");
             return (Criteria) this;
         }
 
-        public Criteria andCurrentTimeIn(List<Long> values) {
-            addCriterion("current_time in", values, "currentTime");
+        public Criteria andTimePointIn(List<Long> values) {
+            addCriterion("time_point in", values, "timePoint");
             return (Criteria) this;
         }
 
-        public Criteria andCurrentTimeNotIn(List<Long> values) {
-            addCriterion("current_time not in", values, "currentTime");
+        public Criteria andTimePointNotIn(List<Long> values) {
+            addCriterion("time_point not in", values, "timePoint");
             return (Criteria) this;
         }
 
-        public Criteria andCurrentTimeBetween(Long value1, Long value2) {
-            addCriterion("current_time between", value1, value2, "currentTime");
+        public Criteria andTimePointBetween(Long value1, Long value2) {
+            addCriterion("time_point between", value1, value2, "timePoint");
             return (Criteria) this;
         }
 
-        public Criteria andCurrentTimeNotBetween(Long value1, Long value2) {
-            addCriterion("current_time not between", value1, value2, "currentTime");
+        public Criteria andTimePointNotBetween(Long value1, Long value2) {
+            addCriterion("time_point not between", value1, value2, "timePoint");
             return (Criteria) this;
         }
 

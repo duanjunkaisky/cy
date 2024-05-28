@@ -6,7 +6,7 @@ package com.djk.core.config;
  */
 public class Constant {
     public static final String BUSINESS_NAME_CRAWL = "爬虫业务";
-    public static final int MAX_REQ_COUNT = 3;
+    public static final int MAX_REQ_COUNT = 5;
 
     /**
      * 爬取状态

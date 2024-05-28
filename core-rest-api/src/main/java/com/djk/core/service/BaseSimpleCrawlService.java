@@ -82,7 +82,7 @@ abstract class BaseSimpleCrawlService implements CrawlService {
         requestLog.setMsg(msg);
         requestLog.setSpotId(queryRouteVo.getSpotId());
         requestLog.setBusinessName(businessName);
-        requestLog.setCurrentTime(System.currentTimeMillis());
+        requestLog.setTimePoint(System.currentTimeMillis());
         if (null != addDataId && addDataId) {
             Long dataId = redisService.generateId(REDIS_DATABASE + ":tmp:log-dataId:" + queryRouteVo.getLogId(), 200L);
             requestLog.setDataId(dataId);
@@ -92,7 +92,7 @@ abstract class BaseSimpleCrawlService implements CrawlService {
         requestLog.setStepName(stepName);
         Long aLong = redisService.generateId(REDIS_DATABASE + ":tmp:log-step-num:" + queryRouteVo.getLogId(), 200L);
         requestLog.setStepNum(aLong);
-        logMapper.insert(requestLog);
+        logMapper.insertSelective(requestLog);
     }
 
     private List<BasePort> getBasePorts(QueryRouteVo queryRouteVo, String flag) {

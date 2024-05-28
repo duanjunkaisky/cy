@@ -26,7 +26,7 @@ public class CrawlRequestLog implements Serializable {
     private String stepName;
 
     @ApiModelProperty(value = "当前步骤执行的时间点")
-    private Long currentTime;
+    private Long timePoint;
 
     @ApiModelProperty(value = "出发港口代码")
     private String fromPort;
@@ -107,12 +107,12 @@ public class CrawlRequestLog implements Serializable {
         this.stepName = stepName;
     }
 
-    public Long getCurrentTime() {
-        return currentTime;
+    public Long getTimePoint() {
+        return timePoint;
     }
 
-    public void setCurrentTime(Long currentTime) {
-        this.currentTime = currentTime;
+    public void setTimePoint(Long timePoint) {
+        this.timePoint = timePoint;
     }
 
     public String getFromPort() {
@@ -184,7 +184,7 @@ public class CrawlRequestLog implements Serializable {
         sb.append(", businessName=").append(businessName);
         sb.append(", stepNum=").append(stepNum);
         sb.append(", stepName=").append(stepName);
-        sb.append(", currentTime=").append(currentTime);
+        sb.append(", timePoint=").append(timePoint);
         sb.append(", fromPort=").append(fromPort);
         sb.append(", toPort=").append(toPort);
         sb.append(", departureDate=").append(departureDate);

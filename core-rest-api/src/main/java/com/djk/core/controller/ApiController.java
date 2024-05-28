@@ -176,6 +176,7 @@ public class ApiController {
     @ResponseBody
     public CommonResult test(@RequestBody QueryRouteVo queryRouteVo) {
         try {
+            queryRouteVo.setLogId(coscoCrawlService.getLogId());
             List<String> beanNames = target.stream().filter(item -> item.toLowerCase().contains(queryRouteVo.getHostCode())).collect(Collectors.toList());
             queryRouteVo.setBeanName(beanNames.get(0));
             queryRouteVo.setStartTime(System.currentTimeMillis());
