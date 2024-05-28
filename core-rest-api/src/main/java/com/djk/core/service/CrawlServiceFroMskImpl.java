@@ -91,6 +91,8 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         List<ContainerDist> realList = containerList.stream().filter(i -> i.getFlag().equalsIgnoreCase(queryRouteVo.getContainerType())).collect(Collectors.toList());
         boolean hasMore = true;
         int page = 1;
+        redisService.del(REDIS_DATABASE + "MSK:sensorData");
+        redisService.del(REDIS_DATABASE + "tmp:get-sensorData-api");
         while (hasMore) {
             hasMore = getDataPerPage(queryRouteVo, proxy, fromPort, toPort, baseShippingCompany, productInfoList, format, queryTime, realList.get(0), page);
             page++;

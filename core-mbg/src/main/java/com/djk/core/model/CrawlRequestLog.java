@@ -19,17 +19,14 @@ public class CrawlRequestLog implements Serializable {
     @ApiModelProperty(value = "业务名称:爬虫、抢单")
     private String businessName;
 
-    @ApiModelProperty(value = "步骤：前端请求-爬虫开始、爬虫开始-获取到数据、获取到数据-数据入库")
+    @ApiModelProperty(value = "步骤顺序编号")
+    private Long stepNum;
+
+    @ApiModelProperty(value = "步骤名称")
     private String stepName;
 
-    @ApiModelProperty(value = "每个步骤的开始时间")
-    private Long startTime;
-
-    @ApiModelProperty(value = "每个步骤的结束时间")
-    private Long endTime;
-
-    @ApiModelProperty(value = "耗时")
-    private Long useTime;
+    @ApiModelProperty(value = "当前步骤执行的时间点")
+    private Long currentTime;
 
     @ApiModelProperty(value = "出发港口代码")
     private String fromPort;
@@ -94,6 +91,14 @@ public class CrawlRequestLog implements Serializable {
         this.businessName = businessName;
     }
 
+    public Long getStepNum() {
+        return stepNum;
+    }
+
+    public void setStepNum(Long stepNum) {
+        this.stepNum = stepNum;
+    }
+
     public String getStepName() {
         return stepName;
     }
@@ -102,28 +107,12 @@ public class CrawlRequestLog implements Serializable {
         this.stepName = stepName;
     }
 
-    public Long getStartTime() {
-        return startTime;
+    public Long getCurrentTime() {
+        return currentTime;
     }
 
-    public void setStartTime(Long startTime) {
-        this.startTime = startTime;
-    }
-
-    public Long getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Long endTime) {
-        this.endTime = endTime;
-    }
-
-    public Long getUseTime() {
-        return useTime;
-    }
-
-    public void setUseTime(Long useTime) {
-        this.useTime = useTime;
+    public void setCurrentTime(Long currentTime) {
+        this.currentTime = currentTime;
     }
 
     public String getFromPort() {
@@ -193,10 +182,9 @@ public class CrawlRequestLog implements Serializable {
         sb.append(", spotId=").append(spotId);
         sb.append(", dataId=").append(dataId);
         sb.append(", businessName=").append(businessName);
+        sb.append(", stepNum=").append(stepNum);
         sb.append(", stepName=").append(stepName);
-        sb.append(", startTime=").append(startTime);
-        sb.append(", endTime=").append(endTime);
-        sb.append(", useTime=").append(useTime);
+        sb.append(", currentTime=").append(currentTime);
         sb.append(", fromPort=").append(fromPort);
         sb.append(", toPort=").append(toPort);
         sb.append(", departureDate=").append(departureDate);

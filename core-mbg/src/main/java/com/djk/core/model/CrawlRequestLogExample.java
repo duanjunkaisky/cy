@@ -425,6 +425,66 @@ public class CrawlRequestLogExample {
             return (Criteria) this;
         }
 
+        public Criteria andStepNumIsNull() {
+            addCriterion("step_num is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStepNumIsNotNull() {
+            addCriterion("step_num is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStepNumEqualTo(Long value) {
+            addCriterion("step_num =", value, "stepNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andStepNumNotEqualTo(Long value) {
+            addCriterion("step_num <>", value, "stepNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andStepNumGreaterThan(Long value) {
+            addCriterion("step_num >", value, "stepNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andStepNumGreaterThanOrEqualTo(Long value) {
+            addCriterion("step_num >=", value, "stepNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andStepNumLessThan(Long value) {
+            addCriterion("step_num <", value, "stepNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andStepNumLessThanOrEqualTo(Long value) {
+            addCriterion("step_num <=", value, "stepNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andStepNumIn(List<Long> values) {
+            addCriterion("step_num in", values, "stepNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andStepNumNotIn(List<Long> values) {
+            addCriterion("step_num not in", values, "stepNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andStepNumBetween(Long value1, Long value2) {
+            addCriterion("step_num between", value1, value2, "stepNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andStepNumNotBetween(Long value1, Long value2) {
+            addCriterion("step_num not between", value1, value2, "stepNum");
+            return (Criteria) this;
+        }
+
         public Criteria andStepNameIsNull() {
             addCriterion("step_name is null");
             return (Criteria) this;
@@ -495,183 +555,63 @@ public class CrawlRequestLogExample {
             return (Criteria) this;
         }
 
-        public Criteria andStartTimeIsNull() {
-            addCriterion("start_time is null");
+        public Criteria andCurrentTimeIsNull() {
+            addCriterion("current_time is null");
             return (Criteria) this;
         }
 
-        public Criteria andStartTimeIsNotNull() {
-            addCriterion("start_time is not null");
+        public Criteria andCurrentTimeIsNotNull() {
+            addCriterion("current_time is not null");
             return (Criteria) this;
         }
 
-        public Criteria andStartTimeEqualTo(Long value) {
-            addCriterion("start_time =", value, "startTime");
+        public Criteria andCurrentTimeEqualTo(Long value) {
+            addCriterion("current_time =", value, "currentTime");
             return (Criteria) this;
         }
 
-        public Criteria andStartTimeNotEqualTo(Long value) {
-            addCriterion("start_time <>", value, "startTime");
+        public Criteria andCurrentTimeNotEqualTo(Long value) {
+            addCriterion("current_time <>", value, "currentTime");
             return (Criteria) this;
         }
 
-        public Criteria andStartTimeGreaterThan(Long value) {
-            addCriterion("start_time >", value, "startTime");
+        public Criteria andCurrentTimeGreaterThan(Long value) {
+            addCriterion("current_time >", value, "currentTime");
             return (Criteria) this;
         }
 
-        public Criteria andStartTimeGreaterThanOrEqualTo(Long value) {
-            addCriterion("start_time >=", value, "startTime");
+        public Criteria andCurrentTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("current_time >=", value, "currentTime");
             return (Criteria) this;
         }
 
-        public Criteria andStartTimeLessThan(Long value) {
-            addCriterion("start_time <", value, "startTime");
+        public Criteria andCurrentTimeLessThan(Long value) {
+            addCriterion("current_time <", value, "currentTime");
             return (Criteria) this;
         }
 
-        public Criteria andStartTimeLessThanOrEqualTo(Long value) {
-            addCriterion("start_time <=", value, "startTime");
+        public Criteria andCurrentTimeLessThanOrEqualTo(Long value) {
+            addCriterion("current_time <=", value, "currentTime");
             return (Criteria) this;
         }
 
-        public Criteria andStartTimeIn(List<Long> values) {
-            addCriterion("start_time in", values, "startTime");
+        public Criteria andCurrentTimeIn(List<Long> values) {
+            addCriterion("current_time in", values, "currentTime");
             return (Criteria) this;
         }
 
-        public Criteria andStartTimeNotIn(List<Long> values) {
-            addCriterion("start_time not in", values, "startTime");
+        public Criteria andCurrentTimeNotIn(List<Long> values) {
+            addCriterion("current_time not in", values, "currentTime");
             return (Criteria) this;
         }
 
-        public Criteria andStartTimeBetween(Long value1, Long value2) {
-            addCriterion("start_time between", value1, value2, "startTime");
+        public Criteria andCurrentTimeBetween(Long value1, Long value2) {
+            addCriterion("current_time between", value1, value2, "currentTime");
             return (Criteria) this;
         }
 
-        public Criteria andStartTimeNotBetween(Long value1, Long value2) {
-            addCriterion("start_time not between", value1, value2, "startTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndTimeIsNull() {
-            addCriterion("end_time is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndTimeIsNotNull() {
-            addCriterion("end_time is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndTimeEqualTo(Long value) {
-            addCriterion("end_time =", value, "endTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndTimeNotEqualTo(Long value) {
-            addCriterion("end_time <>", value, "endTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndTimeGreaterThan(Long value) {
-            addCriterion("end_time >", value, "endTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndTimeGreaterThanOrEqualTo(Long value) {
-            addCriterion("end_time >=", value, "endTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndTimeLessThan(Long value) {
-            addCriterion("end_time <", value, "endTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndTimeLessThanOrEqualTo(Long value) {
-            addCriterion("end_time <=", value, "endTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndTimeIn(List<Long> values) {
-            addCriterion("end_time in", values, "endTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndTimeNotIn(List<Long> values) {
-            addCriterion("end_time not in", values, "endTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndTimeBetween(Long value1, Long value2) {
-            addCriterion("end_time between", value1, value2, "endTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andEndTimeNotBetween(Long value1, Long value2) {
-            addCriterion("end_time not between", value1, value2, "endTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseTimeIsNull() {
-            addCriterion("use_time is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseTimeIsNotNull() {
-            addCriterion("use_time is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseTimeEqualTo(Long value) {
-            addCriterion("use_time =", value, "useTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseTimeNotEqualTo(Long value) {
-            addCriterion("use_time <>", value, "useTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseTimeGreaterThan(Long value) {
-            addCriterion("use_time >", value, "useTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseTimeGreaterThanOrEqualTo(Long value) {
-            addCriterion("use_time >=", value, "useTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseTimeLessThan(Long value) {
-            addCriterion("use_time <", value, "useTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseTimeLessThanOrEqualTo(Long value) {
-            addCriterion("use_time <=", value, "useTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseTimeIn(List<Long> values) {
-            addCriterion("use_time in", values, "useTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseTimeNotIn(List<Long> values) {
-            addCriterion("use_time not in", values, "useTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseTimeBetween(Long value1, Long value2) {
-            addCriterion("use_time between", value1, value2, "useTime");
-            return (Criteria) this;
-        }
-
-        public Criteria andUseTimeNotBetween(Long value1, Long value2) {
-            addCriterion("use_time not between", value1, value2, "useTime");
+        public Criteria andCurrentTimeNotBetween(Long value1, Long value2) {
+            addCriterion("current_time not between", value1, value2, "currentTime");
             return (Criteria) this;
         }
 

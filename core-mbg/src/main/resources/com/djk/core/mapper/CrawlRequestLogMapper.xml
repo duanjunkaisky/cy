@@ -7,10 +7,9 @@
     <result column="spot_id" jdbcType="VARCHAR" property="spotId" />
     <result column="data_id" jdbcType="BIGINT" property="dataId" />
     <result column="business_name" jdbcType="VARCHAR" property="businessName" />
+    <result column="step_num" jdbcType="BIGINT" property="stepNum" />
     <result column="step_name" jdbcType="VARCHAR" property="stepName" />
-    <result column="start_time" jdbcType="BIGINT" property="startTime" />
-    <result column="end_time" jdbcType="BIGINT" property="endTime" />
-    <result column="use_time" jdbcType="BIGINT" property="useTime" />
+    <result column="current_time" jdbcType="BIGINT" property="currentTime" />
     <result column="from_port" jdbcType="VARCHAR" property="fromPort" />
     <result column="to_port" jdbcType="VARCHAR" property="toPort" />
     <result column="departure_date" jdbcType="VARCHAR" property="departureDate" />
@@ -80,8 +79,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, log_id, spot_id, data_id, business_name, step_name, start_time, end_time, use_time, 
-    from_port, to_port, departure_date, host_code, create_time, update_time
+    id, log_id, spot_id, data_id, business_name, step_num, step_name, current_time, from_port, 
+    to_port, departure_date, host_code, create_time, update_time
   </sql>
   <sql id="Blob_Column_List">
     msg
@@ -136,17 +135,17 @@
   </delete>
   <insert id="insert" parameterType="com.djk.core.model.CrawlRequestLog">
     insert into crawl_request_log (id, log_id, spot_id, 
-      data_id, business_name, step_name, 
-      start_time, end_time, use_time, 
-      from_port, to_port, departure_date, 
-      host_code, create_time, update_time, 
-      msg)
+      data_id, business_name, step_num, 
+      step_name, current_time, from_port, 
+      to_port, departure_date, host_code, 
+      create_time, update_time, msg
+      )
     values (#{id,jdbcType=BIGINT}, #{logId,jdbcType=BIGINT}, #{spotId,jdbcType=VARCHAR}, 
-      #{dataId,jdbcType=BIGINT}, #{businessName,jdbcType=VARCHAR}, #{stepName,jdbcType=VARCHAR}, 
-      #{startTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, #{useTime,jdbcType=BIGINT}, 
-      #{fromPort,jdbcType=VARCHAR}, #{toPort,jdbcType=VARCHAR}, #{departureDate,jdbcType=VARCHAR}, 
-      #{hostCode,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{msg,jdbcType=LONGVARCHAR})
+      #{dataId,jdbcType=BIGINT}, #{businessName,jdbcType=VARCHAR}, #{stepNum,jdbcType=BIGINT}, 
+      #{stepName,jdbcType=VARCHAR}, #{currentTime,jdbcType=BIGINT}, #{fromPort,jdbcType=VARCHAR}, 
+      #{toPort,jdbcType=VARCHAR}, #{departureDate,jdbcType=VARCHAR}, #{hostCode,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{msg,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.djk.core.model.CrawlRequestLog">
     insert into crawl_request_log
@@ -166,17 +165,14 @@
       <if test="businessName != null">
         business_name,
       </if>
+      <if test="stepNum != null">
+        step_num,
+      </if>
       <if test="stepName != null">
         step_name,
       </if>
-      <if test="startTime != null">
-        start_time,
-      </if>
-      <if test="endTime != null">
-        end_time,
-      </if>
-      <if test="useTime != null">
-        use_time,
+      <if test="currentTime != null">
+        current_time,
       </if>
       <if test="fromPort != null">
         from_port,
@@ -216,17 +212,14 @@
       <if test="businessName != null">
         #{businessName,jdbcType=VARCHAR},
       </if>
+      <if test="stepNum != null">
+        #{stepNum,jdbcType=BIGINT},
+      </if>
       <if test="stepName != null">
         #{stepName,jdbcType=VARCHAR},
       </if>
-      <if test="startTime != null">
-        #{startTime,jdbcType=BIGINT},
-      </if>
-      <if test="endTime != null">
-        #{endTime,jdbcType=BIGINT},
-      </if>
-      <if test="useTime != null">
-        #{useTime,jdbcType=BIGINT},
+      <if test="currentTime != null">
+        #{currentTime,jdbcType=BIGINT},
       </if>
       <if test="fromPort != null">
         #{fromPort,jdbcType=VARCHAR},
@@ -275,17 +268,14 @@
       <if test="record.businessName != null">
         business_name = #{record.businessName,jdbcType=VARCHAR},
       </if>
+      <if test="record.stepNum != null">
+        step_num = #{record.stepNum,jdbcType=BIGINT},
+      </if>
       <if test="record.stepName != null">
         step_name = #{record.stepName,jdbcType=VARCHAR},
       </if>
-      <if test="record.startTime != null">
-        start_time = #{record.startTime,jdbcType=BIGINT},
-      </if>
-      <if test="record.endTime != null">
-        end_time = #{record.endTime,jdbcType=BIGINT},
-      </if>
-      <if test="record.useTime != null">
-        use_time = #{record.useTime,jdbcType=BIGINT},
+      <if test="record.currentTime != null">
+        current_time = #{record.currentTime,jdbcType=BIGINT},
       </if>
       <if test="record.fromPort != null">
         from_port = #{record.fromPort,jdbcType=VARCHAR},
@@ -320,10 +310,9 @@
       spot_id = #{record.spotId,jdbcType=VARCHAR},
       data_id = #{record.dataId,jdbcType=BIGINT},
       business_name = #{record.businessName,jdbcType=VARCHAR},
+      step_num = #{record.stepNum,jdbcType=BIGINT},
       step_name = #{record.stepName,jdbcType=VARCHAR},
-      start_time = #{record.startTime,jdbcType=BIGINT},
-      end_time = #{record.endTime,jdbcType=BIGINT},
-      use_time = #{record.useTime,jdbcType=BIGINT},
+      current_time = #{record.currentTime,jdbcType=BIGINT},
       from_port = #{record.fromPort,jdbcType=VARCHAR},
       to_port = #{record.toPort,jdbcType=VARCHAR},
       departure_date = #{record.departureDate,jdbcType=VARCHAR},
@@ -342,10 +331,9 @@
       spot_id = #{record.spotId,jdbcType=VARCHAR},
       data_id = #{record.dataId,jdbcType=BIGINT},
       business_name = #{record.businessName,jdbcType=VARCHAR},
+      step_num = #{record.stepNum,jdbcType=BIGINT},
       step_name = #{record.stepName,jdbcType=VARCHAR},
-      start_time = #{record.startTime,jdbcType=BIGINT},
-      end_time = #{record.endTime,jdbcType=BIGINT},
-      use_time = #{record.useTime,jdbcType=BIGINT},
+      current_time = #{record.currentTime,jdbcType=BIGINT},
       from_port = #{record.fromPort,jdbcType=VARCHAR},
       to_port = #{record.toPort,jdbcType=VARCHAR},
       departure_date = #{record.departureDate,jdbcType=VARCHAR},
@@ -371,17 +359,14 @@
       <if test="businessName != null">
         business_name = #{businessName,jdbcType=VARCHAR},
       </if>
+      <if test="stepNum != null">
+        step_num = #{stepNum,jdbcType=BIGINT},
+      </if>
       <if test="stepName != null">
         step_name = #{stepName,jdbcType=VARCHAR},
       </if>
-      <if test="startTime != null">
-        start_time = #{startTime,jdbcType=BIGINT},
-      </if>
-      <if test="endTime != null">
-        end_time = #{endTime,jdbcType=BIGINT},
-      </if>
-      <if test="useTime != null">
-        use_time = #{useTime,jdbcType=BIGINT},
+      <if test="currentTime != null">
+        current_time = #{currentTime,jdbcType=BIGINT},
       </if>
       <if test="fromPort != null">
         from_port = #{fromPort,jdbcType=VARCHAR},
@@ -413,10 +398,9 @@
       spot_id = #{spotId,jdbcType=VARCHAR},
       data_id = #{dataId,jdbcType=BIGINT},
       business_name = #{businessName,jdbcType=VARCHAR},
+      step_num = #{stepNum,jdbcType=BIGINT},
       step_name = #{stepName,jdbcType=VARCHAR},
-      start_time = #{startTime,jdbcType=BIGINT},
-      end_time = #{endTime,jdbcType=BIGINT},
-      use_time = #{useTime,jdbcType=BIGINT},
+      current_time = #{currentTime,jdbcType=BIGINT},
       from_port = #{fromPort,jdbcType=VARCHAR},
       to_port = #{toPort,jdbcType=VARCHAR},
       departure_date = #{departureDate,jdbcType=VARCHAR},
@@ -432,10 +416,9 @@
       spot_id = #{spotId,jdbcType=VARCHAR},
       data_id = #{dataId,jdbcType=BIGINT},
       business_name = #{businessName,jdbcType=VARCHAR},
+      step_num = #{stepNum,jdbcType=BIGINT},
       step_name = #{stepName,jdbcType=VARCHAR},
-      start_time = #{startTime,jdbcType=BIGINT},
-      end_time = #{endTime,jdbcType=BIGINT},
-      use_time = #{useTime,jdbcType=BIGINT},
+      current_time = #{currentTime,jdbcType=BIGINT},
       from_port = #{fromPort,jdbcType=VARCHAR},
       to_port = #{toPort,jdbcType=VARCHAR},
       departure_date = #{departureDate,jdbcType=VARCHAR},
@@ -447,19 +430,19 @@
   <insert id="batchInsert">
     <if test="items.get(0) != null">
             insert into crawl_request_log  (id, log_id, spot_id, 
-        data_id, business_name, step_name, 
-        start_time, end_time, use_time, 
-        from_port, to_port, departure_date, 
-        host_code, create_time, update_time, 
-        msg)
+        data_id, business_name, step_num, 
+        step_name, current_time, from_port, 
+        to_port, departure_date, host_code, 
+        create_time, update_time, msg
+        )
       values
       <foreach collection="items" item="item" index="index" separator=",">
       (#{item.id,jdbcType=BIGINT}, #{item.logId,jdbcType=BIGINT}, #{item.spotId,jdbcType=VARCHAR}, 
-        #{item.dataId,jdbcType=BIGINT}, #{item.businessName,jdbcType=VARCHAR}, #{item.stepName,jdbcType=VARCHAR}, 
-        #{item.startTime,jdbcType=BIGINT}, #{item.endTime,jdbcType=BIGINT}, #{item.useTime,jdbcType=BIGINT}, 
-        #{item.fromPort,jdbcType=VARCHAR}, #{item.toPort,jdbcType=VARCHAR}, #{item.departureDate,jdbcType=VARCHAR}, 
-        #{item.hostCode,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP}, 
-        #{item.msg,jdbcType=LONGVARCHAR})
+        #{item.dataId,jdbcType=BIGINT}, #{item.businessName,jdbcType=VARCHAR}, #{item.stepNum,jdbcType=BIGINT}, 
+        #{item.stepName,jdbcType=VARCHAR}, #{item.currentTime,jdbcType=BIGINT}, #{item.fromPort,jdbcType=VARCHAR}, 
+        #{item.toPort,jdbcType=VARCHAR}, #{item.departureDate,jdbcType=VARCHAR}, #{item.hostCode,jdbcType=VARCHAR}, 
+        #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.msg,jdbcType=LONGVARCHAR}
+        )
       </foreach>
     </if>
   </insert>
