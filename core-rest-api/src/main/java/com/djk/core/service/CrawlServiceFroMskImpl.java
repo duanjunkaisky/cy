@@ -75,7 +75,8 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     }
 
     @Override
-    public String queryData(BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo, String hostCode) throws Exception {
+    public String queryData(BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo) {
+        String hostCode = queryRouteVo.getHostCode();
         this.setHostCode(hostCode);
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: ");
 

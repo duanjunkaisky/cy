@@ -37,8 +37,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Data
-public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements CrawlService
-{
+public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements CrawlService {
     private static int reqCount = 0;
     private static int tokenIndex = 0;
 
@@ -71,8 +70,8 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
     }
 
     @Override
-    public String queryData(BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo, String hostCode) throws Exception
-    {
+    public String queryData(BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo) {
+        String hostCode = queryRouteVo.getHostCode();
         this.setHostCode(hostCode);
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + null);
 
@@ -156,8 +155,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
     }
 
 
-    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList) throws ParseException
-    {
+    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList) throws ParseException {
         int containerType = computeContainerType(container.getContainerType());
 
         for (Object o : offers) {
@@ -269,8 +267,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
 
     }
 
-    private void parseFeeIntoList(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, JSONObject feeItem, int costType)
-    {
+    private void parseFeeIntoList(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, JSONObject feeItem, int costType) {
         JSONObject price = feeItem.getJSONObject("Price");
         BigDecimal amount = price.getBigDecimal("Amount");
         String currency = price.getJSONObject("Currency").getString("Code");
@@ -292,8 +289,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
         productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
     }
 
-    private Map<String, String> getHeader()
-    {
+    private Map<String, String> getHeader() {
         JSONObject tokenBean = getToken(this.getHostCode().toLowerCase(), tokenIndex++);
         Map<String, String> header = new HashMap<>(3);
         tokenBean.keySet().stream().forEach(key -> {
@@ -303,8 +299,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
         return header;
     }
 
-    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode)
-    {
+    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode) {
         int count = 0;
         while (count < Constant.MAX_REQ_COUNT) {
             String api = "https://www.cma-cgm.com/api/Ports/Get?id=" + portCodeEn + "&manageChinaCountryCode=true";
@@ -335,8 +330,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
         throw new RuntimeException(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + "查询港口代码出错： ");
     }
 
-    private JSONObject getProductStatus(QueryRouteVo queryRouteVo, String loggedId, int solutionNumber, int ScheduleNumber, String offerId, String traceId)
-    {
+    private JSONObject getProductStatus(QueryRouteVo queryRouteVo, String loggedId, int solutionNumber, int ScheduleNumber, String offerId, String traceId) {
         int count = 0;
         while (count < Constant.MAX_REQ_COUNT) {
             count++;
@@ -381,8 +375,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
         return null;
     }
 
-    public void getFreeFee(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String traceId, String offerId)
-    {
+    public void getFreeFee(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String traceId, String offerId) {
         int count = 0;
         while (count < Constant.MAX_REQ_COUNT) {
             count++;
@@ -437,8 +430,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
 
     }
 
-    public void getOtherFee3(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String traceId, String offerId)
-    {
+    public void getOtherFee3(List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String traceId, String offerId) {
         int count = 0;
         while (count < Constant.MAX_REQ_COUNT) {
             count++;
@@ -481,8 +473,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
 
     }
 
-    public void getRequestToken(Map<String, String> header)
-    {
+    public void getRequestToken(Map<String, String> header) {
 //        int count = 0;
 //        while (count < Constant.MAX_REQ_COUNT) {
 //            count++;
@@ -531,8 +522,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
 
     }
 
-    public Date parseDate(String dateString, long gmt)
-    {
+    public Date parseDate(String dateString, long gmt) {
         String pattern = "\\d+(\\.\\d+)?";
         Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(dateString);
@@ -543,8 +533,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
         throw new RuntimeException("时间解析出错: " + dateString);
     }
 
-    public String parsePartnerCode(String cookie)
-    {
+    public String parsePartnerCode(String cookie) {
         String[] split = cookie.split(";");
         List<String> strings = Arrays.asList(split);
         List<String> partnerCode = strings.stream().filter(i -> i.contains("partnerCode")).collect(Collectors.toList());

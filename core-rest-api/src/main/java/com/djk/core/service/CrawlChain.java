@@ -17,11 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -34,8 +32,7 @@ import java.util.stream.Collectors;
 @Data
 @Slf4j
 @ConfigurationProperties(prefix = "crawl")
-public class CrawlChain
-{
+public class CrawlChain {
     public static ListeningExecutorService EXECUTOR_SERVICE = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
 
     @Autowired
@@ -53,16 +50,14 @@ public class CrawlChain
     RedisService redisService;
 
     @Async("asyncServiceExecutor")
-    public void doBusiness(QueryRouteVo queryRouteVo)
-    {
+    public void doBusiness(QueryRouteVo queryRouteVo) {
         CrawlService crawlService = (CrawlService) SpringUtil.getBean(queryRouteVo.getBeanName());
-        List<ListenableFuture<String>> futureList = new ArrayList<>();
 
         BaseShippingCompany baseShippingCompany = crawlService.getShipCompany(queryRouteVo.getHostCode());
         BasePort fromPort = crawlService.getFromPort(queryRouteVo);
         BasePort toPort = crawlService.getToPort(queryRouteVo);
 
-        futureList.add(EXECUTOR_SERVICE.submit(() -> {
+        EXECUTOR_SERVICE.submit(() -> {
             try {
                 CrawlRequestStatus requestStatus = new CrawlRequestStatus();
                 CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
@@ -70,7 +65,7 @@ public class CrawlChain
                 requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
                 requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
 
-                String str = queryRouteVo.getHostCode() + " -> " + crawlService.queryData(baseShippingCompany, fromPort, toPort, queryRouteVo, queryRouteVo.getHostCode());
+                String str = queryRouteVo.getHostCode() + " -> " + crawlService.queryData(baseShippingCompany, fromPort, toPort, queryRouteVo);
 
                 crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
                 requestStatus = new CrawlRequestStatus();
@@ -105,7 +100,7 @@ public class CrawlChain
                 ConsumerPull.currentJobs.remove(queryRouteVo.getSpotId() + queryRouteVo.getHostCode());
             }
             return "---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getHostCode() + " -> 0";
-        }));
+        });
     }
 
 }

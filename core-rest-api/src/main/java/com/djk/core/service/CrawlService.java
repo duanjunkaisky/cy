@@ -11,7 +11,7 @@ import com.djk.core.vo.QueryRouteVo;
 public interface CrawlService
 {
 
-    String queryData(BaseShippingCompany shippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo, String hostCode) throws Exception;
+    String queryData(BaseShippingCompany shippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo) throws Exception;
 
     BasePort getFromPort(QueryRouteVo queryRouteVo);
 
