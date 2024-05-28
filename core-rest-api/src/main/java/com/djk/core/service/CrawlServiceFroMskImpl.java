@@ -133,6 +133,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 String bodyJson = resp.getBodyJson();
                 if (response.code() != 200) {
                     redisService.del(REDIS_DATABASE + "MSK:sensorData");
+                    redisService.del(REDIS_DATABASE + "tmp:get-sensorData-api");
                     tokenIndex++;
                     log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求失败");
                     continue;
