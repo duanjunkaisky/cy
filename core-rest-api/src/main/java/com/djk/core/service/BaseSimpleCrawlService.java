@@ -84,13 +84,13 @@ abstract class BaseSimpleCrawlService implements CrawlService {
         requestLog.setBusinessName(businessName);
         requestLog.setTimePoint(System.currentTimeMillis());
         if (null != addDataId && addDataId) {
-            Long dataId = redisService.generateId(REDIS_DATABASE + ":tmp:log-dataId:" + queryRouteVo.getLogId(), 200L);
+            Long dataId = redisService.generateId(REDIS_DATABASE + ":tmp:log-dataId:" + queryRouteVo.getLogId(), 360L);
             requestLog.setDataId(dataId);
         }
         requestLog.setFromPort(queryRouteVo.getDeparturePortEn());
         requestLog.setToPort(queryRouteVo.getDestinationPortEn());
         requestLog.setStepName(stepName);
-        Long aLong = redisService.generateId(REDIS_DATABASE + ":tmp:log-step-num:" + queryRouteVo.getLogId(), 200L);
+        Long aLong = redisService.generateId(REDIS_DATABASE + ":tmp:log-step-num:" + queryRouteVo.getLogId(), 360L);
         requestLog.setStepNum(aLong);
         logMapper.insertSelective(requestLog);
     }

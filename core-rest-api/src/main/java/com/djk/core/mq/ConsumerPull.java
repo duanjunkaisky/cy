@@ -222,6 +222,9 @@ public class ConsumerPull implements CommandLineRunner {
                     requestStatus.setUseTime(null);
                     requestStatus.setMsg("爬取超过[" + maxCrawlTime / 1000 + "秒] -> \n" + requestStatus.getRequestParams());
                     requestStatusMapper.updateByPrimaryKeyWithBLOBs(requestStatus);
+
+                    QueryRouteVo queryRouteVo = JSONObject.parseObject(requestStatus.getRequestParams(), QueryRouteVo.class);
+                    crawlServiceFroMsk.addLog(null, BUSINESS_NAME_CRAWL, "处理超时", null, queryRouteVo);
                 }
             }
         }

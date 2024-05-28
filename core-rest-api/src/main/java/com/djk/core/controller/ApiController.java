@@ -60,6 +60,9 @@ public class ApiController {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    @Autowired
+    private RedisService redisService;
+
     @Value("${redis.database}")
     public String REDIS_DATABASE;
 
@@ -258,6 +261,12 @@ public class ApiController {
                         customDao.executeSql("delete from product_info where spot_id='" + item.get("spotId") + "' and shipping_company_id=" + baseShippingCompany.getId());
                         customDao.executeSql("delete from product_container where spot_id='" + item.get("spotId") + "' and shipping_company_id=" + baseShippingCompany.getId());
                         customDao.executeSql("delete from product_fee_item where spot_id='" + item.get("spotId") + "' and shipping_company_id=" + baseShippingCompany.getId());
+
+                        requestStatus = requestStatusMapper.selectByPrimaryKey(id);
+                        QueryRouteVo queryRouteVo = JSONObject.parseObject(requestStatus.getRequestParams(), QueryRouteVo.class);
+
+                        coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "插件获取到请求参数", null, queryRouteVo);
+
                         return CommonResult.success(item);
                     }
                 }
@@ -279,7 +288,11 @@ public class ApiController {
         BaseShippingCompany baseShippingCompany = coscoCrawlService.getShipCompany(queryRouteVo.getHostCode());
         BasePort fromPort = coscoCrawlService.getFromPort(queryRouteVo);
         BasePort toPort = coscoCrawlService.getToPort(queryRouteVo);
+
+        Long aLong = redisService.generateId(REDIS_DATABASE + ":tmp:log-chrome-data-id:" + queryRouteVo.getLogId(), 360L);
+        coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "开始插入数据-" + aLong, null, queryRouteVo);
         coscoCrawlService.queryData(baseShippingCompany, fromPort, toPort, queryRouteVo);
+        coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "数据插入完成-" + aLong, null, queryRouteVo);
         return CommonResult.success("操作成功");
     }
 
@@ -291,6 +304,17 @@ public class ApiController {
         requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
         requestStatus.setEndTime(System.currentTimeMillis());
         requestStatusMapper.updateByPrimaryKey(requestStatus);
+        QueryRouteVo queryRouteVo = JSONObject.parseObject(requestStatus.getRequestParams(), QueryRouteVo.class);
+        coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "更新爬取状态,爬取结束", null, queryRouteVo);
+        return CommonResult.success("操作成功");
+    }
+
+    @RequestMapping(value = "/pushLog", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult pushLog(@RequestBody JSONArray jsonArray) {
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JSONObject obj = jsonArray.getJSONObject(i);
+        }
         return CommonResult.success("操作成功");
     }
 

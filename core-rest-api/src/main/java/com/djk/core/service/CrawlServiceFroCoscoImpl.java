@@ -14,6 +14,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
+
 /**
  * @author duanjunkai
  * @date 2024/05/01
@@ -84,6 +86,7 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
         productInfo.setSpotId(queryRouteVo.getSpotId());
         productInfo.setId(Generator.nextId());
         productInfoMapper.insertSelective(productInfo);
+        addLog(true, BUSINESS_NAME_CRAWL, "product_info完成入库", null, queryRouteVo);
 
         for (int i = 0; i < routeProductPricingList.size(); i++) {
             JSONObject containerObj = routeProductPricingList.getJSONObject(i);
@@ -101,6 +104,7 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
             productContainer.setTenantId(0L);
             productContainer.setShippingCompanyId(productInfo.getShippingCompanyId());
             productContainerMapper.insertSelective(productContainer);
+            addLog(true, BUSINESS_NAME_CRAWL, "product_container完成入库", null, queryRouteVo);
         }
 
         JSONArray chargeDetailBl = null;
@@ -181,6 +185,8 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
                     productFeeItemMapper.insertSelective(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                 }
             }
+
+            addLog(true, BUSINESS_NAME_CRAWL, "product_fee_item完成入库", null, queryRouteVo);
             customDao.executeSql("update crawl_request_status set use_time=" + System.currentTimeMillis() + "-start_time where spot_id='" + queryRouteVo.getSpotId() + "' and host_code='" + queryRouteVo.getHostCode() + "' and (use_time is null or use_time='')");
         }
     }
