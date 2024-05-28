@@ -32,11 +32,13 @@ public class SslTrustUtil
                 @Override
                 public void checkClientTrusted(X509Certificate[] certs, String authType)
                 {
+//                    System.out.println(certs);
                 }
 
                 @Override
                 public void checkServerTrusted(X509Certificate[] certs, String authType)
                 {
+//                    System.out.println(certs);
                 }
             }
     };

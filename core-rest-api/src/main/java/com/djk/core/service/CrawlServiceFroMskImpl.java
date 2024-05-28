@@ -118,6 +118,8 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 fillData.put("toPortCountry", toPort.getCountryCode());
                 fillData.put("toPortFullName", checkPortName(toPort.getPortCode()) + " (" + checkPortName(toPort.getStateEn()) + "), " + checkPortName(toPort.getCountryNameEn()));
 
+                fillData.put("customerCode", header.get("customerCode"));
+                header.remove("customerCode");
                 fillData.put("containerCode", container.getContainerCode());
                 fillData.put("containerSize", container.getContainerSize());
                 fillData.put("containerType", container.getContainerType());
@@ -378,6 +380,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         header.put("User-Agent", userAgent);
         header.put("Consumer-Key", tokenBean.getString("consumer-key"));
         header.put("Akamai-Bm-Telemetry", akaSign);
+        header.put("customerCode", tokenBean.getString("customerCode"));
 
         return header;
     }

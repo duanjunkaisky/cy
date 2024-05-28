@@ -34,7 +34,7 @@
   },
   "unit": "KG",
   "brandCode": "MAEU",
-  "customerCode": "40605170076",
+  "customerCode": "${customerCode}",
   "loadAFLS": false,
   "weekOffset": ${weekOffset}
 }
