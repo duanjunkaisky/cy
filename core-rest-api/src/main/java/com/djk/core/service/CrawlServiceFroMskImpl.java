@@ -9,11 +9,11 @@ import com.djk.core.model.*;
 import com.djk.core.utils.FreeMakerUtil;
 import com.djk.core.utils.HttpResp;
 import com.djk.core.utils.HttpUtil;
+import com.djk.core.utils.MyProxyUtil;
 import com.djk.core.vo.ContainerDist;
 import com.djk.core.vo.QueryRouteVo;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -40,7 +40,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     private static int reqCount = 0;
     private static int tokenIndex = 0;
 
-    private static String userAgent;
+    public static final String DANLI_ACCESS_KEY = "eyqq4t1ubp4fbjklkrguol6zcc8o5jp5";
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -76,9 +76,8 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
     @Override
     public String queryData(BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo, String hostCode) throws Exception {
-        String proxy = null;
         this.setHostCode(hostCode);
-        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + proxy);
+        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: ");
 
         List<ProductInfo> productInfoList = new ArrayList<>();
 
@@ -91,22 +90,34 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         List<ContainerDist> realList = containerList.stream().filter(i -> i.getFlag().equalsIgnoreCase(queryRouteVo.getContainerType())).collect(Collectors.toList());
         boolean hasMore = true;
         int page = 1;
-        redisService.del(REDIS_DATABASE + "MSK:sensorData");
-        redisService.del(REDIS_DATABASE + "tmp:get-sensorData-api");
+        redisService.del(REDIS_DATABASE + ":MSK:sensorData");
+        redisService.del(REDIS_DATABASE + ":tmp:get-sensorData-api");
         while (hasMore) {
-            hasMore = getDataPerPage(queryRouteVo, proxy, fromPort, toPort, baseShippingCompany, productInfoList, format, queryTime, realList.get(0), page);
+            hasMore = getDataPerPage(queryRouteVo, fromPort, toPort, baseShippingCompany, productInfoList, format, queryTime, realList.get(0), page);
             page++;
         }
         return String.valueOf(productInfoList.size());
     }
 
-    private boolean getDataPerPage(QueryRouteVo queryRouteVo, String proxy, BasePort fromPort, BasePort toPort, BaseShippingCompany baseShippingCompany, List<ProductInfo> productInfoList, SimpleDateFormat format, Date queryTime, ContainerDist container, int page) {
+    private boolean getDataPerPage(QueryRouteVo queryRouteVo, BasePort fromPort, BasePort toPort, BaseShippingCompany baseShippingCompany, List<ProductInfo> productInfoList, SimpleDateFormat format, Date queryTime, ContainerDist container, int page) {
         reqCount = 0;
         String hostCode = queryRouteVo.getHostCode();
         while (reqCount < Constant.MAX_REQ_COUNT) {
             try {
                 reqCount++;
-                Map<String, String> header = getRemoteSensorData(queryRouteVo, proxy);
+                String proxy = MyProxyUtil.getProxy();
+                String proxyIp = null;
+                String proxyPort = null;
+                if (!StringUtils.isEmpty(proxy) && proxy.split(":").length == 2) {
+                    String[] split = proxy.split(":");
+                    proxyIp = split[0];
+                    proxyPort = split[1];
+                } else {
+                    log.error("获取代理失败!");
+                    break;
+                }
+
+                Map<String, String> header = getRemoteSensorData(queryRouteVo);
                 Map<String, Object> fillData = new HashMap<>(1);
                 fillData.put("fromPortId", fromPort.getMskCode());
                 fillData.put("fromPortCode", fromPort.getMskRkstCode());
@@ -126,32 +137,54 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
                 fillData.put("queryDate", format.format(queryTime));
                 fillData.put("weekOffset", (page - 1) * WEEK_STEP);
-                String jsonParam = FreeMakerUtil.createByTemplate("real_mskQuery.ftl", fillData);
+                String jsonParamInner = FreeMakerUtil.createByTemplate("real_mskQuery.ftl", fillData);
+
+                fillData = new HashMap<>(1);
+                fillData.put("appId", DANLI_ACCESS_KEY);
+                fillData.put("method", "POST");
+                fillData.put("api", "https://api.maersk.com/productoffer/v2/productoffers");
+                fillData.put("telemetry", header.get("Akamai-Bm-Telemetry"));
+                fillData.put("authorization", header.get("Authorization"));
+                fillData.put("consumerKey", header.get("Consumer-Key"));
+                fillData.put("jsonParam", jsonParamInner.replaceAll("\"", "\\\\\"").replaceAll("\n", "").replaceAll(" ", "").replaceAll("\t", ""));
+                fillData.put("ip", proxyIp);
+                fillData.put("port", proxyPort);
+                fillData.put("password", MyProxyUtil.PROXY_USERNAME + ":" + MyProxyUtil.PROXY_PASSWORD);
+                String jsonParam = FreeMakerUtil.createByTemplate("danli_req.ftl", fillData);
 
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
-                HttpResp resp = HttpUtil.postBody("https://api.maersk.com/productoffer/v2/productoffers", header, jsonParam, proxy);
-                Response response = resp.getResponse();
+                HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/tls/proxy", null, jsonParam, null);
                 String bodyJson = resp.getBodyJson();
-                if (response.code() != 200) {
-                    redisService.del(REDIS_DATABASE + "MSK:sensorData");
-                    redisService.del(REDIS_DATABASE + "tmp:get-sensorData-api");
-                    tokenIndex++;
-                    log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求鉴权失败\n");
-                    continue;
+                try {
+                    if (bodyJson.contains("Customer Segment limit for customer code")) {
+                        continue;
+                    } else {
+                        JSONObject jsonObject = JSONObject.parseObject(bodyJson);
+                        if (jsonObject.getBoolean("succ")) {
+                            String data = jsonObject.getString("data");
+                            JSONObject retObj = JSONObject.parseObject(data);
+                            boolean hasMore = retObj.getBoolean("loadMore");
+                            log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求返回成功, hasMore: " + hasMore);
+
+                            JSONArray offers = retObj.getJSONArray("offers");
+                            parseData(queryRouteVo, baseShippingCompany, container, offers, fromPort, toPort, productInfoList);
+
+                            return hasMore;
+                        } else {
+                            redisService.del(REDIS_DATABASE + ":MSK:sensorData");
+                            redisService.del(REDIS_DATABASE + ":tmp:get-sensorData-api");
+                            tokenIndex++;
+                            log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求鉴权失败\n");
+                            continue;
+                        }
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-
-                JSONObject retObj = JSONObject.parseObject(bodyJson);
-                boolean hasMore = retObj.getBoolean("loadMore");
-                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求返回成功, hasMore: " + hasMore);
-
-                JSONArray offers = retObj.getJSONArray("offers");
-                parseData(queryRouteVo, baseShippingCompany, container, offers, fromPort, toPort, productInfoList);
-
-                return hasMore;
             } catch (Exception e) {
-                redisService.del(REDIS_DATABASE + "MSK:sensorData");
-                redisService.del(REDIS_DATABASE + "tmp:get-sensorData-api");
+                redisService.del(REDIS_DATABASE + ":MSK:sensorData");
+                redisService.del(REDIS_DATABASE + ":tmp:get-sensorData-api");
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求出错");
                 log.error(ExceptionUtil.getMessage(e));
                 log.error(ExceptionUtil.stacktraceToString(e));
@@ -352,27 +385,21 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         productFeeItem.setFeeEnName(surcharge.getString("chargedescription"));
     }
 
-    public Map<String, String> getRemoteSensorData(QueryRouteVo queryRouteVo, String proxy) {
+    public Map<String, String> getRemoteSensorData(QueryRouteVo queryRouteVo) {
         JSONObject tokenBean = getToken(this.getHostCode(), tokenIndex++);
 
         Map<String, String> header = new HashMap<>(4);
-        String sensorData = (String) redisService.get(REDIS_DATABASE + "MSK:sensorData");
+        String sensorData = (String) redisService.get(REDIS_DATABASE + ":MSK:sensorData");
         if (StringUtils.isEmpty(sensorData)) {
-            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + "tmp:get-sensorData-api", 1, 60L, TimeUnit.SECONDS);
+            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:get-sensorData-api", 1, 60L, TimeUnit.SECONDS);
             if (aBoolean) {
-                String abck = tokenBean.getString("_abck");
-                String bmsz = tokenBean.getString("bm_sz");
                 Map<String, String> sensorDataParams = new HashMap<>(4);
-                sensorDataParams.put("appid", "eyqq4t1ubp4fbjklkrguol6zcc8o5jp5");
-                sensorDataParams.put("siteUrl", "https://www.maersk.com.cn/book");
-                sensorDataParams.put("abck", abck);
-                sensorDataParams.put("bmsz", bmsz);
+                sensorDataParams.put("appid", DANLI_ACCESS_KEY);
+                sensorDataParams.put("jsUrl", "https://www.maersk.com.cn/BR2niX/hlv/HmJ/TNQcZjZQ/pa9YGrtN/W3JTOn5fDQs/T1oWeXYh/eVkB");
                 Long aLong = redisService.generateId("sensorData_count");
-                HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/v2/sensorData", null, JSONObject.toJSONString(sensorDataParams), proxy);
+                HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/v2/getTelemetry", null, JSONObject.toJSONString(sensorDataParams), null);
                 JSONObject retObj = JSONObject.parseObject(resp.getBodyJson());
-                userAgent = retObj.getString("ua");
-                sensorData = retObj.getString("sensorData");
-                sensorData = Base64.getEncoder().encodeToString(sensorData.getBytes());
+                sensorData = retObj.getString("data");
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 第" + aLong + "次获取sensorData:\n" + sensorData);
                 redisService.set(REDIS_DATABASE + "MSK:sensorData", sensorData, 300L);
             } else {
@@ -382,15 +409,9 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 }
             }
         }
-        String str = tokenBean.getString("akamai-bm-telemetry");
-        String start = str.split("sensor_data=")[0];
-        String akaSign = start + "sensor_data=" + sensorData;
-
         header.put("Authorization", tokenBean.getString("authorization"));
-        header.put("Content-Type", "application/json");
-        header.put("User-Agent", userAgent);
         header.put("Consumer-Key", tokenBean.getString("consumer-key"));
-        header.put("Akamai-Bm-Telemetry", akaSign);
+        header.put("Akamai-Bm-Telemetry", sensorData);
         header.put("customerCode", tokenBean.getString("customerCode"));
 
         return header;
