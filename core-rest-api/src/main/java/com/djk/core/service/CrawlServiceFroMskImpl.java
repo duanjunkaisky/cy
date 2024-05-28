@@ -128,7 +128,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 fillData.put("weekOffset", (page - 1) * WEEK_STEP);
                 String jsonParam = FreeMakerUtil.createByTemplate("real_mskQuery.ftl", fillData);
 
-                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
+                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
                 HttpResp resp = HttpUtil.postBody("https://api.maersk.com/productoffer/v2/productoffers", header, jsonParam, proxy);
                 Response response = resp.getResponse();
@@ -137,13 +137,13 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     redisService.del(REDIS_DATABASE + "MSK:sensorData");
                     redisService.del(REDIS_DATABASE + "tmp:get-sensorData-api");
                     tokenIndex++;
-                    log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求失败\n" + bodyJson);
+                    log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求鉴权失败\n");
                     continue;
                 }
 
                 JSONObject retObj = JSONObject.parseObject(bodyJson);
                 boolean hasMore = retObj.getBoolean("loadMore");
-                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求返回成功, hasMore: " + hasMore);
+                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求返回成功, hasMore: " + hasMore);
 
                 JSONArray offers = retObj.getJSONArray("offers");
                 parseData(queryRouteVo, baseShippingCompany, container, offers, fromPort, toPort, productInfoList);
@@ -152,7 +152,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
             } catch (Exception e) {
                 redisService.del(REDIS_DATABASE + "MSK:sensorData");
                 redisService.del(REDIS_DATABASE + "tmp:get-sensorData-api");
-                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求出错");
+                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求出错");
                 log.error(ExceptionUtil.getMessage(e));
                 log.error(ExceptionUtil.stacktraceToString(e));
             }
