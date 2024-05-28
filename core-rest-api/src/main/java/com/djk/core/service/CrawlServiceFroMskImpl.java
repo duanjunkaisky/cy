@@ -135,7 +135,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     redisService.del(REDIS_DATABASE + "MSK:sensorData");
                     redisService.del(REDIS_DATABASE + "tmp:get-sensorData-api");
                     tokenIndex++;
-                    log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求失败");
+                    log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求失败\n" + bodyJson);
                     continue;
                 }
 
@@ -148,6 +148,8 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
                 return hasMore;
             } catch (Exception e) {
+                redisService.del(REDIS_DATABASE + "MSK:sensorData");
+                redisService.del(REDIS_DATABASE + "tmp:get-sensorData-api");
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求出错");
                 log.error(ExceptionUtil.getMessage(e));
                 log.error(ExceptionUtil.stacktraceToString(e));
