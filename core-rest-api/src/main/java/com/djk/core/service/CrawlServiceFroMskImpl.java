@@ -419,11 +419,11 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 JSONObject retObj = JSONObject.parseObject(resp.getBodyJson());
                 sensorData = retObj.getString("data");
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 第" + aLong + "次获取sensorData:\n" + sensorData);
-                redisService.set(REDIS_DATABASE + "MSK:sensorData", sensorData, 300L);
+                redisService.set(REDIS_DATABASE + ":MSK:sensorData", sensorData, 300L);
             } else {
                 long startTime = System.currentTimeMillis();
                 while (StringUtils.isEmpty(sensorData) && System.currentTimeMillis() - startTime < 20 * 1000) {
-                    sensorData = (String) redisService.get(REDIS_DATABASE + "MSK:sensorData");
+                    sensorData = (String) redisService.get(REDIS_DATABASE + ":MSK:sensorData");
                 }
             }
         }
