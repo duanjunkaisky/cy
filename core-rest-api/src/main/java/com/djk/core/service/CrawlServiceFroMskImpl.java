@@ -11,13 +11,12 @@ import com.djk.core.utils.HttpResp;
 import com.djk.core.utils.HttpUtil;
 import com.djk.core.vo.ContainerDist;
 import com.djk.core.vo.QueryRouteVo;
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -35,21 +34,22 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @Data
-public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements CrawlService
-{
+public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements CrawlService {
     private final int WEEK_STEP = 2;
 
     private static int reqCount = 0;
     private static int tokenIndex = 0;
 
-    private static String sensorData;
     private static String userAgent;
 
-//    @Value("${rocketmq.producer-msk.topic}")
-//    private String topic;
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
-//    @Autowired
-//    RocketMQTemplate rocketMQTemplate;
+    @Autowired
+    private RedisService redisService;
+
+    @Value("${redis.database}")
+    public String REDIS_DATABASE;
 
     @Autowired
     BasePortMapper basePortMapper;
@@ -75,8 +75,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     }
 
     @Override
-    public String queryData(BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo, String hostCode) throws Exception
-    {
+    public String queryData(BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo, String hostCode) throws Exception {
         String proxy = null;
         this.setHostCode(hostCode);
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + proxy);
@@ -99,8 +98,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         return String.valueOf(productInfoList.size());
     }
 
-    private boolean getDataPerPage(QueryRouteVo queryRouteVo, String proxy, BasePort fromPort, BasePort toPort, BaseShippingCompany baseShippingCompany, List<ProductInfo> productInfoList, SimpleDateFormat format, Date queryTime, ContainerDist container, int page)
-    {
+    private boolean getDataPerPage(QueryRouteVo queryRouteVo, String proxy, BasePort fromPort, BasePort toPort, BaseShippingCompany baseShippingCompany, List<ProductInfo> productInfoList, SimpleDateFormat format, Date queryTime, ContainerDist container, int page) {
         reqCount = 0;
         String hostCode = queryRouteVo.getHostCode();
         while (reqCount < Constant.MAX_REQ_COUNT) {
@@ -134,7 +132,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 Response response = resp.getResponse();
                 String bodyJson = resp.getBodyJson();
                 if (response.code() != 200) {
-                    sensorData = null;
+                    redisService.del(REDIS_DATABASE + "MSK:sensorData");
                     tokenIndex++;
                     log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求失败");
                     continue;
@@ -157,8 +155,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         return false;
     }
 
-    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList) throws ParseException
-    {
+    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList) throws ParseException {
         int containerType = computeContainerType(container.getContainerCode());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -324,8 +321,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
     }
 
-    private void confirmValue(ProductFeeItem productFeeItem, JSONObject surcharge)
-    {
+    private void confirmValue(ProductFeeItem productFeeItem, JSONObject surcharge) {
         String ratetypecode = surcharge.getString("ratetypecode");
         if ("Origin".equalsIgnoreCase(ratetypecode)) {
             productFeeItem.setFeeCostType(1);
@@ -351,25 +347,35 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         productFeeItem.setFeeEnName(surcharge.getString("chargedescription"));
     }
 
-    public Map<String, String> getRemoteSensorData(QueryRouteVo queryRouteVo, String proxy)
-    {
+    public Map<String, String> getRemoteSensorData(QueryRouteVo queryRouteVo, String proxy) {
         JSONObject tokenBean = getToken(this.getHostCode(), tokenIndex++);
 
         Map<String, String> header = new HashMap<>(4);
+        String sensorData = (String) redisService.get(REDIS_DATABASE + "MSK:sensorData");
         if (StringUtils.isEmpty(sensorData)) {
-            String abck = tokenBean.getString("_abck");
-            String bmsz = tokenBean.getString("bm_sz");
-            Map<String, String> sensorDataParams = new HashMap<>(4);
-            sensorDataParams.put("appid", "eyqq4t1ubp4fbjklkrguol6zcc8o5jp5");
-            sensorDataParams.put("siteUrl", "https://www.maersk.com.cn/book");
-            sensorDataParams.put("abck", abck);
-            sensorDataParams.put("bmsz", bmsz);
-            HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/v2/sensorData", null, JSONObject.toJSONString(sensorDataParams), proxy);
-            JSONObject retObj = JSONObject.parseObject(resp.getBodyJson());
-            userAgent = retObj.getString("ua");
-            sensorData = retObj.getString("sensorData");
-            sensorData = Base64.getEncoder().encodeToString(sensorData.getBytes());
-            log.info(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 获取sensorData:\n" + sensorData);
+            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + "tmp:get-sensorData-api", 1, 60L, TimeUnit.SECONDS);
+            if (aBoolean) {
+                String abck = tokenBean.getString("_abck");
+                String bmsz = tokenBean.getString("bm_sz");
+                Map<String, String> sensorDataParams = new HashMap<>(4);
+                sensorDataParams.put("appid", "eyqq4t1ubp4fbjklkrguol6zcc8o5jp5");
+                sensorDataParams.put("siteUrl", "https://www.maersk.com.cn/book");
+                sensorDataParams.put("abck", abck);
+                sensorDataParams.put("bmsz", bmsz);
+                Long aLong = redisService.generateId("sensorData_count");
+                HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/v2/sensorData", null, JSONObject.toJSONString(sensorDataParams), proxy);
+                JSONObject retObj = JSONObject.parseObject(resp.getBodyJson());
+                userAgent = retObj.getString("ua");
+                sensorData = retObj.getString("sensorData");
+                sensorData = Base64.getEncoder().encodeToString(sensorData.getBytes());
+                log.info(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 第" + aLong + "次获取sensorData:\n" + sensorData);
+                redisService.set(REDIS_DATABASE + "MSK:sensorData", sensorData, 300L);
+            } else {
+                long startTime = System.currentTimeMillis();
+                while (StringUtils.isEmpty(sensorData) && System.currentTimeMillis() - startTime < 20 * 1000) {
+                    sensorData = (String) redisService.get(REDIS_DATABASE + "MSK:sensorData");
+                }
+            }
         }
         String str = tokenBean.getString("akamai-bm-telemetry");
         String start = str.split("sensor_data=")[0];
