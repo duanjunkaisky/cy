@@ -27,6 +27,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
+
 /**
  * @author duanjunkai
  * @date 2024/05/01
@@ -105,6 +107,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         String hostCode = queryRouteVo.getHostCode();
         while (reqCount < Constant.MAX_REQ_COUNT) {
             try {
+                addLog(null, BUSINESS_NAME_CRAWL, "组织请求参数", null, queryRouteVo);
                 reqCount++;
                 String proxy = MyProxyUtil.getProxy();
                 String proxyIp = null;
@@ -155,24 +158,28 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
+                addLog(null, BUSINESS_NAME_CRAWL, "请求数据接口-分页:" + page, null, queryRouteVo);
                 HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/tls/proxy", null, jsonParam, null);
                 String bodyJson = resp.getBodyJson();
                 try {
                     if (bodyJson.contains("Customer Segment limit for customer code")) {
+                        addLog(null, BUSINESS_NAME_CRAWL, "发生错误->请求数据接口-分页:" + page, "Customer Segment limit for customer code", queryRouteVo);
                         continue;
                     } else {
                         JSONObject jsonObject = JSONObject.parseObject(bodyJson);
                         if (jsonObject.getBoolean("succ")) {
+                            addLog(null, BUSINESS_NAME_CRAWL, "成功->请求数据接口-分页:" + page, null, queryRouteVo);
                             String data = jsonObject.getString("data");
                             JSONObject retObj = JSONObject.parseObject(data);
                             boolean hasMore = retObj.getBoolean("loadMore");
                             log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求返回成功, hasMore: " + hasMore);
 
                             JSONArray offers = retObj.getJSONArray("offers");
-                            parseData(queryRouteVo, baseShippingCompany, container, offers, fromPort, toPort, productInfoList);
+                            parseData(queryRouteVo, baseShippingCompany, container, offers, fromPort, toPort, productInfoList, page);
 
                             return hasMore;
                         } else {
+                            addLog(null, BUSINESS_NAME_CRAWL, "鉴权失败->请求数据接口-分页:" + page, "发起请求鉴权失败", queryRouteVo);
                             redisService.del(REDIS_DATABASE + ":MSK:sensorData");
                             redisService.del(REDIS_DATABASE + ":tmp:get-sensorData-api");
                             tokenIndex++;
@@ -186,6 +193,9 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
             } catch (Exception e) {
                 redisService.del(REDIS_DATABASE + ":MSK:sensorData");
                 redisService.del(REDIS_DATABASE + ":tmp:get-sensorData-api");
+
+                addLog(null, BUSINESS_NAME_CRAWL, "鉴权失败->请求数据接口-分页:" + page, ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
+
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求出错");
                 log.error(ExceptionUtil.getMessage(e));
                 log.error(ExceptionUtil.stacktraceToString(e));
@@ -194,10 +204,11 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         return false;
     }
 
-    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList) throws ParseException {
+    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, int page) throws ParseException {
         int containerType = computeContainerType(container.getContainerCode());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+        int index = 1;
         for (Object o : offers) {
             List<ProductFeeItem> productFeeItemList = new ArrayList<>();
             JSONObject item = (JSONObject) o;
@@ -256,6 +267,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 productInfo.setId(Generator.nextId());
                 productInfoList.add(productInfo);
                 productInfoMapper.insertSelective(productInfo);
+                addLog(true, BUSINESS_NAME_CRAWL, "第" + page + "页,第" + index + "条product_info完成入库", null, queryRouteVo);
 
                 ProductContainer productContainer = new ProductContainer();
                 productContainer.setContainerType(containerType);
@@ -270,6 +282,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 productContainer.setTenantId(0L);
                 productContainer.setShippingCompanyId(productInfo.getShippingCompanyId());
                 productContainerMapper.insertSelective(productContainer);
+                addLog(true, BUSINESS_NAME_CRAWL, "第" + page + "页,第" + index + "条product_container完成入库", null, queryRouteVo);
 
                 ProductFeeItem productFeeItem = new ProductFeeItem();
                 productFeeItem.setShippingCompanyId(productInfo.getShippingCompanyId());
@@ -351,11 +364,14 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                         productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                     }
                 }
-
                 productFeeItemMapper.batchInsert(productFeeItemList);
+                addLog(true, BUSINESS_NAME_CRAWL, "第" + page + "页,第" + index + "条product_fee_item完成入库", null, queryRouteVo);
 
                 customDao.executeSql("update crawl_request_status set use_time=" + System.currentTimeMillis() + "-start_time where spot_id='" + queryRouteVo.getSpotId() + "' and host_code='" + queryRouteVo.getHostCode() + "' and (use_time is null or use_time='')");
+            } else {
+                addLog(true, BUSINESS_NAME_CRAWL, "第" + page + "页,第" + index + "条product_info为售罄,忽略", null, queryRouteVo);
             }
+            index++;
         }
 
     }

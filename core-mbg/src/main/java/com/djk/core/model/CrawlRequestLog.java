@@ -8,7 +8,7 @@ public class CrawlRequestLog implements Serializable {
     private Long id;
 
     @ApiModelProperty(value = "请求唯一标识")
-    private Long logId;
+    private String logId;
 
     @ApiModelProperty(value = "关联crawl_request_status")
     private String spotId;
@@ -59,11 +59,11 @@ public class CrawlRequestLog implements Serializable {
         this.id = id;
     }
 
-    public Long getLogId() {
+    public String getLogId() {
         return logId;
     }
 
-    public void setLogId(Long logId) {
+    public void setLogId(String logId) {
         this.logId = logId;
     }
 

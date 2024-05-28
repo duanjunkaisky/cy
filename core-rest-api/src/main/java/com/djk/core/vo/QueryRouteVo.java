@@ -39,5 +39,7 @@ public class QueryRouteVo
 
     private String beanName;
 
+    private String logId;
+
     private JSONObject otherData;
 }

@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
+import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
+
 /**
  * @author duanjunkai
  * @date 2024/05/01
@@ -73,6 +75,8 @@ public class CrawlChain {
                 requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
                 requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
 
+                crawlService.addLog(null, BUSINESS_NAME_CRAWL, "数据全部入库完成", null, queryRouteVo);
+
                 log.info("---> " + queryRouteVo.getSpotId() + " - " + str);
 
                 crawlRequestStatusExample = new CrawlRequestStatusExample();
@@ -88,6 +92,7 @@ public class CrawlChain {
                 }
                 return str;
             } catch (Exception e) {
+                crawlService.addLog(null, BUSINESS_NAME_CRAWL, "爬取出错", ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
                 log.error(ExceptionUtil.getMessage(e));
                 log.error(ExceptionUtil.stacktraceToString(e));
                 CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();

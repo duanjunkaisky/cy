@@ -29,7 +29,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
 
 /**
  * @author duanjunkai
@@ -100,6 +101,10 @@ public class ApiController {
             String hostCode = getHostCode(beanName);
             queryRouteVo.setHostCode(hostCode);
 
+            queryRouteVo.setLogId(coscoCrawlService.getLogId());
+
+            coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "收到前端请求", null, queryRouteVo);
+
             CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
             crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId()).andHostCodeEqualTo(queryRouteVo.getHostCode());
             List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
@@ -149,6 +154,7 @@ public class ApiController {
 
                 if (!"cosco".equalsIgnoreCase(queryRouteVo.getHostCode())) {
                     rocketMQTemplate.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(queryRouteVo)).build());
+                    coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "请求push到消息队列", null, queryRouteVo);
                     log.info("推送到消息->\n topic: " + topic + ",\n " + JSONObject.toJSONString(queryRouteVo));
                 }
             }

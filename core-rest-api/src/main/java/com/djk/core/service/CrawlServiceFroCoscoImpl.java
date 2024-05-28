@@ -28,6 +28,7 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
     @Override
     public String queryData(BaseShippingCompany shippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo) throws Exception {
         String hostCode = queryRouteVo.getHostCode();
+        this.setHostCode(hostCode);
         if (null != queryRouteVo.getOtherData() && !queryRouteVo.getOtherData().isEmpty()) {
             BaseShippingCompany shipCompany = getShipCompany(hostCode);
             parseData(queryRouteVo, shipCompany);

@@ -23,8 +23,7 @@ import java.util.stream.Collectors;
 
 @Data
 @Slf4j
-abstract class BaseSimpleCrawlService implements CrawlService
-{
+abstract class BaseSimpleCrawlService implements CrawlService {
     public static final String FROM_FLAG = "from";
     public static final String TO_FLAG = "to";
 
@@ -52,6 +51,9 @@ abstract class BaseSimpleCrawlService implements CrawlService
     @Autowired
     ProductFeeItemMapper productFeeItemMapper;
 
+    @Autowired
+    CrawlRequestLogMapper logMapper;
+
     private String hostCode;
 
     @Autowired
@@ -61,21 +63,39 @@ abstract class BaseSimpleCrawlService implements CrawlService
     public String REDIS_DATABASE;
 
     @Override
-    public BasePort getFromPort(QueryRouteVo queryRouteVo)
-    {
+    public BasePort getFromPort(QueryRouteVo queryRouteVo) {
         List<BasePort> basePorts = getBasePorts(queryRouteVo, FROM_FLAG);
         return basePorts.get(0);
     }
 
     @Override
-    public BasePort getToPort(QueryRouteVo queryRouteVo)
-    {
+    public BasePort getToPort(QueryRouteVo queryRouteVo) {
         List<BasePort> basePorts = getBasePorts(queryRouteVo, TO_FLAG);
         return basePorts.get(0);
     }
 
-    private List<BasePort> getBasePorts(QueryRouteVo queryRouteVo, String flag)
-    {
+    @Override
+    public void addLog(Boolean addDataId, String businessName, String stepName, String msg, QueryRouteVo queryRouteVo) {
+        CrawlRequestLog requestLog = new CrawlRequestLog();
+        requestLog.setLogId(queryRouteVo.getLogId());
+        requestLog.setHostCode(queryRouteVo.getHostCode());
+        requestLog.setMsg(msg);
+        requestLog.setSpotId(queryRouteVo.getSpotId());
+        requestLog.setBusinessName(businessName);
+        requestLog.setCurrentTime(System.currentTimeMillis());
+        if (null != addDataId && addDataId) {
+            Long dataId = redisService.generateId(REDIS_DATABASE + ":tmp:log-dataId:" + queryRouteVo.getLogId(), 200L);
+            requestLog.setDataId(dataId);
+        }
+        requestLog.setFromPort(queryRouteVo.getDeparturePortEn());
+        requestLog.setToPort(queryRouteVo.getDestinationPortEn());
+        requestLog.setStepName(stepName);
+        Long aLong = redisService.generateId(REDIS_DATABASE + ":tmp:log-step-num:" + queryRouteVo.getLogId(), 200L);
+        requestLog.setStepNum(aLong);
+        logMapper.insert(requestLog);
+    }
+
+    private List<BasePort> getBasePorts(QueryRouteVo queryRouteVo, String flag) {
         String portCode = queryRouteVo.getDestinationPortEn();
         String countryCode = queryRouteVo.getDestinationCountryCode();
         if (FROM_FLAG.equalsIgnoreCase(flag)) {
@@ -92,8 +112,7 @@ abstract class BaseSimpleCrawlService implements CrawlService
         return basePorts;
     }
 
-    public String getProductNumber()
-    {
+    public String getProductNumber() {
         final int numLength = 6;
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyMM");
@@ -110,8 +129,13 @@ abstract class BaseSimpleCrawlService implements CrawlService
         return "CGP" + start + String.format("%0" + numLength + "d", number);
     }
 
-    public JSONObject getToken(String hostCode, int tokenIndex)
-    {
+    public String getLogId() {
+        final int numLength = 18;
+        Long logId = redisService.generateIdCommon("crawl_log_id");
+        return "log_uniqueId_" + String.format("%0" + numLength + "d", logId);
+    }
+
+    public JSONObject getToken(String hostCode, int tokenIndex) {
         CrawlMetadataWebsiteConfigExample crawlMetadataWebsiteConfigExample = new CrawlMetadataWebsiteConfigExample();
         crawlMetadataWebsiteConfigExample.createCriteria().andHostCodeEqualTo(hostCode.toLowerCase());
         List<CrawlMetadataWebsiteConfig> crawlMetadataWebsiteConfigs = crawlMetadataWebsiteConfigMapper.selectByExampleWithBLOBs(crawlMetadataWebsiteConfigExample);
@@ -126,8 +150,7 @@ abstract class BaseSimpleCrawlService implements CrawlService
     }
 
     @Override
-    public BaseShippingCompany getShipCompany(String hostCode)
-    {
+    public BaseShippingCompany getShipCompany(String hostCode) {
         BaseShippingCompanyExample baseShippingCompanyExample = new BaseShippingCompanyExample();
         baseShippingCompanyExample.createCriteria().andEnAbbreviationEqualTo(hostCode.toUpperCase());
         List<BaseShippingCompany> baseShippingCompanies = shippingCompanyMapper.selectByExample(baseShippingCompanyExample);
@@ -138,8 +161,7 @@ abstract class BaseSimpleCrawlService implements CrawlService
         return baseShippingCompany;
     }
 
-    public int computeContainerType(String code)
-    {
+    public int computeContainerType(String code) {
         if ("22G1".equals(code)) {
             return 1;
         } else if ("42G1".equals(code)) {
@@ -150,15 +172,13 @@ abstract class BaseSimpleCrawlService implements CrawlService
         throw new RuntimeException("箱型解析出错");
     }
 
-    public String createSpotId(String departurePortEn, String destinationPortEn)
-    {
+    public String createSpotId(String departurePortEn, String destinationPortEn) {
         String spotIdStr = departurePortEn.toUpperCase() + destinationPortEn.toUpperCase();
         return DigestUtils.md5DigestAsHex(spotIdStr.getBytes());
     }
 
     @Transactional(readOnly = true)
-    public String insertData(QueryRouteVo queryRouteVo, String hostCode, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList)
-    {
+    public String insertData(QueryRouteVo queryRouteVo, String hostCode, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList) {
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " -爬取有效数据数量: " + productInfoList.size());
         if (!productInfoList.isEmpty()) {
             ProductInfo productInfo = productInfoList.get(0);
@@ -237,8 +257,7 @@ abstract class BaseSimpleCrawlService implements CrawlService
         return String.valueOf(productInfoList.size());
     }
 
-    public int parseCurrentCy(String currency)
-    {
+    public int parseCurrentCy(String currency) {
         if ("USD".equalsIgnoreCase(currency)) {
             return 2;
         } else if ("CNY".equalsIgnoreCase(currency)) {
@@ -251,8 +270,7 @@ abstract class BaseSimpleCrawlService implements CrawlService
         throw new RuntimeException(currency + "解析币种出错,无法适配当前的币种信息");
     }
 
-    public String checkPortName(String portName)
-    {
+    public String checkPortName(String portName) {
         String now = "";
         portName = portName.replaceAll("市", "").replaceAll("Shi", "").replaceAll("shi", "");
         String[] arr = portName.toLowerCase().split(" ");
@@ -263,13 +281,11 @@ abstract class BaseSimpleCrawlService implements CrawlService
         return now.trim();
     }
 
-    public String getLogPrefix(String spotId, String hostCode)
-    {
+    public String getLogPrefix(String spotId, String hostCode) {
         return spotId + " - " + hostCode + " - ";
     }
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         System.out.println(new Date(1715061600000L));
     }
 }

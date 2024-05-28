@@ -8,8 +8,7 @@ import com.djk.core.vo.QueryRouteVo;
  * @author duanjunkai
  * @date 2024/05/01
  */
-public interface CrawlService
-{
+public interface CrawlService {
 
     String queryData(BaseShippingCompany shippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo) throws Exception;
 
@@ -18,4 +17,6 @@ public interface CrawlService
     BasePort getToPort(QueryRouteVo queryRouteVo);
 
     BaseShippingCompany getShipCompany(String hostCode);
+
+    void addLog(Boolean addDataId, String businessName, String stepName, String msg, QueryRouteVo queryRouteVo);
 }

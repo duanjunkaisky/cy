@@ -175,52 +175,62 @@ public class CrawlRequestLogExample {
             return (Criteria) this;
         }
 
-        public Criteria andLogIdEqualTo(Long value) {
+        public Criteria andLogIdEqualTo(String value) {
             addCriterion("log_id =", value, "logId");
             return (Criteria) this;
         }
 
-        public Criteria andLogIdNotEqualTo(Long value) {
+        public Criteria andLogIdNotEqualTo(String value) {
             addCriterion("log_id <>", value, "logId");
             return (Criteria) this;
         }
 
-        public Criteria andLogIdGreaterThan(Long value) {
+        public Criteria andLogIdGreaterThan(String value) {
             addCriterion("log_id >", value, "logId");
             return (Criteria) this;
         }
 
-        public Criteria andLogIdGreaterThanOrEqualTo(Long value) {
+        public Criteria andLogIdGreaterThanOrEqualTo(String value) {
             addCriterion("log_id >=", value, "logId");
             return (Criteria) this;
         }
 
-        public Criteria andLogIdLessThan(Long value) {
+        public Criteria andLogIdLessThan(String value) {
             addCriterion("log_id <", value, "logId");
             return (Criteria) this;
         }
 
-        public Criteria andLogIdLessThanOrEqualTo(Long value) {
+        public Criteria andLogIdLessThanOrEqualTo(String value) {
             addCriterion("log_id <=", value, "logId");
             return (Criteria) this;
         }
 
-        public Criteria andLogIdIn(List<Long> values) {
+        public Criteria andLogIdLike(String value) {
+            addCriterion("log_id like", value, "logId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogIdNotLike(String value) {
+            addCriterion("log_id not like", value, "logId");
+            return (Criteria) this;
+        }
+
+        public Criteria andLogIdIn(List<String> values) {
             addCriterion("log_id in", values, "logId");
             return (Criteria) this;
         }
 
-        public Criteria andLogIdNotIn(List<Long> values) {
+        public Criteria andLogIdNotIn(List<String> values) {
             addCriterion("log_id not in", values, "logId");
             return (Criteria) this;
         }
 
-        public Criteria andLogIdBetween(Long value1, Long value2) {
+        public Criteria andLogIdBetween(String value1, String value2) {
             addCriterion("log_id between", value1, value2, "logId");
             return (Criteria) this;
         }
 
-        public Criteria andLogIdNotBetween(Long value1, Long value2) {
+        public Criteria andLogIdNotBetween(String value1, String value2) {
             addCriterion("log_id not between", value1, value2, "logId");
             return (Criteria) this;
         }

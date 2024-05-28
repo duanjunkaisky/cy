@@ -3,7 +3,7 @@
 <mapper namespace="com.djk.core.mapper.CrawlRequestLogMapper">
   <resultMap id="BaseResultMap" type="com.djk.core.model.CrawlRequestLog">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="log_id" jdbcType="BIGINT" property="logId" />
+    <result column="log_id" jdbcType="VARCHAR" property="logId" />
     <result column="spot_id" jdbcType="VARCHAR" property="spotId" />
     <result column="data_id" jdbcType="BIGINT" property="dataId" />
     <result column="business_name" jdbcType="VARCHAR" property="businessName" />
@@ -140,7 +140,7 @@
       to_port, departure_date, host_code, 
       create_time, update_time, msg
       )
-    values (#{id,jdbcType=BIGINT}, #{logId,jdbcType=BIGINT}, #{spotId,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{logId,jdbcType=VARCHAR}, #{spotId,jdbcType=VARCHAR}, 
       #{dataId,jdbcType=BIGINT}, #{businessName,jdbcType=VARCHAR}, #{stepNum,jdbcType=BIGINT}, 
       #{stepName,jdbcType=VARCHAR}, #{currentTime,jdbcType=BIGINT}, #{fromPort,jdbcType=VARCHAR}, 
       #{toPort,jdbcType=VARCHAR}, #{departureDate,jdbcType=VARCHAR}, #{hostCode,jdbcType=VARCHAR}, 
@@ -201,7 +201,7 @@
         #{id,jdbcType=BIGINT},
       </if>
       <if test="logId != null">
-        #{logId,jdbcType=BIGINT},
+        #{logId,jdbcType=VARCHAR},
       </if>
       <if test="spotId != null">
         #{spotId,jdbcType=VARCHAR},
@@ -257,7 +257,7 @@
         id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.logId != null">
-        log_id = #{record.logId,jdbcType=BIGINT},
+        log_id = #{record.logId,jdbcType=VARCHAR},
       </if>
       <if test="record.spotId != null">
         spot_id = #{record.spotId,jdbcType=VARCHAR},
@@ -306,7 +306,7 @@
   <update id="updateByExampleWithBLOBs" parameterType="map">
     update crawl_request_log
     set id = #{record.id,jdbcType=BIGINT},
-      log_id = #{record.logId,jdbcType=BIGINT},
+      log_id = #{record.logId,jdbcType=VARCHAR},
       spot_id = #{record.spotId,jdbcType=VARCHAR},
       data_id = #{record.dataId,jdbcType=BIGINT},
       business_name = #{record.businessName,jdbcType=VARCHAR},
@@ -327,7 +327,7 @@
   <update id="updateByExample" parameterType="map">
     update crawl_request_log
     set id = #{record.id,jdbcType=BIGINT},
-      log_id = #{record.logId,jdbcType=BIGINT},
+      log_id = #{record.logId,jdbcType=VARCHAR},
       spot_id = #{record.spotId,jdbcType=VARCHAR},
       data_id = #{record.dataId,jdbcType=BIGINT},
       business_name = #{record.businessName,jdbcType=VARCHAR},
@@ -348,7 +348,7 @@
     update crawl_request_log
     <set>
       <if test="logId != null">
-        log_id = #{logId,jdbcType=BIGINT},
+        log_id = #{logId,jdbcType=VARCHAR},
       </if>
       <if test="spotId != null">
         spot_id = #{spotId,jdbcType=VARCHAR},
@@ -394,7 +394,7 @@
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.djk.core.model.CrawlRequestLog">
     update crawl_request_log
-    set log_id = #{logId,jdbcType=BIGINT},
+    set log_id = #{logId,jdbcType=VARCHAR},
       spot_id = #{spotId,jdbcType=VARCHAR},
       data_id = #{dataId,jdbcType=BIGINT},
       business_name = #{businessName,jdbcType=VARCHAR},
@@ -412,7 +412,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.djk.core.model.CrawlRequestLog">
     update crawl_request_log
-    set log_id = #{logId,jdbcType=BIGINT},
+    set log_id = #{logId,jdbcType=VARCHAR},
       spot_id = #{spotId,jdbcType=VARCHAR},
       data_id = #{dataId,jdbcType=BIGINT},
       business_name = #{businessName,jdbcType=VARCHAR},
@@ -437,7 +437,7 @@
         )
       values
       <foreach collection="items" item="item" index="index" separator=",">
-      (#{item.id,jdbcType=BIGINT}, #{item.logId,jdbcType=BIGINT}, #{item.spotId,jdbcType=VARCHAR}, 
+      (#{item.id,jdbcType=BIGINT}, #{item.logId,jdbcType=VARCHAR}, #{item.spotId,jdbcType=VARCHAR}, 
         #{item.dataId,jdbcType=BIGINT}, #{item.businessName,jdbcType=VARCHAR}, #{item.stepNum,jdbcType=BIGINT}, 
         #{item.stepName,jdbcType=VARCHAR}, #{item.currentTime,jdbcType=BIGINT}, #{item.fromPort,jdbcType=VARCHAR}, 
         #{item.toPort,jdbcType=VARCHAR}, #{item.departureDate,jdbcType=VARCHAR}, #{item.hostCode,jdbcType=VARCHAR}, 

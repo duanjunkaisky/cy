@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
+
 
 /**
  * @author duanjunkai
@@ -120,6 +122,7 @@ public class ConsumerPull implements CommandLineRunner {
                                             String errorMsg = "爬取超过[" + maxCrawlTime / 1000 + "秒] -> \n" + JSONObject.toJSONString(job);
                                             log.error(errorMsg);
                                             String spotId = job.getSpotId();
+                                            crawlServiceFroMsk.addLog(null, BUSINESS_NAME_CRAWL, "处理超时", null, job);
                                             customDao.executeSql("update crawl_request_status set status = " + Constant.CRAWL_STATUS.ERROR.ordinal() + ", msg = '" + errorMsg + "' where spot_id = '" + spotId + "' and host_code='" + job.getHostCode() + "'");
                                             currentJobs.remove(key);
                                             break;
@@ -129,7 +132,7 @@ public class ConsumerPull implements CommandLineRunner {
                                         if (currentJobs.keySet().size() < maxCrawlCount) {
                                             MessageExt message = pullResult.getMsgFoundList().get(i);
                                             QueryRouteVo queryRouteVo = JSON.parseObject(message.getBody(), QueryRouteVo.class);
-
+                                            crawlServiceFroMsk.addLog(null, BUSINESS_NAME_CRAWL, "消息队列准备受理爬虫请求", null, queryRouteVo);
                                             try {
                                                 Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:crawl_" + queryRouteVo.getSpotId() + "_" + queryRouteVo.getHostCode(), System.currentTimeMillis(), FREE_TIME, TimeUnit.MILLISECONDS);
                                                 if (aBoolean) {
@@ -142,11 +145,13 @@ public class ConsumerPull implements CommandLineRunner {
                                                     currentJobs.put(queryRouteVo.getSpotId() + queryRouteVo.getHostCode(), queryRouteVo);
                                                     crawlChain.doBusiness(queryRouteVo);
                                                 } else {
+                                                    crawlServiceFroMsk.addLog(null, BUSINESS_NAME_CRAWL, "已经存在正在爬取的请求，忽略该请求", null, queryRouteVo);
                                                     customDao.executeSql("update crawl_request_status set status = " + Constant.CRAWL_STATUS.ERROR.ordinal() + ", msg = '已经存在正在爬取的请求，忽略该请求' where spot_id = '" + queryRouteVo.getSpotId() + "' and host_code='" + queryRouteVo.getHostCode() + "'");
                                                     log.info(queryRouteVo.getSpotId() + " - 拉取消息: 已经存在正在爬取的请求，忽略该请求\n" + JSONObject.toJSONString(queryRouteVo));
                                                 }
                                             } catch (Exception e) {
                                                 log.error("消费发生异常");
+                                                crawlServiceFroMsk.addLog(null, BUSINESS_NAME_CRAWL, "消息队列处理时发生异常", ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
                                                 log.error(ExceptionUtil.getMessage(e));
                                                 log.error(ExceptionUtil.stacktraceToString(e));
                                                 customDao.executeSql("update crawl_request_status set status = " + Constant.CRAWL_STATUS.ERROR.ordinal() + ", msg = '" + ExceptionUtil.getMessage(e) + "' where spot_id = '" + queryRouteVo.getSpotId() + "' and host_code='" + queryRouteVo.getHostCode() + "'");
