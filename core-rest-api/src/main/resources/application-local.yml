@@ -12,10 +12,9 @@ spring:
       validation-query: select 1
       test-while-idle: true
   redis:
-    host: 124.223.114.215
+    host: www.meiri56.com
     database: 0
-    port: 16379
-    password: $123456$
+    port: 8397
     timeout: 3000ms
 redis:
   database: crawl
