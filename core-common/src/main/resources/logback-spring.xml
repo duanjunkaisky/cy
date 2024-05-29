@@ -9,7 +9,7 @@
     <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="springBoot"/>
     <springProperty scope="context" name="root_level" source="logging.level.root" defaultValue="debug"/>
     <springProperty scope="context" name="framework_level" source="logging.level.framework" defaultValue="error"/>
-    <springProperty scope="context" name="LOG_FILE_MAX_HISTORY" source="logging.maxHistory" defaultValue="7"/>
+    <springProperty scope="context" name="LOG_FILE_MAX_HISTORY" source="logging.maxHistory" defaultValue="3"/>
     <!--日志文件保存路径-->
     <property name="LOG_FILE_PATH" value="logs" />
 <!--    <property name="LOG_FILE_PATH" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/logs}"/>-->
@@ -70,6 +70,9 @@
     <logger name="com.alibaba.nacos" level="${framework_level}"/>
     <logger name="org.redisson" level="${framework_level}"/>
     <logger name="org.mybatis.spring.mapper" level="${framework_level}"/>
+
+    <logger name="RocketmqClient" level="error"/>
+    <logger name="RocketmqRemoting" level="error"/>
 
     <root level="${root_level}">
         <appender-ref ref="CONSOLE"/>
