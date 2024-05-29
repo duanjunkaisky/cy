@@ -48,6 +48,7 @@ public class TokenController
 
         CrawlMetadataWebsiteConfig updateBean = new CrawlMetadataWebsiteConfig();
         updateBean.setToken(metadataWebsiteConfig.getToken());
+        updateBean.setTimePoint(System.currentTimeMillis());
         metadataWebsiteConfigMapper.updateByExampleSelective(updateBean, metadataWebsiteConfigExample);
         return CommonResult.success(JSON.toJSONString(metadataWebsiteConfig));
     }

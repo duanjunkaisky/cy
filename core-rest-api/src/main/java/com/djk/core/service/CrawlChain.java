@@ -1,14 +1,13 @@
 package com.djk.core.service;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.djk.core.config.Constant;
 import com.djk.core.config.SpringUtil;
 import com.djk.core.dao.CustomDao;
+import com.djk.core.mapper.CrawlMetadataWebsiteConfigMapper;
 import com.djk.core.mapper.CrawlRequestStatusMapper;
-import com.djk.core.model.BasePort;
-import com.djk.core.model.BaseShippingCompany;
-import com.djk.core.model.CrawlRequestStatus;
-import com.djk.core.model.CrawlRequestStatusExample;
+import com.djk.core.model.*;
 import com.djk.core.mq.ConsumerPull;
 import com.djk.core.vo.QueryRouteVo;
 import com.google.common.util.concurrent.*;
@@ -17,8 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.concurrent.*;
@@ -34,13 +35,20 @@ import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
 @Data
 @Slf4j
 @ConfigurationProperties(prefix = "crawl")
-public class CrawlChain {
+public class CrawlChain
+{
     public static ListeningExecutorService EXECUTOR_SERVICE = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
 
     @Autowired
     CrawlRequestStatusMapper requestStatusMapper;
 
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
     private List<String> target;
+
+    @Autowired
+    CrawlMetadataWebsiteConfigMapper crawlMetadataWebsiteConfigMapper;
 
     @Autowired
     CustomDao customDao;
@@ -52,7 +60,8 @@ public class CrawlChain {
     RedisService redisService;
 
     @Async("asyncServiceExecutor")
-    public void doBusiness(QueryRouteVo queryRouteVo) {
+    public void doBusiness(QueryRouteVo queryRouteVo)
+    {
         CrawlService crawlService = (CrawlService) SpringUtil.getBean(queryRouteVo.getBeanName());
 
         BaseShippingCompany baseShippingCompany = crawlService.getShipCompany(queryRouteVo.getHostCode());
@@ -63,6 +72,9 @@ public class CrawlChain {
             try {
                 CrawlRequestStatus requestStatus = new CrawlRequestStatus();
                 CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
+
+                crawlService.setTokenIp(queryRouteVo);
+
                 crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
                 requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
                 requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
@@ -102,6 +114,10 @@ public class CrawlChain {
                 requestStatus.setMsg(ExceptionUtil.stacktraceToString(e));
                 requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
             } finally {
+                String tokenIp = (String) redisService.get(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getLogId());
+                redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getLogId());
+                redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + tokenIp);
+
                 ConsumerPull.currentJobs.remove(queryRouteVo.getSpotId() + queryRouteVo.getHostCode());
             }
             return "---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getHostCode() + " -> 0";

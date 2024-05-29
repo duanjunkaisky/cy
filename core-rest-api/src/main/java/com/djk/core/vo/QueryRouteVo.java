@@ -41,5 +41,7 @@ public class QueryRouteVo
 
     private String logId;
 
+    private String tokenIp;
+
     private JSONObject otherData;
 }

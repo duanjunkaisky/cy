@@ -13,6 +13,8 @@ public class CrawlMetadataWebsiteConfig implements Serializable {
     @ApiModelProperty(value = "网站简码")
     private String hostCode;
 
+    private Long timePoint;
+
     @ApiModelProperty(value = "token过期时间，单位秒")
     private Long expireTime;
 
@@ -52,6 +54,14 @@ public class CrawlMetadataWebsiteConfig implements Serializable {
 
     public void setHostCode(String hostCode) {
         this.hostCode = hostCode;
+    }
+
+    public Long getTimePoint() {
+        return timePoint;
+    }
+
+    public void setTimePoint(Long timePoint) {
+        this.timePoint = timePoint;
     }
 
     public Long getExpireTime() {
@@ -103,6 +113,7 @@ public class CrawlMetadataWebsiteConfig implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", hostName=").append(hostName);
         sb.append(", hostCode=").append(hostCode);
+        sb.append(", timePoint=").append(timePoint);
         sb.append(", expireTime=").append(expireTime);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);

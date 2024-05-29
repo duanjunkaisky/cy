@@ -41,7 +41,6 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     private final int WEEK_STEP = 2;
 
     private static int reqCount = 0;
-    private static int tokenIndex = 0;
 
     public static final String DANLI_ACCESS_KEY = "eyqq4t1ubp4fbjklkrguol6zcc8o5jp5";
 
@@ -186,7 +185,6 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                             addLog(null, BUSINESS_NAME_CRAWL, "鉴权失败->请求数据接口-分页:" + page, "第" + reqCount + "次请求: " + "发起请求鉴权失败", queryRouteVo);
                             redisService.del(REDIS_DATABASE + ":MSK:sensorData");
                             redisService.del(REDIS_DATABASE + ":tmp:get-sensorData-api");
-                            tokenIndex++;
                             log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求鉴权失败\n");
                             continue;
                         }
@@ -412,7 +410,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
     public Map<String, String> getRemoteSensorData(QueryRouteVo queryRouteVo)
     {
-        JSONObject tokenBean = getToken(this.getHostCode(), tokenIndex++);
+        JSONObject tokenBean = getToken(queryRouteVo);
 
         Map<String, String> header = new HashMap<>(4);
         String sensorData = (String) redisService.get(REDIS_DATABASE + ":MSK:sensorData");

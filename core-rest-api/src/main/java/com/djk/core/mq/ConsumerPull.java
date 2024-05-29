@@ -239,6 +239,10 @@ public class ConsumerPull implements CommandLineRunner
 
                     QueryRouteVo queryRouteVo = JSONObject.parseObject(requestStatus.getRequestParams(), QueryRouteVo.class);
                     crawlServiceFroMsk.addLog(null, BUSINESS_NAME_CRAWL, "处理超时", null, queryRouteVo);
+
+                    String tokenIp = (String) redisService.get(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getLogId());
+                    redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getLogId());
+                    redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + tokenIp);
                 }
             }
         }

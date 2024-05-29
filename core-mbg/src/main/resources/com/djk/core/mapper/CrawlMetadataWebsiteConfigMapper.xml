@@ -5,6 +5,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="host_name" jdbcType="VARCHAR" property="hostName" />
     <result column="host_code" jdbcType="VARCHAR" property="hostCode" />
+    <result column="time_point" jdbcType="BIGINT" property="timePoint" />
     <result column="expire_time" jdbcType="BIGINT" property="expireTime" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -72,7 +73,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, host_name, host_code, expire_time, create_time, update_time, deploy_ip
+    id, host_name, host_code, time_point, expire_time, create_time, update_time, deploy_ip
   </sql>
   <sql id="Blob_Column_List">
     token
@@ -127,11 +128,13 @@
   </delete>
   <insert id="insert" parameterType="com.djk.core.model.CrawlMetadataWebsiteConfig">
     insert into crawl_metadata_website_config (id, host_name, host_code, 
-      expire_time, create_time, update_time, 
-      deploy_ip, token)
+      time_point, expire_time, create_time, 
+      update_time, deploy_ip, token
+      )
     values (#{id,jdbcType=BIGINT}, #{hostName,jdbcType=VARCHAR}, #{hostCode,jdbcType=VARCHAR}, 
-      #{expireTime,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{deployIp,jdbcType=VARCHAR}, #{token,jdbcType=LONGVARCHAR})
+      #{timePoint,jdbcType=BIGINT}, #{expireTime,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{deployIp,jdbcType=VARCHAR}, #{token,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.djk.core.model.CrawlMetadataWebsiteConfig">
     insert into crawl_metadata_website_config
@@ -144,6 +147,9 @@
       </if>
       <if test="hostCode != null">
         host_code,
+      </if>
+      <if test="timePoint != null">
+        time_point,
       </if>
       <if test="expireTime != null">
         expire_time,
@@ -170,6 +176,9 @@
       </if>
       <if test="hostCode != null">
         #{hostCode,jdbcType=VARCHAR},
+      </if>
+      <if test="timePoint != null">
+        #{timePoint,jdbcType=BIGINT},
       </if>
       <if test="expireTime != null">
         #{expireTime,jdbcType=BIGINT},
@@ -206,6 +215,9 @@
       <if test="record.hostCode != null">
         host_code = #{record.hostCode,jdbcType=VARCHAR},
       </if>
+      <if test="record.timePoint != null">
+        time_point = #{record.timePoint,jdbcType=BIGINT},
+      </if>
       <if test="record.expireTime != null">
         expire_time = #{record.expireTime,jdbcType=BIGINT},
       </if>
@@ -231,6 +243,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       host_name = #{record.hostName,jdbcType=VARCHAR},
       host_code = #{record.hostCode,jdbcType=VARCHAR},
+      time_point = #{record.timePoint,jdbcType=BIGINT},
       expire_time = #{record.expireTime,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
@@ -245,6 +258,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       host_name = #{record.hostName,jdbcType=VARCHAR},
       host_code = #{record.hostCode,jdbcType=VARCHAR},
+      time_point = #{record.timePoint,jdbcType=BIGINT},
       expire_time = #{record.expireTime,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
@@ -261,6 +275,9 @@
       </if>
       <if test="hostCode != null">
         host_code = #{hostCode,jdbcType=VARCHAR},
+      </if>
+      <if test="timePoint != null">
+        time_point = #{timePoint,jdbcType=BIGINT},
       </if>
       <if test="expireTime != null">
         expire_time = #{expireTime,jdbcType=BIGINT},
@@ -284,6 +301,7 @@
     update crawl_metadata_website_config
     set host_name = #{hostName,jdbcType=VARCHAR},
       host_code = #{hostCode,jdbcType=VARCHAR},
+      time_point = #{timePoint,jdbcType=BIGINT},
       expire_time = #{expireTime,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
@@ -295,6 +313,7 @@
     update crawl_metadata_website_config
     set host_name = #{hostName,jdbcType=VARCHAR},
       host_code = #{hostCode,jdbcType=VARCHAR},
+      time_point = #{timePoint,jdbcType=BIGINT},
       expire_time = #{expireTime,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
@@ -304,13 +323,15 @@
   <insert id="batchInsert">
     <if test="items.get(0) != null">
             insert into crawl_metadata_website_config  (id, host_name, host_code, 
-        expire_time, create_time, update_time, 
-        deploy_ip, token)
+        time_point, expire_time, create_time, 
+        update_time, deploy_ip, token
+        )
       values
       <foreach collection="items" item="item" index="index" separator=",">
       (#{item.id,jdbcType=BIGINT}, #{item.hostName,jdbcType=VARCHAR}, #{item.hostCode,jdbcType=VARCHAR}, 
-        #{item.expireTime,jdbcType=BIGINT}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP}, 
-        #{item.deployIp,jdbcType=VARCHAR}, #{item.token,jdbcType=LONGVARCHAR})
+        #{item.timePoint,jdbcType=BIGINT}, #{item.expireTime,jdbcType=BIGINT}, #{item.createTime,jdbcType=TIMESTAMP}, 
+        #{item.updateTime,jdbcType=TIMESTAMP}, #{item.deployIp,jdbcType=VARCHAR}, #{item.token,jdbcType=LONGVARCHAR}
+        )
       </foreach>
     </if>
   </insert>

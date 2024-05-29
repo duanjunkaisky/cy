@@ -1,6 +1,7 @@
 package com.djk.core.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.djk.core.config.Constant;
 import com.djk.core.dao.CustomDao;
 import com.djk.core.mapper.*;
 import com.djk.core.model.*;
@@ -140,16 +141,13 @@ abstract class BaseSimpleCrawlService implements CrawlService
         return "log_uniqueId_" + String.format("%0" + numLength + "d", logId);
     }
 
-    public JSONObject getToken(String hostCode, int tokenIndex)
+    public JSONObject getToken(QueryRouteVo queryRouteVo)
     {
         CrawlMetadataWebsiteConfigExample crawlMetadataWebsiteConfigExample = new CrawlMetadataWebsiteConfigExample();
-        crawlMetadataWebsiteConfigExample.createCriteria().andHostCodeEqualTo(hostCode.toLowerCase());
+        crawlMetadataWebsiteConfigExample.createCriteria().andHostCodeEqualTo(queryRouteVo.getHostCode().toLowerCase()).andDeployIpEqualTo(queryRouteVo.getTokenIp());
         List<CrawlMetadataWebsiteConfig> crawlMetadataWebsiteConfigs = crawlMetadataWebsiteConfigMapper.selectByExampleWithBLOBs(crawlMetadataWebsiteConfigExample);
 
-        if (tokenIndex > crawlMetadataWebsiteConfigs.size() - 1) {
-            tokenIndex = 0;
-        }
-        CrawlMetadataWebsiteConfig crawlMetadataWebsiteConfig = crawlMetadataWebsiteConfigs.get(tokenIndex);
+        CrawlMetadataWebsiteConfig crawlMetadataWebsiteConfig = crawlMetadataWebsiteConfigs.get(0);
         String token = crawlMetadataWebsiteConfig.getToken();
         JSONObject tokenBean = JSONObject.parseObject(token);
         return tokenBean;
@@ -297,6 +295,41 @@ abstract class BaseSimpleCrawlService implements CrawlService
         }
 
         return String.valueOf(productInfoList.size());
+    }
+
+    @Override
+    public void setTokenIp(QueryRouteVo queryRouteVo)
+    {
+        long start = System.currentTimeMillis();
+        while (StringUtils.isEmpty(queryRouteVo.getTokenIp()) && System.currentTimeMillis() - start <= 30000L) {
+            CrawlMetadataWebsiteConfigExample crawlMetadataWebsiteConfigExample = new CrawlMetadataWebsiteConfigExample();
+            crawlMetadataWebsiteConfigExample.createCriteria().andHostCodeEqualTo(queryRouteVo.getHostCode().toLowerCase());
+            List<CrawlMetadataWebsiteConfig> crawlMetadataWebsiteConfigs = crawlMetadataWebsiteConfigMapper.selectByExampleWithBLOBs(crawlMetadataWebsiteConfigExample);
+            if (null == crawlMetadataWebsiteConfigs || crawlMetadataWebsiteConfigs.isEmpty()) {
+                throw new RuntimeException("数据库中未找到token数据");
+            }
+
+            for (int i = 0; i < crawlMetadataWebsiteConfigs.size(); i++) {
+                CrawlMetadataWebsiteConfig crawlMetadataWebsiteConfig = crawlMetadataWebsiteConfigs.get(i);
+                if (System.currentTimeMillis() - crawlMetadataWebsiteConfig.getTimePoint() < 180000L) {
+                    Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:token-busy:" + crawlMetadataWebsiteConfig.getDeployIp(), 1, 300, TimeUnit.SECONDS);
+                    if (aBoolean) {
+                        redisService.set(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getLogId(), crawlMetadataWebsiteConfig.getDeployIp(), 300L);
+                        queryRouteVo.setTokenIp(crawlMetadataWebsiteConfig.getDeployIp());
+                        break;
+                    }
+                }
+            }
+            try {
+                TimeUnit.SECONDS.sleep(2L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (StringUtils.isEmpty(queryRouteVo.getTokenIp())) {
+            throw new RuntimeException("30秒内未得到token");
+        }
     }
 
     public int parseCurrentCy(String currency)

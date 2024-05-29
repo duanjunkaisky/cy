@@ -205,7 +205,7 @@ public class ApiController
     public CommonResult getToken(@RequestBody QueryRouteVo queryRouteVo)
     {
         try {
-            JSONObject token = coscoCrawlService.getToken(queryRouteVo.getHostCode(), 1);
+            JSONObject token = coscoCrawlService.getToken(queryRouteVo);
             return CommonResult.success(token);
         } catch (Exception e) {
             e.printStackTrace();
