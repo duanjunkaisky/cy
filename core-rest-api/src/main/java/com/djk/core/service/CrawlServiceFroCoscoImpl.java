@@ -23,12 +23,14 @@ import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
 @Service
 @Slf4j
 @Data
-public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements CrawlService {
+public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements CrawlService
+{
     @Autowired
     CrawlRequestStatusMapper requestStatusMapper;
 
     @Override
-    public String queryData(BaseShippingCompany shippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo) throws Exception {
+    public String queryData(BaseShippingCompany shippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo) throws Exception
+    {
         String hostCode = queryRouteVo.getHostCode();
         this.setHostCode(hostCode);
         if (null != queryRouteVo.getOtherData() && !queryRouteVo.getOtherData().isEmpty()) {
@@ -38,7 +40,8 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
         return "0";
     }
 
-    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany) throws ParseException {
+    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany) throws ParseException
+    {
         JSONObject otherData = queryRouteVo.getOtherData();
         Long id = otherData.getLong("id");
         JSONObject order = otherData.getJSONObject("order");
@@ -87,6 +90,8 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
         productInfo.setId(Generator.nextId());
         productInfoMapper.insertSelective(productInfo);
         addLog(true, BUSINESS_NAME_CRAWL, "product_info完成入库", null, queryRouteVo);
+
+        delData(queryRouteVo);
 
         for (int i = 0; i < routeProductPricingList.size(); i++) {
             JSONObject containerObj = routeProductPricingList.getJSONObject(i);
@@ -191,7 +196,8 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
         }
     }
 
-    private int getContainerType(String cntrType) {
+    private int getContainerType(String cntrType)
+    {
         if ("20GP".equalsIgnoreCase(cntrType)) {
             return 1;
         } else if ("40GP".equalsIgnoreCase(cntrType)) {

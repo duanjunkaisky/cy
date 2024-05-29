@@ -42,7 +42,8 @@ import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
 @RequestMapping("/")
 @Data
 @ConfigurationProperties(prefix = "crawl")
-public class ApiController {
+public class ApiController
+{
     @Autowired
     CustomDao customDao;
 
@@ -87,7 +88,8 @@ public class ApiController {
      */
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult query(@RequestBody QueryRouteVo queryRouteVo) {
+    public CommonResult query(@RequestBody QueryRouteVo queryRouteVo)
+    {
         if (StringUtils.isEmpty(queryRouteVo.getDeparturePortEn())
                 || StringUtils.isEmpty(queryRouteVo.getDestinationPortEn())
                 || StringUtils.isEmpty(queryRouteVo.getDepartureCountryCode())
@@ -173,14 +175,16 @@ public class ApiController {
 
     @RequestMapping(value = "/productNumber", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult productNumber() {
+    public CommonResult productNumber()
+    {
         String productNumber = coscoCrawlService.getProductNumber();
         return CommonResult.success(productNumber, "操作成功");
     }
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult test(@RequestBody QueryRouteVo queryRouteVo) {
+    public CommonResult test(@RequestBody QueryRouteVo queryRouteVo)
+    {
         try {
             queryRouteVo.setLogId(coscoCrawlService.getLogId());
             List<String> beanNames = target.stream().filter(item -> item.toLowerCase().contains(queryRouteVo.getHostCode())).collect(Collectors.toList());
@@ -196,7 +200,8 @@ public class ApiController {
 
     @RequestMapping(value = "/getToken", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult getToken(@RequestBody QueryRouteVo queryRouteVo) {
+    public CommonResult getToken(@RequestBody QueryRouteVo queryRouteVo)
+    {
         try {
             JSONObject token = coscoCrawlService.getToken(queryRouteVo.getHostCode(), 1);
             return CommonResult.success(token);
@@ -208,7 +213,8 @@ public class ApiController {
 
     @RequestMapping(value = "/getCoscoParam", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult getCoscoParam() {
+    public CommonResult getCoscoParam()
+    {
         try {
             CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
             crawlRequestStatusExample.createCriteria().andHostCodeEqualTo("cosco").andStatusEqualTo(Constant.CRAWL_STATUS.WAITING.ordinal());
@@ -259,12 +265,11 @@ public class ApiController {
                         requestStatusMapper.updateByPrimaryKeySelective(requestStatus);
 
                         BaseShippingCompany baseShippingCompany = coscoCrawlService.getShipCompany("cosco");
-                        customDao.executeSql("delete from product_info where spot_id='" + item.get("spotId") + "' and shipping_company_id=" + baseShippingCompany.getId());
-                        customDao.executeSql("delete from product_container where spot_id='" + item.get("spotId") + "' and shipping_company_id=" + baseShippingCompany.getId());
-                        customDao.executeSql("delete from product_fee_item where spot_id='" + item.get("spotId") + "' and shipping_company_id=" + baseShippingCompany.getId());
 
                         requestStatus = requestStatusMapper.selectByPrimaryKey(id);
                         QueryRouteVo queryRouteVo = JSONObject.parseObject(requestStatus.getRequestParams(), QueryRouteVo.class);
+
+                        coscoCrawlService.flagDelData(queryRouteVo, baseShippingCompany.getId());
 
                         coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "插件获取到请求参数", null, queryRouteVo);
 
@@ -281,7 +286,8 @@ public class ApiController {
 
     @RequestMapping(value = "/insertCoscoData", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult insertCoscoData(@RequestBody JSONObject data) throws Exception {
+    public CommonResult insertCoscoData(@RequestBody JSONObject data) throws Exception
+    {
         Long id = data.getLong("id");
         CrawlRequestStatus requestStatus = requestStatusMapper.selectByPrimaryKey(id);
         QueryRouteVo queryRouteVo = JSONObject.parseObject(requestStatus.getRequestParams(), QueryRouteVo.class);
@@ -299,7 +305,8 @@ public class ApiController {
 
     @RequestMapping(value = "/updateCoscoStatus", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult updateCoscoStatus(@RequestBody JSONObject jsonObject) {
+    public CommonResult updateCoscoStatus(@RequestBody JSONObject jsonObject)
+    {
         Long id = jsonObject.getLong("id");
         CrawlRequestStatus requestStatus = requestStatusMapper.selectByPrimaryKey(id);
         requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
@@ -312,7 +319,8 @@ public class ApiController {
 
     @RequestMapping(value = "/pushLog", method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult pushLog(@RequestBody JSONArray jsonArray) {
+    public CommonResult pushLog(@RequestBody JSONArray jsonArray)
+    {
         for (int i = 0; i < jsonArray.size(); i++) {
             JSONObject obj = jsonArray.getJSONObject(i);
         }
@@ -321,7 +329,8 @@ public class ApiController {
 
     @RequestMapping(value = "/initPort", method = RequestMethod.GET)
     @ResponseBody
-    public CommonResult initPort() {
+    public CommonResult initPort()
+    {
         String byTemplate = FreeMakerUtil.createByTemplate("1.ftl", null);
         JSONArray array = JSONArray.parseArray(byTemplate);
         for (int i = 0; i < array.size(); i++) {
@@ -369,7 +378,8 @@ public class ApiController {
         return CommonResult.success("操作成功");
     }
 
-    private static String getHostCode(String beanName) {
+    private static String getHostCode(String beanName)
+    {
         String str = beanName.toLowerCase();
         return str.replaceAll("crawlservicefro", "").replaceAll("impl", "");
     }
