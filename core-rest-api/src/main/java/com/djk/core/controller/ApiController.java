@@ -100,7 +100,7 @@ public class ApiController
         }
 
         queryRouteVo.setStartTime(System.currentTimeMillis());
-        queryRouteVo.setSpotId(coscoCrawlService.createSpotId(queryRouteVo.getDeparturePortEn(), queryRouteVo.getDestinationPortEn()));
+        queryRouteVo.setSpotId(coscoCrawlService.createSpotId(queryRouteVo));
         for (String beanName : target) {
             queryRouteVo.setBeanName(beanName);
             String hostCode = getHostCode(beanName);
@@ -192,7 +192,7 @@ public class ApiController
             List<String> beanNames = target.stream().filter(item -> item.toLowerCase().contains(queryRouteVo.getHostCode())).collect(Collectors.toList());
             queryRouteVo.setBeanName(beanNames.get(0));
             queryRouteVo.setStartTime(System.currentTimeMillis());
-            queryRouteVo.setSpotId(coscoCrawlService.createSpotId(queryRouteVo.getDeparturePortEn(), queryRouteVo.getDestinationPortEn()));
+            queryRouteVo.setSpotId(coscoCrawlService.createSpotId(queryRouteVo));
             crawlChain.doBusiness(queryRouteVo);
         } catch (Exception e) {
             e.printStackTrace();

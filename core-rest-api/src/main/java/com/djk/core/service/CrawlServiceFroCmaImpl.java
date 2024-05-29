@@ -196,7 +196,7 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
             productInfo.setDeleted(false);
             productInfo.setTenantId(0L);
 
-            productInfo.setSpotId(createSpotId(productInfo.getDeparturePortEn(), productInfo.getDestinationPortEn()));
+            productInfo.setSpotId(queryRouteVo.getSpotId());
             productInfo.setId(Generator.nextId());
             productInfoList.add(productInfo);
             productInfoMapper.insertSelective(productInfo);

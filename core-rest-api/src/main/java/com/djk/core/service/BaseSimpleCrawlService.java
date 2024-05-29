@@ -1,7 +1,6 @@
 package com.djk.core.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.djk.core.config.Constant;
 import com.djk.core.dao.CustomDao;
 import com.djk.core.mapper.*;
 import com.djk.core.model.*;
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
@@ -210,91 +208,11 @@ abstract class BaseSimpleCrawlService implements CrawlService
         }
     }
 
-    public String createSpotId(String departurePortEn, String destinationPortEn)
+    public String createSpotId(QueryRouteVo queryRouteVo)
     {
-        String spotIdStr = departurePortEn.toUpperCase() + destinationPortEn.toUpperCase();
+        String spotIdStr = queryRouteVo.getDeparturePortEn().toUpperCase() + queryRouteVo.getDestinationPortEn().toUpperCase()
+                + queryRouteVo.getDepartureCountryCode().toUpperCase() + queryRouteVo.getDestinationCountryCode().toUpperCase();
         return DigestUtils.md5DigestAsHex(spotIdStr.getBytes());
-    }
-
-    @Transactional(readOnly = true)
-    public String insertData(QueryRouteVo queryRouteVo, String hostCode, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList)
-    {
-        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " -爬取有效数据数量: " + productInfoList.size());
-        if (!productInfoList.isEmpty()) {
-            ProductInfo productInfo = productInfoList.get(0);
-            String spotId = productInfo.getSpotId();
-            ProductInfoExample productInfoExample = new ProductInfoExample();
-            productInfoExample.createCriteria().andSpotIdEqualTo(spotId).andShippingCompanyIdEqualTo(productInfo.getShippingCompanyId());
-            Map<String, ProductInfo> productNumberPerInfoMap = new HashMap<>(10);
-            List<ProductInfo> productInfos = productInfoMapper.selectByExample(productInfoExample);
-            for (ProductInfo info : productInfos) {
-                String key = info.getDeparturePortEn() + info.getDestinationPortEn() + info.getShippingCompanyId() + info.getEstimatedDepartureDate() + info.getVoyageNumber();
-                productNumberPerInfoMap.put(key, info);
-            }
-            productInfoMapper.deleteByExample(productInfoExample);
-
-            List<Long> productIds = null;
-            if (null != productInfos && !productInfos.isEmpty()) {
-                productIds = productInfos.stream().map(item -> item.getId()).collect(Collectors.toList());
-            }
-
-            if (null != productIds && !productIds.isEmpty()) {
-                ProductContainerExample productContainerExample = new ProductContainerExample();
-                ProductContainerExample.Criteria criteria = productContainerExample.createCriteria();
-                criteria.andSpotIdEqualTo(spotId);
-                criteria.andProductIdIn(productIds);
-                productContainerMapper.deleteByExample(productContainerExample);
-
-                ProductFeeItemExample productFeeItemExample = new ProductFeeItemExample();
-                ProductFeeItemExample.Criteria criteria1 = productFeeItemExample.createCriteria();
-                criteria1.andSpotIdEqualTo(spotId);
-                criteria1.andProductIdIn(productIds);
-                productFeeItemMapper.deleteByExample(productFeeItemExample);
-            }
-
-            //相同的航线，productNumber不变
-            for (ProductInfo info : productInfoList) {
-                String key = info.getDeparturePortEn() + info.getDestinationPortEn() + info.getShippingCompanyId() + info.getEstimatedDepartureDate() + info.getVoyageNumber();
-                ProductInfo existInfo = productNumberPerInfoMap.get(key);
-                if (null != existInfo) {
-                    info.setProductNumber(existInfo.getProductNumber());
-                } else {
-                    info.setProductNumber(getProductNumber());
-                }
-            }
-            productInfoMapper.batchInsert(productInfoList);
-            productContainerMapper.batchInsert(productContainerList);
-            productFeeItemMapper.batchInsert(productFeeItemList);
-
-            log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 入库完成");
-        } else {
-            BaseShippingCompany baseShippingCompany = getShipCompany(hostCode);
-            ProductInfoExample productInfoExample = new ProductInfoExample();
-            productInfoExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId()).andShippingCompanyIdEqualTo(baseShippingCompany.getId());
-
-            List<ProductInfo> productInfos = productInfoMapper.selectByExample(productInfoExample);
-
-            productInfoMapper.deleteByExample(productInfoExample);
-
-            if (null != productInfos && !productInfos.isEmpty()) {
-                List<Long> productIds = productInfos.stream().map(item -> item.getId()).collect(Collectors.toList());
-
-                ProductContainerExample productContainerExample = new ProductContainerExample();
-                ProductContainerExample.Criteria criteria = productContainerExample.createCriteria();
-                criteria.andSpotIdEqualTo(queryRouteVo.getSpotId());
-                criteria.andProductIdIn(productIds);
-                productContainerMapper.deleteByExample(productContainerExample);
-
-                ProductFeeItemExample productFeeItemExample = new ProductFeeItemExample();
-                ProductFeeItemExample.Criteria criteria1 = productFeeItemExample.createCriteria();
-                criteria1.andSpotIdEqualTo(queryRouteVo.getSpotId());
-                criteria1.andProductIdIn(productIds);
-                productFeeItemMapper.deleteByExample(productFeeItemExample);
-            }
-
-        }
-
-        return String.valueOf(productInfoList.size());
     }
 
     @Override
