@@ -22,9 +22,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableScheduling
 @MapperScan("com.djk.core.mapper")
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
-public class App {
+public class App
+{
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
+        System.setProperty("rocketmq.client.logUseSlf4j", "true");
         System.setProperty("com.rocketmq.sendMsgWithVipChannel", "false");
         System.setProperty("druid.mysql.usePingMethod", "false");
         SpringApplication.run(App.class, args);
