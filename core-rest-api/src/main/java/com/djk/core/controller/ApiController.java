@@ -119,6 +119,7 @@ public class ApiController
             if (null == aBoolean || !aBoolean) {
                 if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
                     requestStatus = crawlRequestStatuses.get(0);
+                    requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
                     requestStatus.setStartTime(queryRouteVo.getStartTime());
                     requestStatus.setEndTime(System.currentTimeMillis());
                     requestStatus.setUseTime(null);
@@ -142,6 +143,7 @@ public class ApiController
             } else {
                 if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
                     requestStatus = crawlRequestStatuses.get(0);
+                    requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
                     requestStatus.setStartTime(queryRouteVo.getStartTime());
                     requestStatus.setEndTime(null);
                     requestStatus.setUseTime(null);
