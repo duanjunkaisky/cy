@@ -116,7 +116,7 @@ public class ApiController {
 
             if (null == aBoolean || !aBoolean) {
                 coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "已经存在正在爬取的请求，忽略该请求", null, queryRouteVo);
-                log.info(queryRouteVo.getSpotId() + " - 拉取消息: 已经存在正在爬取的请求，忽略该请求\n" + JSONObject.toJSONString(queryRouteVo));
+                log.info(queryRouteVo.getSpotId() + " - 已经存在正在爬取的请求，忽略该请求\n" + JSONObject.toJSONString(queryRouteVo));
                 return CommonResult.success("请求太频繁,直接返回");
             } else {
                 CrawlRequestStatus requestStatus = getCrawlRequestStatus(queryRouteVo, crawlRequestStatuses);
