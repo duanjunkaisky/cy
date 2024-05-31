@@ -121,6 +121,7 @@ public class ApiController {
                     requestStatus.setStartTime(queryRouteVo.getStartTime());
                     requestStatus.setEndTime(System.currentTimeMillis());
                     requestStatus.setUseTime(null);
+                    requestStatus.setCreateTime(new Date());
                     requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
                     requestStatus.setMsg("刷新频率过高");
                     requestStatusMapper.updateByPrimaryKeyWithBLOBs(requestStatus);
@@ -146,6 +147,7 @@ public class ApiController {
                     requestStatus.setEndTime(null);
                     requestStatus.setUseTime(null);
                     requestStatus.setMsg(null);
+                    requestStatus.setCreateTime(new Date());
                     requestStatus.setStatus(Constant.CRAWL_STATUS.WAITING.ordinal());
                     requestStatusMapper.updateByPrimaryKeyWithBLOBs(requestStatus);
                 } else {
