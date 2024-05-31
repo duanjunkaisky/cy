@@ -114,20 +114,15 @@ public class ApiController {
 
             Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:crawl_" + queryRouteVo.getSpotId() + "_" + queryRouteVo.getHostCode(), System.currentTimeMillis(), ConsumerPull.FREE_TIME, TimeUnit.MILLISECONDS);
 
-            CrawlRequestStatus requestStatus = getCrawlRequestStatus(queryRouteVo, crawlRequestStatuses);
-            requestStatus.setFromPort(queryRouteVo.getDeparturePortEn());
-            requestStatus.setToPort(queryRouteVo.getDestinationPortEn());
-            requestStatus.setHostCode(queryRouteVo.getHostCode());
-            
             if (null == aBoolean || !aBoolean) {
-                requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
-                requestStatus.setEndTime(System.currentTimeMillis());
-                requestStatus.setMsg("刷新频率过高");
-                requestStatusMapper.insertSelective(requestStatus);
-
                 coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "已经存在正在爬取的请求，忽略该请求", null, queryRouteVo);
                 log.info(queryRouteVo.getSpotId() + " - 拉取消息: 已经存在正在爬取的请求，忽略该请求\n" + JSONObject.toJSONString(queryRouteVo));
+                return CommonResult.success("请求太频繁,直接返回");
             } else {
+                CrawlRequestStatus requestStatus = getCrawlRequestStatus(queryRouteVo, crawlRequestStatuses);
+                requestStatus.setFromPort(queryRouteVo.getDeparturePortEn());
+                requestStatus.setToPort(queryRouteVo.getDestinationPortEn());
+                requestStatus.setHostCode(queryRouteVo.getHostCode());
                 requestStatus.setStatus(Constant.CRAWL_STATUS.WAITING.ordinal());
                 requestStatusMapper.insertSelective(requestStatus);
 
