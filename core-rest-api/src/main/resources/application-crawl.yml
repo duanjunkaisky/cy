@@ -4,4 +4,4 @@ crawl:
     #    - crawlServiceFroOneImpl
     #    - crawlServiceFroCmaImpl
     - crawlServiceFroMskImpl
-    - crawlServiceFroCoscoImpl
+#    - crawlServiceFroCoscoImpl

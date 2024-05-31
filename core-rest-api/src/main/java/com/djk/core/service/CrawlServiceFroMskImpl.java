@@ -274,8 +274,8 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 productContainer.setContainerType(containerType);
                 productContainer.setProductId(productInfo.getId());
                 productContainer.setSpotId(productInfo.getSpotId());
-                productContainer.setSellingPrice(price.getBigDecimal("total"));
-                productContainer.setCost(price.getBigDecimal("total"));
+//                productContainer.setSellingPrice(price.getBigDecimal("total"));
+//                productContainer.setCost(price.getBigDecimal("total"));
                 productContainer.setFeeCurrency(parseCurrentCy(price.getString("totalPriceCurrency")));
                 productContainer.setCreateTime(new Date());
                 productContainer.setUpdateTime(new Date());
