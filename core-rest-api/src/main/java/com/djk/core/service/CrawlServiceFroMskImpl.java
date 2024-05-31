@@ -250,7 +250,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 productInfo.setVoyageNumber(routeScheduleFull.getString("voyageNumber"));
                 long diff = Math.abs(productInfo.getArrivalTime().getTime() - productInfo.getEstimatedDepartureDate().getTime());
                 long diffDays = diff / (24 * 60 * 60 * 1000);
-                productInfo.setDistance(String.valueOf(diffDays));
+                productInfo.setDistance(diff % (24 * 60 * 60 * 1000) == 0 ? String.valueOf(diffDays) : String.valueOf(diffDays + 1));
                 productInfo.setCargoType("G");
                 productInfo.setProductType("P");
                 productInfo.setWaiverOfContainerInstructions("无说明");
@@ -350,7 +350,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
                     productFeeItem.setPriceComputeType(0);
                     //免用箱
-                    productFeeItem.setFeeCostType(3);
+                    productFeeItem.setFeeCostType(6);
 
                     productFeeItem.setPrice(new BigDecimal(0));
                     productFeeItem.setFeeCnName(chargeType + " " + freetimeStartEvent + "(1-" + importDnDCondition.getString("freetimeGrantInDays") + ")");
