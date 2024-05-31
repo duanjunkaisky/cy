@@ -113,53 +113,23 @@ public class ApiController {
             List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
 
             Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:crawl_" + queryRouteVo.getSpotId() + "_" + queryRouteVo.getHostCode(), System.currentTimeMillis(), ConsumerPull.FREE_TIME, TimeUnit.MILLISECONDS);
-            CrawlRequestStatus requestStatus = new CrawlRequestStatus();
+
+            CrawlRequestStatus requestStatus = getCrawlRequestStatus(queryRouteVo, crawlRequestStatuses);
+            requestStatus.setFromPort(queryRouteVo.getDeparturePortEn());
+            requestStatus.setToPort(queryRouteVo.getDestinationPortEn());
+            requestStatus.setHostCode(queryRouteVo.getHostCode());
+            
             if (null == aBoolean || !aBoolean) {
-                if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
-                    requestStatus = crawlRequestStatuses.get(0);
-                    requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
-                    requestStatus.setStartTime(queryRouteVo.getStartTime());
-                    requestStatus.setEndTime(System.currentTimeMillis());
-                    requestStatus.setUseTime(null);
-                    requestStatus.setCreateTime(new Date());
-                    requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
-                    requestStatus.setMsg("刷新频率过高");
-                    requestStatusMapper.updateByPrimaryKeyWithBLOBs(requestStatus);
-                } else {
-                    requestStatus.setSpotId(String.valueOf(queryRouteVo.getSpotId()));
-                    requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
-                    requestStatus.setStartTime(queryRouteVo.getStartTime());
-                    requestStatus.setEndTime(System.currentTimeMillis());
-                    requestStatus.setFromPort(queryRouteVo.getDeparturePortEn());
-                    requestStatus.setToPort(queryRouteVo.getDestinationPortEn());
-                    requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
-                    requestStatus.setMsg("刷新频率过高");
-                    requestStatus.setHostCode(queryRouteVo.getHostCode());
-                    requestStatusMapper.insertSelective(requestStatus);
-                }
+                requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
+                requestStatus.setEndTime(System.currentTimeMillis());
+                requestStatus.setMsg("刷新频率过高");
+                requestStatusMapper.insertSelective(requestStatus);
+
                 coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "已经存在正在爬取的请求，忽略该请求", null, queryRouteVo);
                 log.info(queryRouteVo.getSpotId() + " - 拉取消息: 已经存在正在爬取的请求，忽略该请求\n" + JSONObject.toJSONString(queryRouteVo));
             } else {
-                if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
-                    requestStatus = crawlRequestStatuses.get(0);
-                    requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
-                    requestStatus.setStartTime(queryRouteVo.getStartTime());
-                    requestStatus.setEndTime(null);
-                    requestStatus.setUseTime(null);
-                    requestStatus.setMsg(null);
-                    requestStatus.setCreateTime(new Date());
-                    requestStatus.setStatus(Constant.CRAWL_STATUS.WAITING.ordinal());
-                    requestStatusMapper.updateByPrimaryKeyWithBLOBs(requestStatus);
-                } else {
-                    requestStatus.setSpotId(String.valueOf(queryRouteVo.getSpotId()));
-                    requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
-                    requestStatus.setStartTime(queryRouteVo.getStartTime());
-                    requestStatus.setFromPort(queryRouteVo.getDeparturePortEn());
-                    requestStatus.setToPort(queryRouteVo.getDestinationPortEn());
-                    requestStatus.setStatus(Constant.CRAWL_STATUS.WAITING.ordinal());
-                    requestStatus.setHostCode(queryRouteVo.getHostCode());
-                    requestStatusMapper.insertSelective(requestStatus);
-                }
+                requestStatus.setStatus(Constant.CRAWL_STATUS.WAITING.ordinal());
+                requestStatusMapper.insertSelective(requestStatus);
 
                 if (!"cosco".equalsIgnoreCase(queryRouteVo.getHostCode())) {
                     rocketMQTemplate.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(queryRouteVo)).build());
@@ -173,6 +143,19 @@ public class ApiController {
         retObj.put("spot_id", queryRouteVo.getSpotId());
         retObj.put("log_id", queryRouteVo.getLogId());
         return CommonResult.success(retObj, "操作成功");
+    }
+
+    private CrawlRequestStatus getCrawlRequestStatus(@RequestBody QueryRouteVo queryRouteVo, List<CrawlRequestStatus> crawlRequestStatuses) {
+        if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
+            CrawlRequestStatus requestStatus = crawlRequestStatuses.get(0);
+            requestStatusMapper.deleteByPrimaryKey(requestStatus.getId());
+        }
+
+        CrawlRequestStatus requestStatus = new CrawlRequestStatus();
+        requestStatus.setSpotId(String.valueOf(queryRouteVo.getSpotId()));
+        requestStatus.setRequestParams(JSONObject.toJSONString(queryRouteVo));
+        requestStatus.setStartTime(queryRouteVo.getStartTime());
+        return requestStatus;
     }
 
     @RequestMapping(value = "/productNumber", method = RequestMethod.GET)
