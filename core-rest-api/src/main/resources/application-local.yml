@@ -12,7 +12,7 @@ spring:
       validation-query: select 1
       test-while-idle: true
   redis:
-    host: www.meiri56.com
+    host: crawl.meiri56.com
     database: 0
     port: 8397
     timeout: 3000ms
