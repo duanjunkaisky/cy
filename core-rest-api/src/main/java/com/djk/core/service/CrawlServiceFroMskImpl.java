@@ -282,7 +282,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 productContainer.setDeleted(false);
                 productContainer.setTenantId(0L);
                 productContainer.setShippingCompanyId(productInfo.getShippingCompanyId());
-                productContainerMapper.insertSelective(productContainer);
+                //运费重新在fee中计算
                 addLog(true, BUSINESS_NAME_CRAWL, "第" + page + "页,第" + index + "条product_container完成入库", null, queryRouteVo);
 
                 ProductFeeItem productFeeItem = new ProductFeeItem();
@@ -301,7 +301,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 JSONArray surchargesPerDocs = price.getJSONArray("surcharges_per_doc");
                 for (int i = 0; i < surchargesPerDocs.size(); i++) {
                     JSONObject jsonObject = surchargesPerDocs.getJSONObject(i);
-                    confirmValue(productFeeItem, jsonObject);
+                    confirmValue(productFeeItem, jsonObject, productContainer);
                     productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                 }
 
@@ -309,13 +309,13 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 for (Object ppc : pricesPerContainer) {
                     JSONObject jsonObject = (JSONObject) ppc;
                     JSONObject bas = jsonObject.getJSONObject("bas");
-                    confirmValue(productFeeItem, bas);
+                    confirmValue(productFeeItem, bas, productContainer);
                     productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
                     JSONArray surcharges = jsonObject.getJSONArray("surcharges_per_container");
                     for (Object sc : surcharges) {
                         JSONObject surcharge = (JSONObject) sc;
-                        confirmValue(productFeeItem, surcharge);
+                        confirmValue(productFeeItem, surcharge, productContainer);
                         productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                     }
                 }
@@ -374,6 +374,9 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                         productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                     }
                 }
+
+                productContainer.setCost(productContainer.getSellingPrice());
+                productContainerMapper.insertSelective(productContainer);
                 productFeeItemMapper.batchInsert(productFeeItemList);
                 addLog(true, BUSINESS_NAME_CRAWL, "第" + page + "页,第" + index + "条product_fee_item完成入库", null, queryRouteVo);
 
@@ -386,7 +389,8 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
     }
 
-    private void confirmValue(ProductFeeItem productFeeItem, JSONObject surcharge) {
+    private void confirmValue(ProductFeeItem productFeeItem, JSONObject surcharge, ProductContainer productContainer) {
+        BigDecimal price = surcharge.getBigDecimal("rate");
         String ratetypecode = surcharge.getString("ratetypecode");
         if ("Origin".equalsIgnoreCase(ratetypecode)) {
             productFeeItem.setFeeCostType(2);
@@ -395,6 +399,12 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         } else if ("Freight".equalsIgnoreCase(ratetypecode)) {
             //基础运费
             productFeeItem.setFeeCostType(1);
+            BigDecimal sellingPrice = productContainer.getSellingPrice();
+            if (null != sellingPrice && sellingPrice.longValue() > 0) {
+                productContainer.setSellingPrice(productContainer.getSellingPrice().add(price));
+            } else {
+                productContainer.setSellingPrice(price);
+            }
         }
         String currency = surcharge.getString("currency");
 
@@ -407,7 +417,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         } else {
             productFeeItem.setPriceComputeType(0);
         }
-        productFeeItem.setPrice(surcharge.getBigDecimal("rate"));
+        productFeeItem.setPrice(price);
         productFeeItem.setFeeCnName(surcharge.getString("chargedescription"));
         productFeeItem.setFeeEnName(surcharge.getString("chargedescription"));
     }
