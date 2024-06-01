@@ -8,7 +8,7 @@ app = Flask(__name__)
 # 添加新项目
 @app.route('/py/proxy', methods=['POST'])
 def proxy():
-    api = request.json['api']
+    api = request.json['url']
     method = request.json['method']
     headers = request.json['headers']
 
