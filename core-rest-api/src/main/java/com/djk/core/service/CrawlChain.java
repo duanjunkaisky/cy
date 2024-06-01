@@ -73,7 +73,9 @@ public class CrawlChain
                 CrawlRequestStatus requestStatus = new CrawlRequestStatus();
                 CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
 
+                log.info("开始设置token-ip");
                 crawlService.setTokenIp(queryRouteVo);
+                log.info("成功获取token-ip");
 
                 crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
                 requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
