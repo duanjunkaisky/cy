@@ -249,7 +249,10 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     if (null != deadlines && deadlines.size() > 0) {
                         JSONObject deadlineObj = deadlines.getJSONObject(0);
                         String deadline = deadlineObj.getString("deadline");
-                        productInfo.setProductExpiryDate(sdf.parse(deadline));
+                        try {
+                            productInfo.setProductExpiryDate(sdf.parse(deadline));
+                        } catch (Exception e) {
+                        }
                     }
                 }
                 JSONObject vessel = routeScheduleFull.getJSONObject("vessel");
