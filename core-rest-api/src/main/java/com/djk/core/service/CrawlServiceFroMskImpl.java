@@ -438,6 +438,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         if (StringUtils.isEmpty(sensorData)) {
             Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + "tmp:get-sensorData-api", 1, 60L, TimeUnit.SECONDS);
             if (aBoolean) {
+                addLog(null, BUSINESS_NAME_CRAWL, "开始获取akamai指纹", null, queryRouteVo);
                 String abck = tokenBean.getString("_abck");
                 String bmsz = tokenBean.getString("bm_sz");
                 Map<String, String> sensorDataParams = new HashMap<>(4);
@@ -450,6 +451,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 JSONObject retObj = JSONObject.parseObject(resp.getBodyJson());
                 userAgent = retObj.getString("ua");
                 sensorData = retObj.getString("sensorData");
+                addLog(null, BUSINESS_NAME_CRAWL, "成功得到akamai指纹", sensorData, queryRouteVo);
                 sensorData = Base64.getEncoder().encodeToString(sensorData.getBytes());
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 第" + aLong + "次获取sensorData:\n" + sensorData);
                 redisService.set(REDIS_DATABASE + ":MSK:sensorData", sensorData, 300L);
