@@ -437,7 +437,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         Map<String, String> header = new HashMap<>(4);
         String sensorData = (String) redisService.get(REDIS_DATABASE + ":MSK:sensorData");
         if (StringUtils.isEmpty(sensorData)) {
-            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + "tmp:get-sensorData-api", 1, 60L, TimeUnit.SECONDS);
+            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:get-sensorData-api", 1, 60L, TimeUnit.SECONDS);
             if (aBoolean) {
                 addLog(null, BUSINESS_NAME_CRAWL, "开始获取akamai指纹", null, queryRouteVo);
                 String abck = tokenBean.getString("_abck");
