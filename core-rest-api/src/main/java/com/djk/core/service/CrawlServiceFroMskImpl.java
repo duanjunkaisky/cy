@@ -199,9 +199,9 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 redisService.del(REDIS_DATABASE + ":MSK:sensorData");
                 redisService.del(REDIS_DATABASE + ":tmp:get-sensorData-api");
 
-                addLog(null, BUSINESS_NAME_CRAWL, "鉴权失败->请求数据接口-分页:" + page, "第" + reqCount + "次请求:\n" + ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
+                addLog(null, BUSINESS_NAME_CRAWL, "业务处理出错-分页:" + page, "第" + reqCount + "次请求:\n" + ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
 
-                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求出错");
+                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求,业务处理出错");
                 log.error(ExceptionUtil.getMessage(e));
                 log.error(ExceptionUtil.stacktraceToString(e));
             }
