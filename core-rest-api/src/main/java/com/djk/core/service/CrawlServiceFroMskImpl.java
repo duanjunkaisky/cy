@@ -434,27 +434,20 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     {
         JSONObject tokenBean = getToken(queryRouteVo);
 
-        String userAgent = null;
         Map<String, String> header = new HashMap<>(4);
         String sensorData = (String) redisService.get(REDIS_DATABASE + ":MSK:sensorData");
         if (StringUtils.isEmpty(sensorData)) {
             Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:get-sensorData-api", 1, 60L, TimeUnit.SECONDS);
             if (aBoolean) {
-                addLog(null, BUSINESS_NAME_CRAWL, "开始获取akamai指纹", null, queryRouteVo);
-                String abck = tokenBean.getString("_abck");
-                String bmsz = tokenBean.getString("bm_sz");
+                addLog(null, BUSINESS_NAME_CRAWL, "开始获取akamai指纹鉴权", null, queryRouteVo);
                 Map<String, String> sensorDataParams = new HashMap<>(4);
-                sensorDataParams.put("appid", "eyqq4t1ubp4fbjklkrguol6zcc8o5jp5");
-                sensorDataParams.put("siteUrl", "https://www.maersk.com.cn/book");
-                sensorDataParams.put("abck", abck);
-                sensorDataParams.put("bmsz", bmsz);
+                sensorDataParams.put("appid", DANLI_ACCESS_KEY);
+                sensorDataParams.put("jsUrl", "https://www.maersk.com.cn/BR2niX/hlv/HmJ/TNQcZjZQ/pa9YGrtN/W3JTOn5fDQs/T1oWeXYh/eVkB");
                 Long aLong = redisService.generateId("sensorData_count");
-                HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/v2/sensorData", null, JSONObject.toJSONString(sensorDataParams), null);
+                HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/v2/getTelemetry", null, JSONObject.toJSONString(sensorDataParams), null);
                 JSONObject retObj = JSONObject.parseObject(resp.getBodyJson());
-                userAgent = retObj.getString("ua");
-                sensorData = retObj.getString("sensorData");
-                addLog(null, BUSINESS_NAME_CRAWL, "成功得到akamai指纹", sensorData, queryRouteVo);
-                sensorData = Base64.getEncoder().encodeToString(sensorData.getBytes());
+                sensorData = retObj.getString("data");
+                addLog(null, BUSINESS_NAME_CRAWL, "成功获取akamai指纹鉴权信息", null, queryRouteVo);
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 第" + aLong + "次获取sensorData:\n" + sensorData);
                 redisService.set(REDIS_DATABASE + ":MSK:sensorData", sensorData, 300L);
             } else {
@@ -464,17 +457,9 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 }
             }
         }
-        String str = tokenBean.getString("akamai-bm-telemetry");
-        String start = str.split("sensor_data=")[0];
-        String akaSign = start + "sensor_data=" + sensorData;
-
         header.put("Authorization", tokenBean.getString("authorization"));
-        header.put("Content-Type", "application/json");
-        if (!StringUtils.isEmpty(userAgent)) {
-            header.put("User-Agent", userAgent);
-        }
         header.put("Consumer-Key", tokenBean.getString("consumer-key"));
-        header.put("Akamai-Bm-Telemetry", akaSign);
+        header.put("Akamai-Bm-Telemetry", sensorData);
         header.put("customerCode", tokenBean.getString("customerCode"));
 
         return header;
