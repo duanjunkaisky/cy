@@ -437,6 +437,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         if (StringUtils.isEmpty(sensorData)) {
             Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:get-sensorData-api", 1, 60L, TimeUnit.SECONDS);
             if (aBoolean) {
+                addLog(null, BUSINESS_NAME_CRAWL, "开始获取akamai指纹鉴权", null, queryRouteVo);
                 Map<String, String> sensorDataParams = new HashMap<>(4);
                 sensorDataParams.put("appid", DANLI_ACCESS_KEY);
                 sensorDataParams.put("jsUrl", "https://www.maersk.com.cn/BR2niX/hlv/HmJ/TNQcZjZQ/pa9YGrtN/W3JTOn5fDQs/T1oWeXYh/eVkB");
@@ -444,6 +445,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/v2/getTelemetry", null, JSONObject.toJSONString(sensorDataParams), null);
                 JSONObject retObj = JSONObject.parseObject(resp.getBodyJson());
                 sensorData = retObj.getString("data");
+                addLog(null, BUSINESS_NAME_CRAWL, "成功获取akamai指纹鉴权信息", null, queryRouteVo);
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 第" + aLong + "次获取sensorData:\n" + sensorData);
                 redisService.set(REDIS_DATABASE + ":MSK:sensorData", sensorData, 300L);
             } else {
