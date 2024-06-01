@@ -163,7 +163,8 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
                 addLog(null, BUSINESS_NAME_CRAWL, "请求数据接口-分页:" + page, "第" + reqCount + "次请求", queryRouteVo);
-                HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/tls/proxy", null, jsonParam, null);
+                HttpResp resp = HttpUtil.postBody("http://localhost:8899/py/proxy", null, jsonParam, null);
+//                HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/tls/proxy", null, jsonParam, null);
                 String bodyJson = resp.getBodyJson();
                 try {
                     if (bodyJson.contains("Customer Segment limit for customer code")) {
@@ -171,7 +172,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                         continue;
                     } else {
                         JSONObject jsonObject = JSONObject.parseObject(bodyJson);
-                        if (jsonObject.getBoolean("succ")) {
+                        if (jsonObject.getIntValue("code") == 200) {
                             addLog(null, BUSINESS_NAME_CRAWL, "成功->请求数据接口-分页:" + page, "第" + reqCount + "次请求", queryRouteVo);
                             String data = jsonObject.getString("data");
                             JSONObject retObj = JSONObject.parseObject(data);

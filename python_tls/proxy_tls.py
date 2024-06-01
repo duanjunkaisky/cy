@@ -34,7 +34,7 @@ def proxy():
         else:
             response = requests.get(api, headers=headers, impersonate="chrome110", proxies=proxies, timeout=timeout)
         ret = {
-            "code": 200,
+            "code": response.status_code,
             "data": response.text
         }
     except RequestsError as e:
