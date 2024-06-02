@@ -11,36 +11,45 @@ def proxy():
     api = request.json['url']
     method = request.json['method']
     headers = request.json['headers']
+    data = request.json['body']
 
     timeout = 30
     if "timeOut" in request.json:
         timeout = request.json['timeOut']
 
     proxies = None
-    if "proxyIp" in request.json:
-        proxies = {
-            'http': 'http://' + request.json['proxyIp'] + ":" + request.json['proxyPort'],
-            'https': 'http://' + request.json['proxyIp'] + ":" + request.json['proxyPort']
-        }
+    # if "proxyIp" in request.json:
+    #     proxies = {
+    #         'http': 'http://' + request.json['proxyIp'] + ":" + request.json['proxyPort'],
+    #         'https': 'http://' + request.json['proxyIp'] + ":" + request.json['proxyPort']
+    #     }
 
     ret = {
         "code": -1,
         "data": None
     }
 
+    print(request.json)
+
     try:
         if "post" == method.lower():
-            response = requests.post(api, headers=headers, impersonate="chrome110", proxies=proxies, timeout=timeout)
+            response = requests.post(api, headers=headers, json=data, impersonate="chrome110", proxies=proxies,
+                                     timeout=timeout)
         else:
-            response = requests.get(api, headers=headers, impersonate="chrome110", proxies=proxies, timeout=timeout)
+            response = requests.get(api, headers=headers, params=data, impersonate="chrome110", proxies=proxies,
+                                    timeout=timeout)
         ret = {
             "code": response.status_code,
             "data": response.text
         }
+
+        print(ret)
+
     except RequestsError as e:
+        print("error")
         print(e)
     return ret
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8899, debug=True)
+    app.run(host='0.0.0.0', port=8899, debug=False)
