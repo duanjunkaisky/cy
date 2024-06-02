@@ -100,7 +100,7 @@ public class ApiController
         }
 
         queryRouteVo.setStartTime(System.currentTimeMillis());
-        queryRouteVo.setSpotId(coscoCrawlService.createSpotId(queryRouteVo));
+        queryRouteVo.setSpotId(coscoCrawlService.createSpotId(queryRouteVo, queryRouteVo.getContainerType()));
         for (String beanName : target) {
             queryRouteVo.setBeanName(beanName);
             String hostCode = getHostCode(beanName);
@@ -173,7 +173,7 @@ public class ApiController
             List<String> beanNames = target.stream().filter(item -> item.toLowerCase().contains(queryRouteVo.getHostCode())).collect(Collectors.toList());
             queryRouteVo.setBeanName(beanNames.get(0));
             queryRouteVo.setStartTime(System.currentTimeMillis());
-            queryRouteVo.setSpotId(coscoCrawlService.createSpotId(queryRouteVo));
+            queryRouteVo.setSpotId(coscoCrawlService.createSpotId(queryRouteVo, queryRouteVo.getContainerType()));
             crawlChain.doBusiness(queryRouteVo);
         } catch (Exception e) {
             e.printStackTrace();
@@ -252,7 +252,7 @@ public class ApiController
                         requestStatus = requestStatusMapper.selectByPrimaryKey(id);
                         QueryRouteVo queryRouteVo = JSONObject.parseObject(requestStatus.getRequestParams(), QueryRouteVo.class);
 
-                        coscoCrawlService.flagDelData(queryRouteVo, baseShippingCompany.getId(), Arrays.asList(new String[]{"1", "2", "3"}));
+                        coscoCrawlService.flagDelData(queryRouteVo, baseShippingCompany.getId());
 
                         coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "插件获取到请求参数", null, queryRouteVo);
 

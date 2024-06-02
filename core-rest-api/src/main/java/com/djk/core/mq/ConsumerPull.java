@@ -6,13 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.djk.core.config.Constant;
 import com.djk.core.dao.CustomDao;
 import com.djk.core.mapper.CrawlRequestStatusMapper;
-import com.djk.core.mapper.ProductContainerMapper;
-import com.djk.core.mapper.ProductFeeItemMapper;
-import com.djk.core.mapper.ProductInfoMapper;
-import com.djk.core.model.BaseShippingCompany;
 import com.djk.core.model.CrawlRequestStatus;
 import com.djk.core.model.CrawlRequestStatusExample;
-import com.djk.core.model.ProductInfoExample;
 import com.djk.core.service.CrawlChain;
 import com.djk.core.service.CrawlServiceFroMskImpl;
 import com.djk.core.service.RedisService;
@@ -28,13 +23,11 @@ import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
 
@@ -50,9 +43,6 @@ public class ConsumerPull implements CommandLineRunner
 
     //    相同的爬取请求前后2次需要间隔
     public static final Long FREE_TIME = 60 * 1000 * 10L;
-
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
     private RedisService redisService;

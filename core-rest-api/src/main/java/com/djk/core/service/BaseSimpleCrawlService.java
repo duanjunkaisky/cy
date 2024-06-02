@@ -177,35 +177,33 @@ abstract class BaseSimpleCrawlService implements CrawlService
     }
 
     @Override
-    public void flagDelData(QueryRouteVo queryRouteVo, Long shipId, List<String> containerTypes)
+    public void flagDelData(QueryRouteVo queryRouteVo, Long shipId)
     {
         redisService.del(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productInfo");
         redisService.del(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productContainer");
         redisService.del(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productFeeItem");
+        List<LinkedHashMap<String, Object>> productInfoIds = new ArrayList<>();
+        List<LinkedHashMap<String, Object>> productContainerIds = new ArrayList<>();
+        List<LinkedHashMap<String, Object>> productFeeItemIds = new ArrayList<>();
+        //一次返回所有箱型的
+        if ("cosco".equalsIgnoreCase(queryRouteVo.getHostCode())) {
+            List<String> spotList = new ArrayList<>();
+            spotList.add(createSpotId(queryRouteVo, "1"));
+            spotList.add(createSpotId(queryRouteVo, "2"));
+            spotList.add(createSpotId(queryRouteVo, "3"));
+            String collect = spotList.stream().map(item -> "'" + item + "'").collect(Collectors.joining(","));
 
-        List<Long> productInfoIds = new ArrayList<>();
-        List<Long> productContainerIds = new ArrayList<>();
-        List<Long> productFeeItemIds = new ArrayList<>();
-        for (int i = 0; i < containerTypes.size(); i++) {
-            String containerType = containerTypes.get(i);
-            List<LinkedHashMap<String, Object>> tmpProductContainerIds = customDao.queryBySql("select id from product_container where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId + " and container_type=" + containerType);
-            if (null != tmpProductContainerIds && !tmpProductContainerIds.isEmpty()) {
-                productContainerIds.addAll(tmpProductContainerIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()));
-            }
-            List<LinkedHashMap<String, Object>> tmpProductFeeItemIds = customDao.queryBySql("select id from product_fee_item where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId + " and container_type=" + containerType);
-            if (null != tmpProductFeeItemIds && !tmpProductFeeItemIds.isEmpty()) {
-                productFeeItemIds.addAll(tmpProductFeeItemIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()));
-            }
+            productInfoIds = customDao.queryBySql("select id from product_info where spot_id in (" + collect + ") and shipping_company_id=" + shipId);
+            productContainerIds = customDao.queryBySql("select id from product_container where spot_id in (" + collect + ") and shipping_company_id=" + shipId);
+            productFeeItemIds = customDao.queryBySql("select id from product_fee_item where spot_id in (" + collect + ") and shipping_company_id=" + shipId);
+        } else {
+            productInfoIds = customDao.queryBySql("select id from product_info where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId);
+            productContainerIds = customDao.queryBySql("select id from product_container where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId);
+            productFeeItemIds = customDao.queryBySql("select id from product_fee_item where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId);
         }
-
-        List<LinkedHashMap<String, Object>> tmpProductIds = customDao.queryBySql("select id from product_info where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId + " and id not in ( " +
-                "select p.id from product_info p where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId + " and not exists (select 1 from product_container c where c.product_id=p.id and c.container_type in (" + containerTypes.stream().collect(Collectors.joining(",")) + ")" +
-                "))");
-        productInfoIds.addAll(tmpProductIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()));
-
-        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productInfo", productInfoIds, 600L);
-        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productContainer", productContainerIds, 600L);
-        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productFeeItem", productFeeItemIds, 600L);
+        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productInfo", productInfoIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()), 600L);
+        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productContainer", productContainerIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()), 600L);
+        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productFeeItem", productFeeItemIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()), 600L);
     }
 
     public void delData(QueryRouteVo queryRouteVo)
@@ -227,10 +225,10 @@ abstract class BaseSimpleCrawlService implements CrawlService
         }
     }
 
-    public String createSpotId(QueryRouteVo queryRouteVo)
+    public String createSpotId(QueryRouteVo queryRouteVo, String containerType)
     {
         String spotIdStr = queryRouteVo.getDeparturePortEn().toUpperCase() + queryRouteVo.getDestinationPortEn().toUpperCase()
-                + queryRouteVo.getDepartureCountryCode().toUpperCase() + queryRouteVo.getDestinationCountryCode().toUpperCase() + queryRouteVo.getContainerType().toUpperCase();
+                + queryRouteVo.getDepartureCountryCode().toUpperCase() + queryRouteVo.getDestinationCountryCode().toUpperCase() + containerType.toUpperCase();
         return DigestUtils.md5DigestAsHex(spotIdStr.getBytes());
     }
 
