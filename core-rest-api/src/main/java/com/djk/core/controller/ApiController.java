@@ -114,7 +114,7 @@ public class ApiController
             crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId()).andHostCodeEqualTo(queryRouteVo.getHostCode());
             List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
 
-            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:crawl_" + queryRouteVo.getSpotId() + "_" + queryRouteVo.getHostCode(), System.currentTimeMillis(), ConsumerPull.FREE_TIME, TimeUnit.MILLISECONDS);
+            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:crawl_" + queryRouteVo.getSpotId() + "_" + queryRouteVo.getHostCode() + "_" + queryRouteVo.getContainerType(), System.currentTimeMillis(), ConsumerPull.FREE_TIME, TimeUnit.MILLISECONDS);
 
             if (null == aBoolean || !aBoolean) {
                 coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "已经存在正在爬取的请求，忽略该请求", null, queryRouteVo);

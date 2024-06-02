@@ -145,8 +145,6 @@ public class ConsumerPull implements CommandLineRunner
                                             QueryRouteVo queryRouteVo = JSON.parseObject(message.getBody(), QueryRouteVo.class);
                                             crawlServiceFroMsk.addLog(null, BUSINESS_NAME_CRAWL, "消息队列准备受理爬虫请求", null, queryRouteVo);
                                             try {
-                                                BaseShippingCompany baseShippingCompany = crawlServiceFroMsk.getShipCompany(queryRouteVo.getHostCode());
-
                                                 log.info(queryRouteVo.getSpotId() + " - 消费消息,开始爬取: \n " + JSONObject.toJSONString(queryRouteVo));
                                                 currentJobs.put(queryRouteVo.getSpotId() + queryRouteVo.getHostCode(), queryRouteVo);
                                                 crawlChain.doBusiness(queryRouteVo);
