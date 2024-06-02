@@ -200,7 +200,7 @@ abstract class BaseSimpleCrawlService implements CrawlService
 
         List<LinkedHashMap<String, Object>> tmpProductIds = customDao.queryBySql("select id from product_info where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId + " and id not in ( " +
                 "select p.id from product_info p where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId + " and not exists (select 1 from product_container c where c.product_id=p.id and c.container_type in (" + containerTypes.stream().collect(Collectors.joining(",")) + ")" +
-                ")");
+                "))");
         productInfoIds.addAll(tmpProductIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()));
 
         redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productInfo", productInfoIds, 600L);
