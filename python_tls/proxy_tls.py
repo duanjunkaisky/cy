@@ -5,7 +5,7 @@ from curl_cffi import requests
 app = Flask(__name__)
 
 
-# 添加新项目
+# tls代理请求
 @app.route('/py/proxy', methods=['POST'])
 def proxy():
     api = request.json['url']
