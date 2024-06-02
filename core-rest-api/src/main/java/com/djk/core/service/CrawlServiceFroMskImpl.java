@@ -436,50 +436,49 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     public Map<String, String> getRemoteSensorData(QueryRouteVo queryRouteVo)
     {
         JSONObject tokenBean = getToken(queryRouteVo);
-
-        String userAgent = null;
         Map<String, String> header = new HashMap<>(4);
-        String sensorData = (String) redisService.get(REDIS_DATABASE + ":MSK:sensorData");
-        if (StringUtils.isEmpty(sensorData)) {
-            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:get-sensorData-api", 1, 60L, TimeUnit.SECONDS);
-            if (aBoolean) {
-                addLog(null, BUSINESS_NAME_CRAWL, "开始获取akamai指纹", null, queryRouteVo);
-                String abck = tokenBean.getString("_abck");
-                String bmsz = tokenBean.getString("bm_sz");
-                Map<String, String> sensorDataParams = new HashMap<>(4);
-                sensorDataParams.put("appid", "eyqq4t1ubp4fbjklkrguol6zcc8o5jp5");
-                sensorDataParams.put("siteUrl", "https://www.maersk.com.cn/book");
-                sensorDataParams.put("abck", abck);
-                sensorDataParams.put("bmsz", bmsz);
-                Long aLong = redisService.generateId("sensorData_count");
-                HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/v2/sensorData", null, JSONObject.toJSONString(sensorDataParams), null);
-                JSONObject retObj = JSONObject.parseObject(resp.getBodyJson());
-                userAgent = retObj.getString("ua");
-                sensorData = retObj.getString("sensorData");
-                addLog(null, BUSINESS_NAME_CRAWL, "成功得到akamai指纹", sensorData, queryRouteVo);
-                sensorData = Base64.getEncoder().encodeToString(sensorData.getBytes());
-                log.info(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 第" + aLong + "次获取sensorData:\n" + sensorData);
-                redisService.set(REDIS_DATABASE + ":MSK:sensorData", sensorData, 300L);
-            } else {
-                long startTime = System.currentTimeMillis();
-                while (StringUtils.isEmpty(sensorData) && System.currentTimeMillis() - startTime < 20 * 1000) {
-                    sensorData = (String) redisService.get(REDIS_DATABASE + ":MSK:sensorData");
-                }
-            }
-        }
-        String str = tokenBean.getString("akamai-bm-telemetry");
-        String start = str.split("sensor_data=")[0];
-        String akaSign = start + "sensor_data=" + sensorData;
 
+//        String userAgent = null;
+//        String sensorData = (String) redisService.get(REDIS_DATABASE + ":MSK:sensorData");
+//        if (StringUtils.isEmpty(sensorData)) {
+//            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:get-sensorData-api", 1, 60L, TimeUnit.SECONDS);
+//            if (aBoolean) {
+//                addLog(null, BUSINESS_NAME_CRAWL, "开始获取akamai指纹", null, queryRouteVo);
+//                String abck = tokenBean.getString("_abck");
+//                String bmsz = tokenBean.getString("bm_sz");
+//                Map<String, String> sensorDataParams = new HashMap<>(4);
+//                sensorDataParams.put("appid", "eyqq4t1ubp4fbjklkrguol6zcc8o5jp5");
+//                sensorDataParams.put("siteUrl", "https://www.maersk.com.cn/book");
+//                sensorDataParams.put("abck", abck);
+//                sensorDataParams.put("bmsz", bmsz);
+//                Long aLong = redisService.generateId("sensorData_count");
+//                HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/v2/sensorData", null, JSONObject.toJSONString(sensorDataParams), null);
+//                JSONObject retObj = JSONObject.parseObject(resp.getBodyJson());
+//                userAgent = retObj.getString("ua");
+//                sensorData = retObj.getString("sensorData");
+//                addLog(null, BUSINESS_NAME_CRAWL, "成功得到akamai指纹", sensorData, queryRouteVo);
+//                sensorData = Base64.getEncoder().encodeToString(sensorData.getBytes());
+//                log.info(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 第" + aLong + "次获取sensorData:\n" + sensorData);
+//                redisService.set(REDIS_DATABASE + ":MSK:sensorData", sensorData, 300L);
+//            } else {
+//                long startTime = System.currentTimeMillis();
+//                while (StringUtils.isEmpty(sensorData) && System.currentTimeMillis() - startTime < 20 * 1000) {
+//                    sensorData = (String) redisService.get(REDIS_DATABASE + ":MSK:sensorData");
+//                }
+//            }
+//        }
+//        String str = tokenBean.getString("akamai-bm-telemetry");
+//        String start = str.split("sensor_data=")[0];
+//        String akaSign = start + "sensor_data=" + sensorData;
+
+        redisService.del(REDIS_DATABASE + ":MSK:sensorData");
+        redisService.del(REDIS_DATABASE + ":tmp:get-sensorData-api");
         header.put("Authorization", tokenBean.getString("authorization"));
         header.put("Content-Type", "application/json");
-        if (!StringUtils.isEmpty(userAgent)) {
-            header.put("User-Agent", userAgent);
-        }
         header.put("Consumer-Key", tokenBean.getString("consumer-key"));
-        header.put("Akamai-Bm-Telemetry", akaSign);
+        header.put("Akamai-Bm-Telemetry", tokenBean.getString("akamai-bm-telemetry"));
         header.put("customerCode", tokenBean.getString("customerCode"));
-        
+
 //        Map<String, String> header = new HashMap<>(4);
 //        String sensorData = (String) redisService.get(REDIS_DATABASE + ":MSK:sensorData");
 //        if (StringUtils.isEmpty(sensorData)) {
