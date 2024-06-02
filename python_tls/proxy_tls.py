@@ -18,14 +18,14 @@ def proxy():
         timeout = request.json['timeOut']
 
     proxies = None
-    # if "proxyIp" in request.json:
-    #     proxies = {
-    #         'http': 'http://' + request.json['proxyIp'] + ":" + request.json['proxyPort'],
-    #         'https': 'http://' + request.json['proxyIp'] + ":" + request.json['proxyPort']
-    #     }
+    if "proxyIp" in request.json:
+        proxies = {
+            'http': 'http://' + request.json['proxyIp'] + ":" + request.json['proxyPort'],
+            'https': 'http://' + request.json['proxyIp'] + ":" + request.json['proxyPort']
+        }
 
     ret = {
-        "code": -1,
+        "succ": False,
         "data": None
     }
 
@@ -39,7 +39,7 @@ def proxy():
             response = requests.get(api, headers=headers, params=data, impersonate="chrome110", proxies=proxies,
                                     timeout=timeout)
         ret = {
-            "code": response.status_code,
+            "succ": True if response.status_code == 200 else False,
             "data": response.text
         }
 
