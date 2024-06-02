@@ -4,6 +4,8 @@ import com.djk.core.model.BasePort;
 import com.djk.core.model.BaseShippingCompany;
 import com.djk.core.vo.QueryRouteVo;
 
+import java.util.List;
+
 /**
  * @author duanjunkai
  * @date 2024/05/01
@@ -22,4 +24,6 @@ public interface CrawlService
     void addLog(Boolean addDataId, String businessName, String stepName, String msg, QueryRouteVo queryRouteVo);
 
     void setTokenIp(QueryRouteVo queryRouteVo);
+
+    void flagDelData(QueryRouteVo queryRouteVo, Long shipId, List<String> containerTypes);
 }

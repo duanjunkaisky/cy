@@ -19,6 +19,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -65,6 +66,8 @@ public class CrawlChain
         BaseShippingCompany baseShippingCompany = crawlService.getShipCompany(queryRouteVo.getHostCode());
         BasePort fromPort = crawlService.getFromPort(queryRouteVo);
         BasePort toPort = crawlService.getToPort(queryRouteVo);
+
+        crawlService.flagDelData(queryRouteVo, baseShippingCompany.getId(), Arrays.asList(new String[]{queryRouteVo.getContainerType()}));
 
         EXECUTOR_SERVICE.submit(() -> {
             try {

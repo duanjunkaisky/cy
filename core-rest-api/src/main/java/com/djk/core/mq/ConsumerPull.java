@@ -147,8 +147,6 @@ public class ConsumerPull implements CommandLineRunner
                                             try {
                                                 BaseShippingCompany baseShippingCompany = crawlServiceFroMsk.getShipCompany(queryRouteVo.getHostCode());
 
-                                                crawlServiceFroMsk.flagDelData(queryRouteVo, baseShippingCompany.getId());
-
                                                 log.info(queryRouteVo.getSpotId() + " - 消费消息,开始爬取: \n " + JSONObject.toJSONString(queryRouteVo));
                                                 currentJobs.put(queryRouteVo.getSpotId() + queryRouteVo.getHostCode(), queryRouteVo);
                                                 crawlChain.doBusiness(queryRouteVo);

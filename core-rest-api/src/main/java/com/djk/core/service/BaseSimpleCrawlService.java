@@ -176,17 +176,36 @@ abstract class BaseSimpleCrawlService implements CrawlService
         throw new RuntimeException("箱型解析出错");
     }
 
-    public void flagDelData(QueryRouteVo queryRouteVo, Long shipId)
+    @Override
+    public void flagDelData(QueryRouteVo queryRouteVo, Long shipId, List<String> containerTypes)
     {
         redisService.del(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productInfo");
         redisService.del(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productContainer");
         redisService.del(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productFeeItem");
-        List<LinkedHashMap<String, Object>> productInfoIds = customDao.queryBySql("select id from product_info where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId);
-        List<LinkedHashMap<String, Object>> productContainerIds = customDao.queryBySql("select id from product_container where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId);
-        List<LinkedHashMap<String, Object>> productFeeItemIds = customDao.queryBySql("select id from product_fee_item where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId);
-        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productInfo", productInfoIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()), 600L);
-        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productContainer", productContainerIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()), 600L);
-        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productFeeItem", productFeeItemIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()), 600L);
+
+        List<Long> productInfoIds = new ArrayList<>();
+        List<Long> productContainerIds = new ArrayList<>();
+        List<Long> productFeeItemIds = new ArrayList<>();
+        for (int i = 0; i < containerTypes.size(); i++) {
+            String containerType = containerTypes.get(i);
+            List<LinkedHashMap<String, Object>> tmpProductContainerIds = customDao.queryBySql("select id from product_container where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId + " and container_type=" + containerType);
+            if (null != tmpProductContainerIds && !tmpProductContainerIds.isEmpty()) {
+                productContainerIds.addAll(tmpProductContainerIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()));
+            }
+            List<LinkedHashMap<String, Object>> tmpProductFeeItemIds = customDao.queryBySql("select id from product_fee_item where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId + " and container_type=" + containerType);
+            if (null != tmpProductFeeItemIds && !tmpProductFeeItemIds.isEmpty()) {
+                productFeeItemIds.addAll(tmpProductFeeItemIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()));
+            }
+        }
+
+        List<LinkedHashMap<String, Object>> tmpProductIds = customDao.queryBySql("select id from product_info where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId + " and id not in ( " +
+                "select p.id from product_info p where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId + " and not exists (select 1 from product_container c where c.product_id=p.id and c.container_type in (" + containerTypes.stream().collect(Collectors.joining(",")) + ")" +
+                ")");
+        productInfoIds.addAll(tmpProductIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()));
+
+        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productInfo", productInfoIds, 600L);
+        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productContainer", productContainerIds, 600L);
+        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productFeeItem", productFeeItemIds, 600L);
     }
 
     public void delData(QueryRouteVo queryRouteVo)
