@@ -33,8 +33,7 @@ import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
 @Data
 @Slf4j
 @ConfigurationProperties(prefix = "crawl")
-public class CrawlChain
-{
+public class CrawlChain {
     public static ListeningExecutorService EXECUTOR_SERVICE = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
 
     @Autowired
@@ -58,8 +57,7 @@ public class CrawlChain
     RedisService redisService;
 
     @Async("asyncServiceExecutor")
-    public void doBusiness(QueryRouteVo queryRouteVo)
-    {
+    public void doBusiness(QueryRouteVo queryRouteVo) {
         CrawlService crawlService = (CrawlService) SpringUtil.getBean(queryRouteVo.getBeanName());
 
         BaseShippingCompany baseShippingCompany = crawlService.getShipCompany(queryRouteVo.getHostCode());
@@ -91,7 +89,7 @@ public class CrawlChain
 
                 crawlService.addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", null, queryRouteVo);
 
-                log.info("---> " + queryRouteVo.getSpotId() + " - " + str);
+                log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + str);
 
                 crawlRequestStatusExample = new CrawlRequestStatusExample();
                 crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId());
