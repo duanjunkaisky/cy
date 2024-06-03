@@ -137,7 +137,7 @@ public class ConsumerPull implements CommandLineRunner {
                                             QueryRouteVo queryRouteVo = JSON.parseObject(message.getBody(), QueryRouteVo.class);
 
                                             //10秒内,避免重复消费
-                                            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:unique-consumer:" + queryRouteVo.getLogId(), System.currentTimeMillis(), 10L, TimeUnit.SECONDS);
+                                            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:unique-consumer:" + queryRouteVo.getLogId() + queryRouteVo.getHostCode() + queryRouteVo.getSpotId(), System.currentTimeMillis(), 10L, TimeUnit.SECONDS);
                                             if (aBoolean) {
                                                 crawlServiceFroMsk.addLog(null, BUSINESS_NAME_CRAWL, "消息队列准备受理爬虫请求", null, queryRouteVo);
                                                 try {
