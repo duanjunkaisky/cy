@@ -73,7 +73,7 @@ public class CrawlChain {
 
                 log.info("开始设置token-ip");
                 crawlService.setTokenIp(queryRouteVo);
-                log.info("成功获取token-ip");
+                log.info("成功获取token-ip: " + queryRouteVo.getTokenIp());
 
                 crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
                 requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
