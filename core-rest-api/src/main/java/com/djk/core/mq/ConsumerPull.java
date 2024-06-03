@@ -3,6 +3,7 @@ package com.djk.core.mq;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.djk.core.api.CommonResult;
 import com.djk.core.config.Constant;
 import com.djk.core.dao.CustomDao;
 import com.djk.core.mapper.CrawlRequestStatusMapper;
@@ -23,11 +24,13 @@ import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
 
@@ -38,8 +41,7 @@ import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
  */
 @Component
 @Slf4j
-public class ConsumerPull implements CommandLineRunner
-{
+public class ConsumerPull implements CommandLineRunner {
 
     //    相同的爬取请求前后2次需要间隔
     public static final Long FREE_TIME = 60 * 1000 * 10L;
@@ -75,6 +77,9 @@ public class ConsumerPull implements CommandLineRunner
     CrawlServiceFroMskImpl crawlServiceFroMsk;
 
     @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
     CrawlChain crawlChain;
 
     @Autowired
@@ -88,8 +93,7 @@ public class ConsumerPull implements CommandLineRunner
     /**
      * @throws MQClientException
      */
-    public void consumeMessage() throws MQClientException
-    {
+    public void consumeMessage() throws MQClientException {
         // 1. 实例化对象
         final MQPullConsumerScheduleService scheduleService = new MQPullConsumerScheduleService(group);
         // 2. 设置NameServer
@@ -98,11 +102,9 @@ public class ConsumerPull implements CommandLineRunner
         scheduleService.setMessageModel(MessageModel.CLUSTERING);
         scheduleService.getDefaultMQPullConsumer().setInstanceName("consumerPull");
         // 4. 注册拉取回调函数
-        scheduleService.registerPullTaskCallback(topic, new PullTaskCallback()
-        {
+        scheduleService.registerPullTaskCallback(topic, new PullTaskCallback() {
             @Override
-            public void doPullTask(MessageQueue mq, PullTaskContext context)
-            {
+            public void doPullTask(MessageQueue mq, PullTaskContext context) {
                 if (isPull) {
                     // 5.从上下文中获取MQPullConsumer对象，此处其实就是DefaultMQPullConsumer。
                     MQPullConsumer consumer = context.getPullConsumer();
@@ -133,17 +135,24 @@ public class ConsumerPull implements CommandLineRunner
                                         if (currentJobs.keySet().size() < maxCrawlCount) {
                                             MessageExt message = pullResult.getMsgFoundList().get(i);
                                             QueryRouteVo queryRouteVo = JSON.parseObject(message.getBody(), QueryRouteVo.class);
-                                            crawlServiceFroMsk.addLog(null, BUSINESS_NAME_CRAWL, "消息队列准备受理爬虫请求", null, queryRouteVo);
-                                            try {
-                                                log.info(queryRouteVo.getSpotId() + " - 消费消息,开始爬取: \n " + JSONObject.toJSONString(queryRouteVo));
-                                                currentJobs.put(queryRouteVo.getSpotId() + queryRouteVo.getHostCode(), queryRouteVo);
-                                                crawlChain.doBusiness(queryRouteVo);
-                                            } catch (Exception e) {
-                                                log.error("消费发生异常");
-                                                crawlServiceFroMsk.addLog(null, BUSINESS_NAME_CRAWL, "消息队列处理时发生异常", ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
-                                                log.error(ExceptionUtil.getMessage(e));
-                                                log.error(ExceptionUtil.stacktraceToString(e));
-                                                customDao.executeSql("update crawl_request_status set status = " + Constant.CRAWL_STATUS.ERROR.ordinal() + ", msg = '" + ExceptionUtil.getMessage(e) + "' where spot_id = '" + queryRouteVo.getSpotId() + "' and host_code='" + queryRouteVo.getHostCode() + "'");
+
+                                            //10秒内,避免重复消费
+                                            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:unique-consumer:" + queryRouteVo.getLogId(), System.currentTimeMillis(), 10L, TimeUnit.SECONDS);
+                                            if (aBoolean) {
+                                                crawlServiceFroMsk.addLog(null, BUSINESS_NAME_CRAWL, "消息队列准备受理爬虫请求", null, queryRouteVo);
+                                                try {
+                                                    log.info(queryRouteVo.getSpotId() + " - 消费消息,开始爬取: \n " + JSONObject.toJSONString(queryRouteVo));
+                                                    currentJobs.put(queryRouteVo.getSpotId() + queryRouteVo.getHostCode(), queryRouteVo);
+                                                    crawlChain.doBusiness(queryRouteVo);
+                                                } catch (Exception e) {
+                                                    log.error("消费发生异常");
+                                                    crawlServiceFroMsk.addLog(null, BUSINESS_NAME_CRAWL, "消息队列处理时发生异常", ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
+                                                    log.error(ExceptionUtil.getMessage(e));
+                                                    log.error(ExceptionUtil.stacktraceToString(e));
+                                                    customDao.executeSql("update crawl_request_status set status = " + Constant.CRAWL_STATUS.ERROR.ordinal() + ", msg = '" + ExceptionUtil.getMessage(e) + "' where spot_id = '" + queryRouteVo.getSpotId() + "' and host_code='" + queryRouteVo.getHostCode() + "'");
+                                                }
+                                            } else {
+                                                log.error("避免重复消费,忽略本次消费");
                                             }
                                         } else {
                                             log.info("正在处理的拉取消息数量大于: " + maxCrawlCount + "\n" + JSONObject.toJSONString(currentJobs));
@@ -179,8 +188,7 @@ public class ConsumerPull implements CommandLineRunner
      * @throws Exception
      */
     @Override
-    public void run(String... args) throws Exception
-    {
+    public void run(String... args) throws Exception {
         consumeMessage();
     }
 
@@ -188,8 +196,7 @@ public class ConsumerPull implements CommandLineRunner
      * 每天12点触发
      */
     @Scheduled(cron = "0 0 23 * * ?")
-    public void delRequestStatus()
-    {
+    public void delRequestStatus() {
         //删除5天前的
         log.info("清除crawl_request_status 5天前的数据");
         String delSql = "delete from crawl_request_status where ( UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(create_time) ) / (60*60)  > (24*5)";
@@ -200,8 +207,7 @@ public class ConsumerPull implements CommandLineRunner
      * 每3分钟清空一次ip代理，重新获取
      */
     @Scheduled(cron = "0 0/3 * * * ?")
-    public void refreshProxy()
-    {
+    public void refreshProxy() {
         MyProxyUtil.proxyMap.clear();
     }
 
@@ -209,8 +215,7 @@ public class ConsumerPull implements CommandLineRunner
      * 30秒检查一次crawl_request_status
      */
     @Scheduled(cron = "0/30 * * * * ?")
-    public void checkRequestStatus()
-    {
+    public void checkRequestStatus() {
         CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
         crawlRequestStatusExample.createCriteria().andStatusLessThanOrEqualTo(Constant.CRAWL_STATUS.RUNNING.ordinal());
         List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
