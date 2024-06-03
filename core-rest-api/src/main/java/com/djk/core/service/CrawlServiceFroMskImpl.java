@@ -36,8 +36,7 @@ import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
 @Service
 @Slf4j
 @Data
-public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements CrawlService
-{
+public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements CrawlService {
     private final int WEEK_STEP = 2;
 
     private static int reqCount = 0;
@@ -77,11 +76,10 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     }
 
     @Override
-    public String queryData(BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo)
-    {
+    public String queryData(BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo) {
         String hostCode = queryRouteVo.getHostCode();
         this.setHostCode(hostCode);
-        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: ");
+        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据");
 
         List<ProductInfo> productInfoList = new ArrayList<>();
 
@@ -100,14 +98,18 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
             hasMore = getDataPerPage(queryRouteVo, fromPort, toPort, baseShippingCompany, productInfoList, format, queryTime, realList.get(0), page);
             page++;
         }
+
+        //到这里一定是没有数据入库，重新删一次
+        delData(queryRouteVo);
+
         return String.valueOf(productInfoList.size());
     }
 
-    private boolean getDataPerPage(QueryRouteVo queryRouteVo, BasePort fromPort, BasePort toPort, BaseShippingCompany baseShippingCompany, List<ProductInfo> productInfoList, SimpleDateFormat format, Date queryTime, ContainerDist container, int page)
-    {
+    private boolean getDataPerPage(QueryRouteVo queryRouteVo, BasePort fromPort, BasePort toPort, BaseShippingCompany baseShippingCompany, List<ProductInfo> productInfoList, SimpleDateFormat format, Date queryTime, ContainerDist container, int page) {
         reqCount = 0;
         String hostCode = queryRouteVo.getHostCode();
         while (reqCount < Constant.MAX_REQ_COUNT) {
+            String bodyJson = "";
             try {
                 addLog(null, BUSINESS_NAME_CRAWL, "组织请求参数", null, queryRouteVo);
                 reqCount++;
@@ -122,6 +124,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     log.error("获取代理失败!");
                     break;
                 }
+                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 获取代理ip: " + proxy);
                 addLog(null, BUSINESS_NAME_CRAWL, "获取代理ip: " + proxy, null, queryRouteVo);
 
                 Map<String, String> header = getRemoteSensorData(queryRouteVo);
@@ -153,42 +156,42 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 fillData.put("telemetry", header.get("Akamai-Bm-Telemetry"));
                 fillData.put("authorization", header.get("Authorization"));
                 fillData.put("consumerKey", header.get("Consumer-Key"));
-                fillData.put("jsonParam", jsonParamInner.replaceAll("\"", "\\\\\"").replaceAll("\n", "").replaceAll(" ", "").replaceAll("\t", ""));
+                fillData.put("jsonParam", jsonParamInner);
                 fillData.put("timeOut", 15);
                 fillData.put("ip", proxyIp);
                 fillData.put("port", proxyPort);
                 fillData.put("password", MyProxyUtil.PROXY_USERNAME + ":" + MyProxyUtil.PROXY_PASSWORD);
                 String jsonParam = FreeMakerUtil.createByTemplate("danli_req.ftl", fillData);
 
-                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
+                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页,第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
-                addLog(null, BUSINESS_NAME_CRAWL, "请求数据接口-分页:" + page, "第" + reqCount + "次请求", queryRouteVo);
-//                HttpResp resp = HttpUtil.postBody("http://localhost:8899/py/proxy", null, jsonParam, null);
-                HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/tls/proxy", null, jsonParam, null);
-                String bodyJson = resp.getBodyJson();
+                addLog(null, BUSINESS_NAME_CRAWL, "发起请求->开始第" + reqCount + "次请求数据接口-分页:" + page, jsonParam, queryRouteVo);
+                HttpResp resp = HttpUtil.postBody("http://localhost:8899/py/proxy", null, jsonParam, null);
+//                HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/tls/proxy", null, jsonParam, null);
+                bodyJson = resp.getBodyJson();
                 try {
                     if (bodyJson.contains("Customer Segment limit for customer code")) {
-                        addLog(null, BUSINESS_NAME_CRAWL, "发生错误->请求数据接口-分页:" + page, "第" + reqCount + "次请求: " + "Customer Segment limit for customer code", queryRouteVo);
+                        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页,第" + reqCount + "次发起请求返回错误: Customer Segment limit for customer code !");
+                        addLog(null, BUSINESS_NAME_CRAWL, "发生错误->第" + reqCount + "次请求数据接口-分页:" + page, "Customer Segment limit for customer code", queryRouteVo);
                         continue;
                     } else {
                         JSONObject jsonObject = JSONObject.parseObject(bodyJson);
-//                        if (jsonObject.getIntValue("code") == 200) {
                         if (jsonObject.getBoolean("succ")) {
-                            addLog(null, BUSINESS_NAME_CRAWL, "成功->请求数据接口-分页:" + page, "第" + reqCount + "次请求", queryRouteVo);
                             String data = jsonObject.getString("data");
+                            addLog(null, BUSINESS_NAME_CRAWL, "成功->第" + reqCount + "次请求数据接口-分页:" + page, data, queryRouteVo);
                             JSONObject retObj = JSONObject.parseObject(data);
                             boolean hasMore = retObj.getBoolean("loadMore");
-                            log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求返回成功, hasMore: " + hasMore);
+                            log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页,第" + reqCount + "次发起请求返回成功, hasMore: " + hasMore);
 
                             JSONArray offers = retObj.getJSONArray("offers");
                             parseData(queryRouteVo, baseShippingCompany, container, offers, fromPort, toPort, productInfoList, page);
 
                             return hasMore;
                         } else {
-                            addLog(null, BUSINESS_NAME_CRAWL, "鉴权失败->请求数据接口-分页:" + page, "第" + reqCount + "次请求: " + "发起请求鉴权失败", queryRouteVo);
+                            addLog(null, BUSINESS_NAME_CRAWL, "鉴权失败->第" + reqCount + "次请求数据接口-分页:" + page, bodyJson, queryRouteVo);
                             redisService.del(REDIS_DATABASE + ":MSK:sensorData");
                             redisService.del(REDIS_DATABASE + ":tmp:get-sensorData-api");
-                            log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求鉴权失败\n");
+                            log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页,第" + reqCount + "次发起请求鉴权失败\n");
                             continue;
                         }
                     }
@@ -199,9 +202,10 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 redisService.del(REDIS_DATABASE + ":MSK:sensorData");
                 redisService.del(REDIS_DATABASE + ":tmp:get-sensorData-api");
 
-                addLog(null, BUSINESS_NAME_CRAWL, "业务处理出错-分页:" + page, "第" + reqCount + "次请求:\n" + ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
+                addLog(null, BUSINESS_NAME_CRAWL, "业务处理出错->第" + reqCount + "次请求分页:" + page, bodyJson + "\n" + ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
 
-                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求,业务处理出错");
+                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页,第" + reqCount + "次发起请求,业务处理出错");
+                log.error(bodyJson);
                 log.error(ExceptionUtil.getMessage(e));
                 log.error(ExceptionUtil.stacktraceToString(e));
             }
@@ -209,8 +213,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         return false;
     }
 
-    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, int page) throws ParseException
-    {
+    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, int page) throws ParseException {
         int containerType = computeContainerType(container.getContainerCode());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -399,8 +402,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
     }
 
-    private void confirmValue(ProductFeeItem productFeeItem, JSONObject surcharge, ProductContainer productContainer)
-    {
+    private void confirmValue(ProductFeeItem productFeeItem, JSONObject surcharge, ProductContainer productContainer) {
         BigDecimal price = surcharge.getBigDecimal("rate");
         String ratetypecode = surcharge.getString("ratetypecode");
         if ("Origin".equalsIgnoreCase(ratetypecode)) {
@@ -433,8 +435,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         productFeeItem.setFeeEnName(surcharge.getString("chargedescription"));
     }
 
-    public Map<String, String> getRemoteSensorData(QueryRouteVo queryRouteVo)
-    {
+    public Map<String, String> getRemoteSensorData(QueryRouteVo queryRouteVo) {
         JSONObject tokenBean = getToken(queryRouteVo);
         Map<String, String> header = new HashMap<>(4);
 

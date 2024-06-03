@@ -31,7 +31,7 @@ def proxy():
         "data": None
     }
 
-    print(request.json)
+#     print(request.json)
 
     try:
         if "post" == method.lower():
@@ -45,11 +45,12 @@ def proxy():
             "data": response.text
         }
 
-        print(ret)
+#         print(ret)
 
     except RequestsError as e:
-        print("error")
+#         print("error")
         print(e)
+        ret["data"] = e
     return ret
 
 

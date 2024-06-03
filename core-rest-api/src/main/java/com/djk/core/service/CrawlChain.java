@@ -33,9 +33,8 @@ import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
 @Data
 @Slf4j
 @ConfigurationProperties(prefix = "crawl")
-public class CrawlChain
-{
-    public static ListeningExecutorService EXECUTOR_SERVICE = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
+public class CrawlChain {
+    public static ListeningExecutorService EXECUTOR_SERVICE = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(99));
 
     @Autowired
     CrawlRequestStatusMapper requestStatusMapper;
@@ -58,8 +57,7 @@ public class CrawlChain
     RedisService redisService;
 
     @Async("asyncServiceExecutor")
-    public void doBusiness(QueryRouteVo queryRouteVo)
-    {
+    public void doBusiness(QueryRouteVo queryRouteVo) {
         CrawlService crawlService = (CrawlService) SpringUtil.getBean(queryRouteVo.getBeanName());
 
         BaseShippingCompany baseShippingCompany = crawlService.getShipCompany(queryRouteVo.getHostCode());
@@ -75,7 +73,7 @@ public class CrawlChain
 
                 log.info("开始设置token-ip");
                 crawlService.setTokenIp(queryRouteVo);
-                log.info("成功获取token-ip");
+                log.info("成功获取token-ip: " + queryRouteVo.getTokenIp());
 
                 crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
                 requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
@@ -91,7 +89,7 @@ public class CrawlChain
 
                 crawlService.addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", null, queryRouteVo);
 
-                log.info("---> " + queryRouteVo.getSpotId() + " - " + str);
+                log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + str);
 
                 crawlRequestStatusExample = new CrawlRequestStatusExample();
                 crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId());
@@ -101,7 +99,7 @@ public class CrawlChain
                             .filter(item -> item.getStatus() <= Constant.CRAWL_STATUS.RUNNING.ordinal())
                             .collect(Collectors.toList());
                     if (null == mergeList || mergeList.isEmpty()) {
-                        log.info("---> " + queryRouteVo.getSpotId() + " - 本次请求爬取结束!");
+                        log.info("---> " + queryRouteVo.getSpotId() + " - 本次请求爬取结束! - " + queryRouteVo.getLogId());
                     }
                 }
                 return str;
@@ -122,7 +120,7 @@ public class CrawlChain
 
                 ConsumerPull.currentJobs.remove(queryRouteVo.getSpotId() + queryRouteVo.getHostCode());
             }
-            return "---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getHostCode() + " -> 0";
+            return "---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getHostCode() + " - " + queryRouteVo.getLogId() + " -> 0";
         });
     }
 
