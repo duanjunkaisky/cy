@@ -20,8 +20,10 @@ def proxy():
     proxies = None
     if "proxyIp" in request.json:
         proxies = {
-            'http': 'http://' + request.json['proxyIp'] + ":" + request.json['proxyPort'],
-            'https': 'http://' + request.json['proxyIp'] + ":" + request.json['proxyPort']
+            'http': 'http://' + request.json['proxyUserPwd']
+                    + "@" + request.json['proxyIp'] + ":" + request.json['proxyPort'],
+            'https': 'http://' + request.json['proxyUserPwd']
+                     + "@" + request.json['proxyIp'] + ":" + request.json['proxyPort']
         }
 
     ret = {
