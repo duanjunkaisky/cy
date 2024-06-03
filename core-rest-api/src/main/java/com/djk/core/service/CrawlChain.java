@@ -34,7 +34,7 @@ import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
 @Slf4j
 @ConfigurationProperties(prefix = "crawl")
 public class CrawlChain {
-    public static ListeningExecutorService EXECUTOR_SERVICE = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
+    public static ListeningExecutorService EXECUTOR_SERVICE = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(99));
 
     @Autowired
     CrawlRequestStatusMapper requestStatusMapper;
