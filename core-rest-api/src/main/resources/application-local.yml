@@ -33,7 +33,7 @@ rocketmq:
     mqMax: 32
   pull: true
   maxCrawlTime: 180000 #一次爬取最大3分钟
-  maxCrawlCount: 3 #一台机器最多执行3个爬取请求,因为每个请求中最多可能有10个网站的爬取线程
+  maxCrawlCount: 10 #一台机器最多执行3个爬取请求,因为每个请求中最多可能有10个网站的爬取线程
 
 executor:
   corePoolSize: 10
