@@ -79,7 +79,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     public String queryData(BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo) {
         String hostCode = queryRouteVo.getHostCode();
         this.setHostCode(hostCode);
-        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: ");
+        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据");
 
         List<ProductInfo> productInfoList = new ArrayList<>();
 
@@ -124,6 +124,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     log.error("获取代理失败!");
                     break;
                 }
+                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 获取代理ip: " + proxy);
                 addLog(null, BUSINESS_NAME_CRAWL, "获取代理ip: " + proxy, null, queryRouteVo);
 
                 Map<String, String> header = getRemoteSensorData(queryRouteVo);
