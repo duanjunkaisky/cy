@@ -24,7 +24,6 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
@@ -161,7 +160,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 fillData.put("password", MyProxyUtil.PROXY_USERNAME + ":" + MyProxyUtil.PROXY_PASSWORD);
                 String jsonParam = FreeMakerUtil.createByTemplate("danli_req.ftl", fillData);
 
-                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
+                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页,第" + reqCount + "次发起请求, \n" + "header: " + JSONObject.toJSONString(header) + "\nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
 
                 addLog(null, BUSINESS_NAME_CRAWL, "请求数据接口-分页:" + page, "第" + reqCount + "次请求", queryRouteVo);
 //                HttpResp resp = HttpUtil.postBody("http://localhost:8899/py/proxy", null, jsonParam, null);
@@ -169,7 +168,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 String bodyJson = resp.getBodyJson();
                 try {
                     if (bodyJson.contains("Customer Segment limit for customer code")) {
-                        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求返回错误: Customer Segment limit for customer code !");
+                        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页,第" + reqCount + "次发起请求返回错误: Customer Segment limit for customer code !");
                         addLog(null, BUSINESS_NAME_CRAWL, "发生错误->请求数据接口-分页:" + page, "第" + reqCount + "次请求: " + "Customer Segment limit for customer code", queryRouteVo);
                         continue;
                     } else {
@@ -180,7 +179,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                             String data = jsonObject.getString("data");
                             JSONObject retObj = JSONObject.parseObject(data);
                             boolean hasMore = retObj.getBoolean("loadMore");
-                            log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求返回成功, hasMore: " + hasMore);
+                            log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页,第" + reqCount + "次发起请求返回成功, hasMore: " + hasMore);
 
                             JSONArray offers = retObj.getJSONArray("offers");
                             parseData(queryRouteVo, baseShippingCompany, container, offers, fromPort, toPort, productInfoList, page);
@@ -190,7 +189,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                             addLog(null, BUSINESS_NAME_CRAWL, "鉴权失败->请求数据接口-分页:" + page, "第" + reqCount + "次请求: " + "发起请求鉴权失败", queryRouteVo);
                             redisService.del(REDIS_DATABASE + ":MSK:sensorData");
                             redisService.del(REDIS_DATABASE + ":tmp:get-sensorData-api");
-                            log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求鉴权失败\n");
+                            log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页,第" + reqCount + "次发起请求鉴权失败\n");
                             continue;
                         }
                     }
@@ -203,7 +202,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
                 addLog(null, BUSINESS_NAME_CRAWL, "业务处理出错-分页:" + page, "第" + reqCount + "次请求:\n" + ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
 
-                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求,业务处理出错");
+                log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页,第" + reqCount + "次发起请求,业务处理出错");
                 log.error(ExceptionUtil.getMessage(e));
                 log.error(ExceptionUtil.stacktraceToString(e));
             }
