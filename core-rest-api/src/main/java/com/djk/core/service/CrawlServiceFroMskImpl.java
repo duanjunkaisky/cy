@@ -36,8 +36,7 @@ import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
 @Service
 @Slf4j
 @Data
-public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements CrawlService
-{
+public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements CrawlService {
     private final int WEEK_STEP = 2;
 
     private static int reqCount = 0;
@@ -77,8 +76,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     }
 
     @Override
-    public String queryData(BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo)
-    {
+    public String queryData(BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo) {
         String hostCode = queryRouteVo.getHostCode();
         this.setHostCode(hostCode);
         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: ");
@@ -107,8 +105,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         return String.valueOf(productInfoList.size());
     }
 
-    private boolean getDataPerPage(QueryRouteVo queryRouteVo, BasePort fromPort, BasePort toPort, BaseShippingCompany baseShippingCompany, List<ProductInfo> productInfoList, SimpleDateFormat format, Date queryTime, ContainerDist container, int page)
-    {
+    private boolean getDataPerPage(QueryRouteVo queryRouteVo, BasePort fromPort, BasePort toPort, BaseShippingCompany baseShippingCompany, List<ProductInfo> productInfoList, SimpleDateFormat format, Date queryTime, ContainerDist container, int page) {
         reqCount = 0;
         String hostCode = queryRouteVo.getHostCode();
         while (reqCount < Constant.MAX_REQ_COUNT) {
@@ -172,6 +169,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 String bodyJson = resp.getBodyJson();
                 try {
                     if (bodyJson.contains("Customer Segment limit for customer code")) {
+                        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页," + reqCount + "次发起请求返回错误: Customer Segment limit for customer code !");
                         addLog(null, BUSINESS_NAME_CRAWL, "发生错误->请求数据接口-分页:" + page, "第" + reqCount + "次请求: " + "Customer Segment limit for customer code", queryRouteVo);
                         continue;
                     } else {
@@ -213,8 +211,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         return false;
     }
 
-    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, int page) throws ParseException
-    {
+    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, int page) throws ParseException {
         int containerType = computeContainerType(container.getContainerCode());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -403,8 +400,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
 
     }
 
-    private void confirmValue(ProductFeeItem productFeeItem, JSONObject surcharge, ProductContainer productContainer)
-    {
+    private void confirmValue(ProductFeeItem productFeeItem, JSONObject surcharge, ProductContainer productContainer) {
         BigDecimal price = surcharge.getBigDecimal("rate");
         String ratetypecode = surcharge.getString("ratetypecode");
         if ("Origin".equalsIgnoreCase(ratetypecode)) {
@@ -437,8 +433,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         productFeeItem.setFeeEnName(surcharge.getString("chargedescription"));
     }
 
-    public Map<String, String> getRemoteSensorData(QueryRouteVo queryRouteVo)
-    {
+    public Map<String, String> getRemoteSensorData(QueryRouteVo queryRouteVo) {
         JSONObject tokenBean = getToken(queryRouteVo);
         Map<String, String> header = new HashMap<>(4);
 
