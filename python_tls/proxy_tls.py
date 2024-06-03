@@ -48,6 +48,7 @@ def proxy():
     except RequestsError as e:
         print("error")
         print(e)
+        ret["data"] = e
     return ret
 
 
