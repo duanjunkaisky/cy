@@ -22,7 +22,6 @@ public class MyProxyUtil {
     public static ConcurrentHashMap<Integer, String> proxyMap = new ConcurrentHashMap<>(10);
 
     public synchronized static void newProxyList() {
-        log.info("获取代理ip");
         Map<String, Object> params = new HashMap<>();
         params.put("secret_id", SECRET_ID);
         params.put("secret_key", SECRET_KEY);
@@ -46,6 +45,7 @@ public class MyProxyUtil {
                 String proxyString = (String) jsonArray.get(i);
                 proxyMap.put(i, proxyString);
             }
+            log.info("获取代理ip: " + JSONArray.toJSONString(jsonArray));
         } catch (Exception e) {
             log.info("获取代理ip出错", e);
         }
