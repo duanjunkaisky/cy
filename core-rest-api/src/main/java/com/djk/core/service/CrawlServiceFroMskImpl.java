@@ -153,7 +153,6 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 fillData.put("telemetry", header.get("Akamai-Bm-Telemetry"));
                 fillData.put("authorization", header.get("Authorization"));
                 fillData.put("consumerKey", header.get("Consumer-Key"));
-//                fillData.put("jsonParam", jsonParamInner.replaceAll("\"", "\\\\\"").replaceAll("\n", "").replaceAll(" ", "").replaceAll("\t", ""));
                 fillData.put("jsonParam", jsonParamInner);
                 fillData.put("timeOut", 15);
                 fillData.put("ip", proxyIp);
