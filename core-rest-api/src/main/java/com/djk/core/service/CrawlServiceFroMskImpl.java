@@ -203,6 +203,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 addLog(null, BUSINESS_NAME_CRAWL, "业务处理出错->第" + reqCount + "次请求分页:" + page, bodyJson + "\n" + ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
 
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页,第" + reqCount + "次发起请求,业务处理出错");
+                log.error(bodyJson);
                 log.error(ExceptionUtil.getMessage(e));
                 log.error(ExceptionUtil.stacktraceToString(e));
             }
