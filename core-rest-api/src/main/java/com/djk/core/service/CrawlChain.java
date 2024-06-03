@@ -99,7 +99,7 @@ public class CrawlChain {
                             .filter(item -> item.getStatus() <= Constant.CRAWL_STATUS.RUNNING.ordinal())
                             .collect(Collectors.toList());
                     if (null == mergeList || mergeList.isEmpty()) {
-                        log.info("---> " + queryRouteVo.getSpotId() + " - 本次请求爬取结束!");
+                        log.info("---> " + queryRouteVo.getSpotId() + " - 本次请求爬取结束! - " + queryRouteVo.getLogId());
                     }
                 }
                 return str;
@@ -120,7 +120,7 @@ public class CrawlChain {
 
                 ConsumerPull.currentJobs.remove(queryRouteVo.getSpotId() + queryRouteVo.getHostCode());
             }
-            return "---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getHostCode() + " -> 0";
+            return "---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getHostCode() + " - " + queryRouteVo.getLogId() + " -> 0";
         });
     }
 
