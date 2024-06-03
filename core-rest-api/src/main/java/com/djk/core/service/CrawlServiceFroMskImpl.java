@@ -173,7 +173,6 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                         continue;
                     } else {
                         JSONObject jsonObject = JSONObject.parseObject(bodyJson);
-//                        if (jsonObject.getIntValue("code") == 200) {
                         if (jsonObject.getBoolean("succ")) {
                             String data = jsonObject.getString("data");
                             addLog(null, BUSINESS_NAME_CRAWL, "成功->第" + reqCount + "次请求数据接口-分页:" + page, data, queryRouteVo);
