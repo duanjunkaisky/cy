@@ -108,6 +108,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         reqCount = 0;
         String hostCode = queryRouteVo.getHostCode();
         while (reqCount < Constant.MAX_REQ_COUNT) {
+            String bodyJson = "";
             try {
                 addLog(null, BUSINESS_NAME_CRAWL, "组织请求参数", null, queryRouteVo);
                 reqCount++;
@@ -165,7 +166,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 addLog(null, BUSINESS_NAME_CRAWL, "发起请求->开始第" + reqCount + "次请求数据接口-分页:" + page, jsonParam, queryRouteVo);
                 HttpResp resp = HttpUtil.postBody("http://localhost:8899/py/proxy", null, jsonParam, null);
 //                HttpResp resp = HttpUtil.postBody("http://api.zjdanli.com/akamai/tls/proxy", null, jsonParam, null);
-                String bodyJson = resp.getBodyJson();
+                bodyJson = resp.getBodyJson();
                 try {
                     if (bodyJson.contains("Customer Segment limit for customer code")) {
                         log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页,第" + reqCount + "次发起请求返回错误: Customer Segment limit for customer code !");
@@ -199,7 +200,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 redisService.del(REDIS_DATABASE + ":MSK:sensorData");
                 redisService.del(REDIS_DATABASE + ":tmp:get-sensorData-api");
 
-                addLog(null, BUSINESS_NAME_CRAWL, "业务处理出错->第" + reqCount + "次请求分页:" + page, ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
+                addLog(null, BUSINESS_NAME_CRAWL, "业务处理出错->第" + reqCount + "次请求分页:" + page, bodyJson + "\n" + ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
 
                 log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + page + "页,第" + reqCount + "次发起请求,业务处理出错");
                 log.error(ExceptionUtil.getMessage(e));
