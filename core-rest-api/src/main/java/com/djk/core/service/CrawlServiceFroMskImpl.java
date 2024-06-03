@@ -100,6 +100,10 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
             hasMore = getDataPerPage(queryRouteVo, fromPort, toPort, baseShippingCompany, productInfoList, format, queryTime, realList.get(0), page);
             page++;
         }
+
+        //到这里一定是没有数据入库，重新删一次
+        delData(queryRouteVo);
+
         return String.valueOf(productInfoList.size());
     }
 
