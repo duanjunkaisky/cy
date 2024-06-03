@@ -178,6 +178,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                         JSONObject jsonObject = JSONObject.parseObject(bodyJson);
                         if (jsonObject.getBoolean("succ")) {
                             long offset = System.currentTimeMillis() - startTime;
+                            log.info("请求接口耗时: " + offset);
                             if (offset < 5000L) {
                                 TimeUnit.MILLISECONDS.sleep(5000L - offset);
                             }
