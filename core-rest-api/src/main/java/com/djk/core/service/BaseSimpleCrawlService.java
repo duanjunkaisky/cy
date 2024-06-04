@@ -73,7 +73,7 @@ abstract class BaseSimpleCrawlService implements CrawlService {
 
     @Override
     public void addLog(Boolean addDataId, String businessName, String stepName, String msg, QueryRouteVo queryRouteVo) {
-        Long lastTimePoint = queryRouteVo.getLastTimePoint();
+        Long lastTimePoint = (Long) redisService.get(REDIS_DATABASE + ":tmp:lastTimePoint:" + queryRouteVo.getLogId());
         long timePoint = System.currentTimeMillis();
         CrawlRequestLog requestLog = new CrawlRequestLog();
         requestLog.setLogId(queryRouteVo.getLogId());
@@ -82,7 +82,7 @@ abstract class BaseSimpleCrawlService implements CrawlService {
         requestLog.setSpotId(queryRouteVo.getSpotId());
         requestLog.setBusinessName(businessName);
         requestLog.setTimePoint(timePoint);
-        queryRouteVo.setLastTimePoint(timePoint);
+        redisService.set(REDIS_DATABASE + ":tmp:lastTimePoint:" + queryRouteVo.getLogId(), timePoint, 360L);
         if (null != lastTimePoint) {
             requestLog.setOffsetTime(timePoint - lastTimePoint);
         }
