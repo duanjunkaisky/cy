@@ -201,6 +201,10 @@ public class ConsumerPull implements CommandLineRunner {
         log.info("清除crawl_request_status 5天前的数据");
         String delSql = "delete from crawl_request_status where ( UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(create_time) ) / (60*60)  > (24*5)";
         customDao.executeSql(delSql);
+
+        log.info("清除crawl_request_log 5天前的数据");
+        String delSqlLog = "delete from crawl_request_log where ( " + System.currentTimeMillis() + " - time_point ) / (60*60*1000)  > (24*5)";
+        customDao.executeSql(delSqlLog);
     }
 
     /**
