@@ -3175,6 +3175,66 @@ public class ProductInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andDpDeptIdIsNull() {
+            addCriterion("dp_dept_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDpDeptIdIsNotNull() {
+            addCriterion("dp_dept_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDpDeptIdEqualTo(Long value) {
+            addCriterion("dp_dept_id =", value, "dpDeptId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDpDeptIdNotEqualTo(Long value) {
+            addCriterion("dp_dept_id <>", value, "dpDeptId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDpDeptIdGreaterThan(Long value) {
+            addCriterion("dp_dept_id >", value, "dpDeptId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDpDeptIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("dp_dept_id >=", value, "dpDeptId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDpDeptIdLessThan(Long value) {
+            addCriterion("dp_dept_id <", value, "dpDeptId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDpDeptIdLessThanOrEqualTo(Long value) {
+            addCriterion("dp_dept_id <=", value, "dpDeptId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDpDeptIdIn(List<Long> values) {
+            addCriterion("dp_dept_id in", values, "dpDeptId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDpDeptIdNotIn(List<Long> values) {
+            addCriterion("dp_dept_id not in", values, "dpDeptId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDpDeptIdBetween(Long value1, Long value2) {
+            addCriterion("dp_dept_id between", value1, value2, "dpDeptId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDpDeptIdNotBetween(Long value1, Long value2) {
+            addCriterion("dp_dept_id not between", value1, value2, "dpDeptId");
+            return (Criteria) this;
+        }
+
         public Criteria andCreatorIsNull() {
             addCriterion("creator is null");
             return (Criteria) this;

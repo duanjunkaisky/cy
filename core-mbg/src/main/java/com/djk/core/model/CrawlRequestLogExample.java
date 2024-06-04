@@ -625,6 +625,66 @@ public class CrawlRequestLogExample {
             return (Criteria) this;
         }
 
+        public Criteria andOffsetTimeIsNull() {
+            addCriterion("offset_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOffsetTimeIsNotNull() {
+            addCriterion("offset_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOffsetTimeEqualTo(Long value) {
+            addCriterion("offset_time =", value, "offsetTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOffsetTimeNotEqualTo(Long value) {
+            addCriterion("offset_time <>", value, "offsetTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOffsetTimeGreaterThan(Long value) {
+            addCriterion("offset_time >", value, "offsetTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOffsetTimeGreaterThanOrEqualTo(Long value) {
+            addCriterion("offset_time >=", value, "offsetTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOffsetTimeLessThan(Long value) {
+            addCriterion("offset_time <", value, "offsetTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOffsetTimeLessThanOrEqualTo(Long value) {
+            addCriterion("offset_time <=", value, "offsetTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOffsetTimeIn(List<Long> values) {
+            addCriterion("offset_time in", values, "offsetTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOffsetTimeNotIn(List<Long> values) {
+            addCriterion("offset_time not in", values, "offsetTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOffsetTimeBetween(Long value1, Long value2) {
+            addCriterion("offset_time between", value1, value2, "offsetTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andOffsetTimeNotBetween(Long value1, Long value2) {
+            addCriterion("offset_time not between", value1, value2, "offsetTime");
+            return (Criteria) this;
+        }
+
         public Criteria andFromPortIsNull() {
             addCriterion("from_port is null");
             return (Criteria) this;

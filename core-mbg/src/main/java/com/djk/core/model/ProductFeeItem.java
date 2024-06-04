@@ -30,7 +30,7 @@ public class ProductFeeItem implements Serializable {
     @ApiModelProperty(value = "来源，字典配置（1.船司/2.自建）")
     private Integer feeSource;
 
-    @ApiModelProperty(value = "费用类型 1海运费，2附加费，3其他费用，4亏仓费，5目的港费用")
+    @ApiModelProperty(value = "费用类型 1海运费，2附加费，3其他费用，4亏仓费，5目的港费用，6免用箱费")
     private Integer feeCostType;
 
     @ApiModelProperty(value = "币种 字典配置 1人民币/2美元/3欧元")

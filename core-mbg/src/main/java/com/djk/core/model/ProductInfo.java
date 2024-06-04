@@ -143,6 +143,9 @@ public class ProductInfo implements Serializable {
     @ApiModelProperty(value = "爬虫字段唯一标识")
     private String spotId;
 
+    @ApiModelProperty(value = "数据权限部门字段")
+    private Long dpDeptId;
+
     @ApiModelProperty(value = "创建者")
     private String creator;
 
@@ -537,6 +540,14 @@ public class ProductInfo implements Serializable {
         this.spotId = spotId;
     }
 
+    public Long getDpDeptId() {
+        return dpDeptId;
+    }
+
+    public void setDpDeptId(Long dpDeptId) {
+        this.dpDeptId = dpDeptId;
+    }
+
     public String getCreator() {
         return creator;
     }
@@ -653,6 +664,7 @@ public class ProductInfo implements Serializable {
         sb.append(", approvalComment=").append(approvalComment);
         sb.append(", productLabels=").append(productLabels);
         sb.append(", spotId=").append(spotId);
+        sb.append(", dpDeptId=").append(dpDeptId);
         sb.append(", creator=").append(creator);
         sb.append(", createTime=").append(createTime);
         sb.append(", updater=").append(updater);

@@ -73,13 +73,19 @@ abstract class BaseSimpleCrawlService implements CrawlService {
 
     @Override
     public void addLog(Boolean addDataId, String businessName, String stepName, String msg, QueryRouteVo queryRouteVo) {
+        Long lastTimePoint = queryRouteVo.getLastTimePoint();
+        long timePoint = System.currentTimeMillis();
         CrawlRequestLog requestLog = new CrawlRequestLog();
         requestLog.setLogId(queryRouteVo.getLogId());
         requestLog.setHostCode(queryRouteVo.getHostCode());
         requestLog.setMsg(msg);
         requestLog.setSpotId(queryRouteVo.getSpotId());
         requestLog.setBusinessName(businessName);
-        requestLog.setTimePoint(System.currentTimeMillis());
+        requestLog.setTimePoint(timePoint);
+        queryRouteVo.setLastTimePoint(timePoint);
+        if (null != lastTimePoint) {
+            requestLog.setOffsetTime(timePoint - lastTimePoint);
+        }
         if (null != addDataId && addDataId) {
             Long dataId = redisService.generateId(REDIS_DATABASE + ":tmp:log-dataId:" + queryRouteVo.getLogId(), 360L);
             requestLog.setDataId(dataId);

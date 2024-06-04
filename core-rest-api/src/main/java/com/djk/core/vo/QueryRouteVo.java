@@ -43,5 +43,7 @@ public class QueryRouteVo
 
     private String tokenIp;
 
+    private Long lastTimePoint;
+
     private JSONObject otherData;
 }
