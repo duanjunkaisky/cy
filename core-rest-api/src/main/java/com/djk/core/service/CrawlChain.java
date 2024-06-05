@@ -64,12 +64,12 @@ public class CrawlChain {
                 try {
                     crawlService = (CrawlService) SpringUtil.getBean(queryRouteVo.getBeanName());
                 } catch (Exception e) {
-                    log.error("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getUniqueId() + " - " + queryRouteVo.getHostCode() + "未提供服务");
+                    log.error("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + queryRouteVo.getHostCode() + "未提供服务");
                 }
                 if (null == crawlService) {
                     addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", queryRouteVo.getHostCode() + "未提供服务", queryRouteVo);
                     str += "0";
-                    log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getUniqueId() + " - " + str);
+                    log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + str);
                 } else {
                     BaseShippingCompany baseShippingCompany = crawlService.getShipCompany(queryRouteVo.getHostCode());
                     BasePort fromPort = crawlService.getFromPort(queryRouteVo);
@@ -98,7 +98,7 @@ public class CrawlChain {
 
                     addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", null, queryRouteVo);
 
-                    log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getUniqueId() + " - " + str);
+                    log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + str);
 
                     crawlRequestStatusExample = new CrawlRequestStatusExample();
                     crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId());
@@ -108,7 +108,7 @@ public class CrawlChain {
                                 .filter(item -> item.getStatus() <= Constant.CRAWL_STATUS.RUNNING.ordinal())
                                 .collect(Collectors.toList());
                         if (null == mergeList || mergeList.isEmpty()) {
-                            log.info("---> " + queryRouteVo.getSpotId() + " - 本次请求爬取结束! - " + queryRouteVo.getUniqueId());
+                            log.info("---> " + queryRouteVo.getSpotId() + " - 本次请求爬取结束! - " + queryRouteVo.getLogId());
                         }
                     }
                 }
@@ -130,7 +130,7 @@ public class CrawlChain {
 
                 ConsumerPull.currentJobs.remove(queryRouteVo.getSpotId() + queryRouteVo.getHostCode());
             }
-            return "---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getHostCode() + " - " + queryRouteVo.getUniqueId() + " -> 0";
+            return "---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getHostCode() + " - " + queryRouteVo.getLogId() + " -> 0";
         });
     }
 
