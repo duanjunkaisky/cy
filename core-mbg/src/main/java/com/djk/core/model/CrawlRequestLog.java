@@ -25,10 +25,7 @@ public class CrawlRequestLog implements Serializable {
     @ApiModelProperty(value = "步骤名称")
     private String stepName;
 
-    @ApiModelProperty(value = "当前步骤执行的时间点")
-    private Long timePoint;
-
-    @ApiModelProperty(value = "与上一步的时间差(毫秒)")
+    @ApiModelProperty(value = "与上一步的时间差(单位:毫秒)")
     private Long offsetTime;
 
     @ApiModelProperty(value = "出发港口代码")
@@ -42,6 +39,9 @@ public class CrawlRequestLog implements Serializable {
 
     @ApiModelProperty(value = "网站简码")
     private String hostCode;
+
+    @ApiModelProperty(value = "当前步骤执行的时间点")
+    private Long timePoint;
 
     @ApiModelProperty(value = "创建时间")
     private Date createTime;
@@ -110,14 +110,6 @@ public class CrawlRequestLog implements Serializable {
         this.stepName = stepName;
     }
 
-    public Long getTimePoint() {
-        return timePoint;
-    }
-
-    public void setTimePoint(Long timePoint) {
-        this.timePoint = timePoint;
-    }
-
     public Long getOffsetTime() {
         return offsetTime;
     }
@@ -158,6 +150,14 @@ public class CrawlRequestLog implements Serializable {
         this.hostCode = hostCode;
     }
 
+    public Long getTimePoint() {
+        return timePoint;
+    }
+
+    public void setTimePoint(Long timePoint) {
+        this.timePoint = timePoint;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -195,12 +195,12 @@ public class CrawlRequestLog implements Serializable {
         sb.append(", businessName=").append(businessName);
         sb.append(", stepNum=").append(stepNum);
         sb.append(", stepName=").append(stepName);
-        sb.append(", timePoint=").append(timePoint);
         sb.append(", offsetTime=").append(offsetTime);
         sb.append(", fromPort=").append(fromPort);
         sb.append(", toPort=").append(toPort);
         sb.append(", departureDate=").append(departureDate);
         sb.append(", hostCode=").append(hostCode);
+        sb.append(", timePoint=").append(timePoint);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", msg=").append(msg);

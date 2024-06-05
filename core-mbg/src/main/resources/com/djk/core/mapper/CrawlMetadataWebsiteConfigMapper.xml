@@ -9,7 +9,7 @@
     <result column="expire_time" jdbcType="BIGINT" property="expireTime" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="deploy_ip" jdbcType="VARCHAR" property="deployIp" />
+    <result column="account_name" jdbcType="VARCHAR" property="accountName" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.djk.core.model.CrawlMetadataWebsiteConfig">
     <result column="token" jdbcType="LONGVARCHAR" property="token" />
@@ -73,7 +73,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, host_name, host_code, time_point, expire_time, create_time, update_time, deploy_ip
+    id, host_name, host_code, time_point, expire_time, create_time, update_time, account_name
   </sql>
   <sql id="Blob_Column_List">
     token
@@ -129,11 +129,11 @@
   <insert id="insert" parameterType="com.djk.core.model.CrawlMetadataWebsiteConfig">
     insert into crawl_metadata_website_config (id, host_name, host_code, 
       time_point, expire_time, create_time, 
-      update_time, deploy_ip, token
+      update_time, account_name, token
       )
     values (#{id,jdbcType=BIGINT}, #{hostName,jdbcType=VARCHAR}, #{hostCode,jdbcType=VARCHAR}, 
       #{timePoint,jdbcType=BIGINT}, #{expireTime,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{deployIp,jdbcType=VARCHAR}, #{token,jdbcType=LONGVARCHAR}
+      #{updateTime,jdbcType=TIMESTAMP}, #{accountName,jdbcType=VARCHAR}, #{token,jdbcType=LONGVARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.djk.core.model.CrawlMetadataWebsiteConfig">
@@ -160,8 +160,8 @@
       <if test="updateTime != null">
         update_time,
       </if>
-      <if test="deployIp != null">
-        deploy_ip,
+      <if test="accountName != null">
+        account_name,
       </if>
       <if test="token != null">
         token,
@@ -189,8 +189,8 @@
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="deployIp != null">
-        #{deployIp,jdbcType=VARCHAR},
+      <if test="accountName != null">
+        #{accountName,jdbcType=VARCHAR},
       </if>
       <if test="token != null">
         #{token,jdbcType=LONGVARCHAR},
@@ -227,8 +227,8 @@
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.deployIp != null">
-        deploy_ip = #{record.deployIp,jdbcType=VARCHAR},
+      <if test="record.accountName != null">
+        account_name = #{record.accountName,jdbcType=VARCHAR},
       </if>
       <if test="record.token != null">
         token = #{record.token,jdbcType=LONGVARCHAR},
@@ -247,7 +247,7 @@
       expire_time = #{record.expireTime,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      deploy_ip = #{record.deployIp,jdbcType=VARCHAR},
+      account_name = #{record.accountName,jdbcType=VARCHAR},
       token = #{record.token,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -262,7 +262,7 @@
       expire_time = #{record.expireTime,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      deploy_ip = #{record.deployIp,jdbcType=VARCHAR}
+      account_name = #{record.accountName,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -288,8 +288,8 @@
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="deployIp != null">
-        deploy_ip = #{deployIp,jdbcType=VARCHAR},
+      <if test="accountName != null">
+        account_name = #{accountName,jdbcType=VARCHAR},
       </if>
       <if test="token != null">
         token = #{token,jdbcType=LONGVARCHAR},
@@ -305,7 +305,7 @@
       expire_time = #{expireTime,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      deploy_ip = #{deployIp,jdbcType=VARCHAR},
+      account_name = #{accountName,jdbcType=VARCHAR},
       token = #{token,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -317,20 +317,20 @@
       expire_time = #{expireTime,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      deploy_ip = #{deployIp,jdbcType=VARCHAR}
+      account_name = #{accountName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <insert id="batchInsert">
     <if test="items.get(0) != null">
             insert into crawl_metadata_website_config  (id, host_name, host_code, 
         time_point, expire_time, create_time, 
-        update_time, deploy_ip, token
+        update_time, account_name, token
         )
       values
       <foreach collection="items" item="item" index="index" separator=",">
       (#{item.id,jdbcType=BIGINT}, #{item.hostName,jdbcType=VARCHAR}, #{item.hostCode,jdbcType=VARCHAR}, 
         #{item.timePoint,jdbcType=BIGINT}, #{item.expireTime,jdbcType=BIGINT}, #{item.createTime,jdbcType=TIMESTAMP}, 
-        #{item.updateTime,jdbcType=TIMESTAMP}, #{item.deployIp,jdbcType=VARCHAR}, #{item.token,jdbcType=LONGVARCHAR}
+        #{item.updateTime,jdbcType=TIMESTAMP}, #{item.accountName,jdbcType=VARCHAR}, #{item.token,jdbcType=LONGVARCHAR}
         )
       </foreach>
     </if>

@@ -44,5 +44,6 @@
         <table tableName="product_fee_item"></table>
         <table tableName="base_port"></table>
         <table tableName="base_shipping_company"></table>
+        <table tableName="trade_spider_control"></table>
     </context>
 </generatorConfiguration>

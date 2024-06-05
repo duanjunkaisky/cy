@@ -545,73 +545,73 @@ public class CrawlMetadataWebsiteConfigExample {
             return (Criteria) this;
         }
 
-        public Criteria andDeployIpIsNull() {
-            addCriterion("deploy_ip is null");
+        public Criteria andAccountNameIsNull() {
+            addCriterion("account_name is null");
             return (Criteria) this;
         }
 
-        public Criteria andDeployIpIsNotNull() {
-            addCriterion("deploy_ip is not null");
+        public Criteria andAccountNameIsNotNull() {
+            addCriterion("account_name is not null");
             return (Criteria) this;
         }
 
-        public Criteria andDeployIpEqualTo(String value) {
-            addCriterion("deploy_ip =", value, "deployIp");
+        public Criteria andAccountNameEqualTo(String value) {
+            addCriterion("account_name =", value, "accountName");
             return (Criteria) this;
         }
 
-        public Criteria andDeployIpNotEqualTo(String value) {
-            addCriterion("deploy_ip <>", value, "deployIp");
+        public Criteria andAccountNameNotEqualTo(String value) {
+            addCriterion("account_name <>", value, "accountName");
             return (Criteria) this;
         }
 
-        public Criteria andDeployIpGreaterThan(String value) {
-            addCriterion("deploy_ip >", value, "deployIp");
+        public Criteria andAccountNameGreaterThan(String value) {
+            addCriterion("account_name >", value, "accountName");
             return (Criteria) this;
         }
 
-        public Criteria andDeployIpGreaterThanOrEqualTo(String value) {
-            addCriterion("deploy_ip >=", value, "deployIp");
+        public Criteria andAccountNameGreaterThanOrEqualTo(String value) {
+            addCriterion("account_name >=", value, "accountName");
             return (Criteria) this;
         }
 
-        public Criteria andDeployIpLessThan(String value) {
-            addCriterion("deploy_ip <", value, "deployIp");
+        public Criteria andAccountNameLessThan(String value) {
+            addCriterion("account_name <", value, "accountName");
             return (Criteria) this;
         }
 
-        public Criteria andDeployIpLessThanOrEqualTo(String value) {
-            addCriterion("deploy_ip <=", value, "deployIp");
+        public Criteria andAccountNameLessThanOrEqualTo(String value) {
+            addCriterion("account_name <=", value, "accountName");
             return (Criteria) this;
         }
 
-        public Criteria andDeployIpLike(String value) {
-            addCriterion("deploy_ip like", value, "deployIp");
+        public Criteria andAccountNameLike(String value) {
+            addCriterion("account_name like", value, "accountName");
             return (Criteria) this;
         }
 
-        public Criteria andDeployIpNotLike(String value) {
-            addCriterion("deploy_ip not like", value, "deployIp");
+        public Criteria andAccountNameNotLike(String value) {
+            addCriterion("account_name not like", value, "accountName");
             return (Criteria) this;
         }
 
-        public Criteria andDeployIpIn(List<String> values) {
-            addCriterion("deploy_ip in", values, "deployIp");
+        public Criteria andAccountNameIn(List<String> values) {
+            addCriterion("account_name in", values, "accountName");
             return (Criteria) this;
         }
 
-        public Criteria andDeployIpNotIn(List<String> values) {
-            addCriterion("deploy_ip not in", values, "deployIp");
+        public Criteria andAccountNameNotIn(List<String> values) {
+            addCriterion("account_name not in", values, "accountName");
             return (Criteria) this;
         }
 
-        public Criteria andDeployIpBetween(String value1, String value2) {
-            addCriterion("deploy_ip between", value1, value2, "deployIp");
+        public Criteria andAccountNameBetween(String value1, String value2) {
+            addCriterion("account_name between", value1, value2, "accountName");
             return (Criteria) this;
         }
 
-        public Criteria andDeployIpNotBetween(String value1, String value2) {
-            addCriterion("deploy_ip not between", value1, value2, "deployIp");
+        public Criteria andAccountNameNotBetween(String value1, String value2) {
+            addCriterion("account_name not between", value1, value2, "accountName");
             return (Criteria) this;
         }
     }

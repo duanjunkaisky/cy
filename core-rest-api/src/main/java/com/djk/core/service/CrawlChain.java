@@ -32,7 +32,6 @@ import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
 @Component
 @Data
 @Slf4j
-@ConfigurationProperties(prefix = "crawl")
 public class CrawlChain {
     public static ListeningExecutorService EXECUTOR_SERVICE = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(99));
 
@@ -41,8 +40,6 @@ public class CrawlChain {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
-
-    private List<String> target;
 
     @Autowired
     CrawlMetadataWebsiteConfigMapper crawlMetadataWebsiteConfigMapper;
@@ -58,48 +55,60 @@ public class CrawlChain {
 
     @Async("asyncServiceExecutor")
     public void doBusiness(QueryRouteVo queryRouteVo) {
-        CrawlService crawlService = (CrawlService) SpringUtil.getBean(queryRouteVo.getBeanName());
-
-        BaseShippingCompany baseShippingCompany = crawlService.getShipCompany(queryRouteVo.getHostCode());
-        BasePort fromPort = crawlService.getFromPort(queryRouteVo);
-        BasePort toPort = crawlService.getToPort(queryRouteVo);
-
-        crawlService.flagDelData(queryRouteVo, baseShippingCompany.getId());
 
         EXECUTOR_SERVICE.submit(() -> {
+            CrawlService crawlService = null;
+            String str = queryRouteVo.getHostCode() + " -> ";
             try {
-                CrawlRequestStatus requestStatus = new CrawlRequestStatus();
-                CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
+                try {
+                    crawlService = (CrawlService) SpringUtil.getBean(queryRouteVo.getBeanName());
+                } catch (Exception e) {
+                    log.error("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + queryRouteVo.getBeanName() + "未提供服务");
+                }
+                if (null == crawlService) {
+                    crawlService.addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", queryRouteVo.getBeanName() + "未提供服务", queryRouteVo);
+                    str += "0";
+                    log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + str);
+                } else {
+                    BaseShippingCompany baseShippingCompany = crawlService.getShipCompany(queryRouteVo.getHostCode());
+                    BasePort fromPort = crawlService.getFromPort(queryRouteVo);
+                    BasePort toPort = crawlService.getToPort(queryRouteVo);
 
-                log.info("开始设置token-ip");
-                crawlService.setTokenIp(queryRouteVo);
-                log.info("成功获取token-ip: " + queryRouteVo.getTokenIp());
+                    crawlService.flagDelData(queryRouteVo, baseShippingCompany.getId());
 
-                crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
-                requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
-                requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
+                    CrawlRequestStatus requestStatus = new CrawlRequestStatus();
+                    CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
 
-                String str = queryRouteVo.getHostCode() + " -> " + crawlService.queryData(baseShippingCompany, fromPort, toPort, queryRouteVo);
+                    log.info("开始绑定本次请求token账号");
+                    crawlService.setTokenAccount(queryRouteVo);
+                    log.info("本次请求token账号: " + queryRouteVo.getAccountName());
 
-                crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
-                requestStatus = new CrawlRequestStatus();
-                requestStatus.setEndTime(System.currentTimeMillis());
-                requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
-                requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
+                    crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
+                    requestStatus.setStatus(Constant.CRAWL_STATUS.RUNNING.ordinal());
+                    requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
 
-                crawlService.addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", null, queryRouteVo);
+                    str += crawlService.queryData(baseShippingCompany, fromPort, toPort, queryRouteVo);
 
-                log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + str);
+                    crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
+                    requestStatus = new CrawlRequestStatus();
+                    requestStatus.setEndTime(System.currentTimeMillis());
+                    requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
+                    requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
 
-                crawlRequestStatusExample = new CrawlRequestStatusExample();
-                crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId());
-                List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
-                if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
-                    List<CrawlRequestStatus> mergeList = crawlRequestStatuses.stream()
-                            .filter(item -> item.getStatus() <= Constant.CRAWL_STATUS.RUNNING.ordinal())
-                            .collect(Collectors.toList());
-                    if (null == mergeList || mergeList.isEmpty()) {
-                        log.info("---> " + queryRouteVo.getSpotId() + " - 本次请求爬取结束! - " + queryRouteVo.getLogId());
+                    crawlService.addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", null, queryRouteVo);
+
+                    log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + str);
+
+                    crawlRequestStatusExample = new CrawlRequestStatusExample();
+                    crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId());
+                    List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
+                    if (null != crawlRequestStatuses && !crawlRequestStatuses.isEmpty()) {
+                        List<CrawlRequestStatus> mergeList = crawlRequestStatuses.stream()
+                                .filter(item -> item.getStatus() <= Constant.CRAWL_STATUS.RUNNING.ordinal())
+                                .collect(Collectors.toList());
+                        if (null == mergeList || mergeList.isEmpty()) {
+                            log.info("---> " + queryRouteVo.getSpotId() + " - 本次请求爬取结束! - " + queryRouteVo.getLogId());
+                        }
                     }
                 }
                 return str;

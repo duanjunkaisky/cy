@@ -63,7 +63,7 @@ public interface CrawlService
      *
      * @param queryRouteVo
      */
-    void setTokenIp(QueryRouteVo queryRouteVo);
+    void setTokenAccount(QueryRouteVo queryRouteVo);
 
     /**
      * 标记需要删除的数据

@@ -140,7 +140,7 @@ abstract class BaseSimpleCrawlService implements CrawlService {
 
     public JSONObject getToken(QueryRouteVo queryRouteVo) {
         CrawlMetadataWebsiteConfigExample crawlMetadataWebsiteConfigExample = new CrawlMetadataWebsiteConfigExample();
-        crawlMetadataWebsiteConfigExample.createCriteria().andHostCodeEqualTo(queryRouteVo.getHostCode().toLowerCase()).andDeployIpEqualTo(queryRouteVo.getTokenIp());
+        crawlMetadataWebsiteConfigExample.createCriteria().andHostCodeEqualTo(queryRouteVo.getHostCode().toLowerCase()).andAccountNameEqualTo(queryRouteVo.getAccountName());
         List<CrawlMetadataWebsiteConfig> crawlMetadataWebsiteConfigs = crawlMetadataWebsiteConfigMapper.selectByExampleWithBLOBs(crawlMetadataWebsiteConfigExample);
 
         CrawlMetadataWebsiteConfig crawlMetadataWebsiteConfig = crawlMetadataWebsiteConfigs.get(0);
@@ -226,11 +226,11 @@ abstract class BaseSimpleCrawlService implements CrawlService {
     }
 
     @Override
-    public void setTokenIp(QueryRouteVo queryRouteVo) {
+    public void setTokenAccount(QueryRouteVo queryRouteVo) {
         long start = System.currentTimeMillis();
         Loop:
         //30秒内循环获取有效token
-        while (StringUtils.isEmpty(queryRouteVo.getTokenIp()) && System.currentTimeMillis() - start <= 30 * 1000L) {
+        while (StringUtils.isEmpty(queryRouteVo.getAccountName()) && System.currentTimeMillis() - start <= 30 * 1000L) {
             CrawlMetadataWebsiteConfigExample crawlMetadataWebsiteConfigExample = new CrawlMetadataWebsiteConfigExample();
             crawlMetadataWebsiteConfigExample.createCriteria().andHostCodeEqualTo(queryRouteVo.getHostCode().toLowerCase());
             List<CrawlMetadataWebsiteConfig> crawlMetadataWebsiteConfigs = crawlMetadataWebsiteConfigMapper.selectByExampleWithBLOBs(crawlMetadataWebsiteConfigExample);
@@ -242,10 +242,10 @@ abstract class BaseSimpleCrawlService implements CrawlService {
                 CrawlMetadataWebsiteConfig crawlMetadataWebsiteConfig = crawlMetadataWebsiteConfigs.get(i);
                 //token有效时间为距离当前时间30秒
                 if (System.currentTimeMillis() - crawlMetadataWebsiteConfig.getTimePoint() < 30 * 1000L) {
-                    Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:token-busy:" + crawlMetadataWebsiteConfig.getDeployIp(), 1, 300, TimeUnit.SECONDS);
+                    Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:token-busy:" + crawlMetadataWebsiteConfig.getAccountName(), 1, 300, TimeUnit.SECONDS);
                     if (aBoolean) {
-                        redisService.set(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getLogId(), crawlMetadataWebsiteConfig.getDeployIp(), 300L);
-                        queryRouteVo.setTokenIp(crawlMetadataWebsiteConfig.getDeployIp());
+                        redisService.set(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getLogId(), crawlMetadataWebsiteConfig.getAccountName(), 300L);
+                        queryRouteVo.setAccountName(crawlMetadataWebsiteConfig.getAccountName());
                         break Loop;
                     }
                 }
@@ -257,7 +257,7 @@ abstract class BaseSimpleCrawlService implements CrawlService {
             }
         }
 
-        if (StringUtils.isEmpty(queryRouteVo.getTokenIp())) {
+        if (StringUtils.isEmpty(queryRouteVo.getAccountName())) {
             throw new RuntimeException("30秒内未得到token");
         }
     }

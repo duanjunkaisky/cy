@@ -41,7 +41,9 @@ public class QueryRouteVo
 
     private String logId;
 
-    private String tokenIp;
+    private String accountName;
+
+    private Long maxExistTime;
 
     private JSONObject otherData;
 }

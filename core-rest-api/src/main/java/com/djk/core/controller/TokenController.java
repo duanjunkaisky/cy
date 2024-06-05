@@ -36,18 +36,18 @@ public class TokenController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
     public CommonResult update(@RequestBody CrawlMetadataWebsiteConfig metadataWebsiteConfig) {
-        String deployIp = metadataWebsiteConfig.getDeployIp();
-        if (StringUtils.isEmpty(deployIp)) {
-            return CommonResult.failed("插件参数[ip]未设置");
+        String accountName = metadataWebsiteConfig.getAccountName();
+        if (StringUtils.isEmpty(accountName)) {
+            return CommonResult.failed("插件参数[登陆账号]未设置");
         }
         CrawlMetadataWebsiteConfigExample metadataWebsiteConfigExample = new CrawlMetadataWebsiteConfigExample();
         metadataWebsiteConfigExample
                 .createCriteria()
                 .andHostCodeEqualTo(metadataWebsiteConfig.getHostCode())
-                .andDeployIpEqualTo(metadataWebsiteConfig.getDeployIp());
+                .andAccountNameEqualTo(metadataWebsiteConfig.getAccountName());
         List<CrawlMetadataWebsiteConfig> crawlMetadataWebsiteConfigs = metadataWebsiteConfigMapper.selectByExample(metadataWebsiteConfigExample);
         if (null == crawlMetadataWebsiteConfigs || crawlMetadataWebsiteConfigs.isEmpty()) {
-            return CommonResult.failed("插件参数[ip]未授权,请联系管理员添加ip配置");
+            return CommonResult.failed("插件参数[登陆账号]未授权,请联系管理员添加配置");
         }
         if (crawlMetadataWebsiteConfigs.size() > 1) {
             for (int i = 1; i < crawlMetadataWebsiteConfigs.size(); i++) {

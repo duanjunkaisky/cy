@@ -24,8 +24,8 @@ public class CrawlMetadataWebsiteConfig implements Serializable {
     @ApiModelProperty(value = "最后更新时间")
     private Date updateTime;
 
-    @ApiModelProperty(value = "爬虫程序部署的机器ip，该字段用来应对多机器同时爬数")
-    private String deployIp;
+    @ApiModelProperty(value = "账号")
+    private String accountName;
 
     @ApiModelProperty(value = "网站登录后的授权码")
     private String token;
@@ -88,12 +88,12 @@ public class CrawlMetadataWebsiteConfig implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public String getDeployIp() {
-        return deployIp;
+    public String getAccountName() {
+        return accountName;
     }
 
-    public void setDeployIp(String deployIp) {
-        this.deployIp = deployIp;
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
     }
 
     public String getToken() {
@@ -117,7 +117,7 @@ public class CrawlMetadataWebsiteConfig implements Serializable {
         sb.append(", expireTime=").append(expireTime);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
-        sb.append(", deployIp=").append(deployIp);
+        sb.append(", accountName=").append(accountName);
         sb.append(", token=").append(token);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");

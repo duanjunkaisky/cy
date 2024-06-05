@@ -565,66 +565,6 @@ public class CrawlRequestLogExample {
             return (Criteria) this;
         }
 
-        public Criteria andTimePointIsNull() {
-            addCriterion("time_point is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTimePointIsNotNull() {
-            addCriterion("time_point is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTimePointEqualTo(Long value) {
-            addCriterion("time_point =", value, "timePoint");
-            return (Criteria) this;
-        }
-
-        public Criteria andTimePointNotEqualTo(Long value) {
-            addCriterion("time_point <>", value, "timePoint");
-            return (Criteria) this;
-        }
-
-        public Criteria andTimePointGreaterThan(Long value) {
-            addCriterion("time_point >", value, "timePoint");
-            return (Criteria) this;
-        }
-
-        public Criteria andTimePointGreaterThanOrEqualTo(Long value) {
-            addCriterion("time_point >=", value, "timePoint");
-            return (Criteria) this;
-        }
-
-        public Criteria andTimePointLessThan(Long value) {
-            addCriterion("time_point <", value, "timePoint");
-            return (Criteria) this;
-        }
-
-        public Criteria andTimePointLessThanOrEqualTo(Long value) {
-            addCriterion("time_point <=", value, "timePoint");
-            return (Criteria) this;
-        }
-
-        public Criteria andTimePointIn(List<Long> values) {
-            addCriterion("time_point in", values, "timePoint");
-            return (Criteria) this;
-        }
-
-        public Criteria andTimePointNotIn(List<Long> values) {
-            addCriterion("time_point not in", values, "timePoint");
-            return (Criteria) this;
-        }
-
-        public Criteria andTimePointBetween(Long value1, Long value2) {
-            addCriterion("time_point between", value1, value2, "timePoint");
-            return (Criteria) this;
-        }
-
-        public Criteria andTimePointNotBetween(Long value1, Long value2) {
-            addCriterion("time_point not between", value1, value2, "timePoint");
-            return (Criteria) this;
-        }
-
         public Criteria andOffsetTimeIsNull() {
             addCriterion("offset_time is null");
             return (Criteria) this;
@@ -962,6 +902,66 @@ public class CrawlRequestLogExample {
 
         public Criteria andHostCodeNotBetween(String value1, String value2) {
             addCriterion("host_code not between", value1, value2, "hostCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimePointIsNull() {
+            addCriterion("time_point is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimePointIsNotNull() {
+            addCriterion("time_point is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimePointEqualTo(Long value) {
+            addCriterion("time_point =", value, "timePoint");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimePointNotEqualTo(Long value) {
+            addCriterion("time_point <>", value, "timePoint");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimePointGreaterThan(Long value) {
+            addCriterion("time_point >", value, "timePoint");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimePointGreaterThanOrEqualTo(Long value) {
+            addCriterion("time_point >=", value, "timePoint");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimePointLessThan(Long value) {
+            addCriterion("time_point <", value, "timePoint");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimePointLessThanOrEqualTo(Long value) {
+            addCriterion("time_point <=", value, "timePoint");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimePointIn(List<Long> values) {
+            addCriterion("time_point in", values, "timePoint");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimePointNotIn(List<Long> values) {
+            addCriterion("time_point not in", values, "timePoint");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimePointBetween(Long value1, Long value2) {
+            addCriterion("time_point between", value1, value2, "timePoint");
+            return (Criteria) this;
+        }
+
+        public Criteria andTimePointNotBetween(Long value1, Long value2) {
+            addCriterion("time_point not between", value1, value2, "timePoint");
             return (Criteria) this;
         }
 

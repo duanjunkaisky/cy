@@ -8,6 +8,7 @@ import com.djk.core.dao.CustomDao;
 import com.djk.core.mapper.BasePortMapper;
 import com.djk.core.mapper.CrawlMetadataWebsiteConfigMapper;
 import com.djk.core.mapper.CrawlRequestStatusMapper;
+import com.djk.core.mapper.TradeSpiderControlMapper;
 import com.djk.core.model.*;
 import com.djk.core.mq.ConsumerPull;
 import com.djk.core.service.*;
@@ -81,6 +82,9 @@ public class ApiController {
     @Autowired
     BasePortMapper basePortMapper;
 
+    @Autowired
+    TradeSpiderControlMapper controlMapper;
+
     /**
      * @param queryRouteVo
      * @return {@link CommonResult}
@@ -99,10 +103,24 @@ public class ApiController {
 
         queryRouteVo.setStartTime(System.currentTimeMillis());
         queryRouteVo.setSpotId(coscoCrawlService.createSpotId(queryRouteVo, queryRouteVo.getContainerType()));
-        for (String beanName : target) {
+
+        TradeSpiderControlExample tradeSpiderControlExample = new TradeSpiderControlExample();
+        tradeSpiderControlExample.createCriteria().andStatusEqualTo((byte) 0);
+        List<TradeSpiderControl> tradeSpiderControls = controlMapper.selectByExample(tradeSpiderControlExample);
+        if (null == tradeSpiderControls || tradeSpiderControls.isEmpty()) {
+            return CommonResult.failed("未找到开启的配置");
+        }
+
+        for (TradeSpiderControl control : tradeSpiderControls) {
+            String hostCode = control.getShipownerCode().toLowerCase();
+            String beanName = getServiceName(hostCode);
             queryRouteVo.setBeanName(beanName);
-            String hostCode = getHostCode(beanName);
             queryRouteVo.setHostCode(hostCode);
+            Integer timeIntervalMin = control.getTimeIntervalMin();
+            if (null == timeIntervalMin) {
+                timeIntervalMin = 30;
+            }
+            queryRouteVo.setMaxExistTime(timeIntervalMin.longValue());
 
             queryRouteVo.setLogId(coscoCrawlService.getLogId());
 
@@ -112,7 +130,7 @@ public class ApiController {
             crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId()).andHostCodeEqualTo(queryRouteVo.getHostCode());
             List<CrawlRequestStatus> crawlRequestStatuses = requestStatusMapper.selectByExample(crawlRequestStatusExample);
 
-            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:crawl_" + queryRouteVo.getSpotId() + "_" + queryRouteVo.getHostCode() + "_" + queryRouteVo.getContainerType(), System.currentTimeMillis(), ConsumerPull.FREE_TIME, TimeUnit.MILLISECONDS);
+            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:crawl_" + queryRouteVo.getSpotId() + "_" + queryRouteVo.getHostCode() + "_" + queryRouteVo.getContainerType(), System.currentTimeMillis(), queryRouteVo.getMaxExistTime(), TimeUnit.MINUTES);
 
             if (null == aBoolean || !aBoolean) {
                 coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "已经存在正在爬取的请求，忽略该请求", null, queryRouteVo);
@@ -353,6 +371,12 @@ public class ApiController {
     private static String getHostCode(String beanName) {
         String str = beanName.toLowerCase();
         return str.replaceAll("crawlservicefro", "").replaceAll("impl", "");
+    }
+
+    private static String getServiceName(String hostCode) {
+        hostCode = hostCode.toLowerCase();
+        String serviceName = "crawlServiceFro" + hostCode.substring(0, 1).toUpperCase() + hostCode.substring(1) + "Impl";
+        return serviceName;
     }
 
 }

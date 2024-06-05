@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * @author duanjunkai
  * @date 2024/05/01
  */
-@Service
+//@Service
 @Slf4j
 @Data
 public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements CrawlService
