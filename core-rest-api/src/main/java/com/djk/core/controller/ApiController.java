@@ -252,7 +252,8 @@ public class ApiController {
                         CrawlRequestStatus requestStatus = new CrawlRequestStatus();
                         requestStatus.setId(Long.parseLong(item.get("id")));
                         requestStatus.setStatus(Constant.CRAWL_STATUS.ERROR.ordinal());
-                        requestStatus.setMsg("base_port表未配置coscoCode");
+                        requestStatus.setMsg(Constant.ERROR_MSG_CRAWL);
+                        requestStatus.setStackTrace("base_port表未配置coscoCode");
                         requestStatusMapper.updateByPrimaryKeySelective(requestStatus);
                         return false;
                     }

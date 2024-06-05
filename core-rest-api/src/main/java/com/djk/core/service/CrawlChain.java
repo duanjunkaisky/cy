@@ -67,7 +67,6 @@ public class CrawlChain {
                     log.error("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + queryRouteVo.getHostCode() + "未提供服务");
                 }
                 if (null == crawlService) {
-                    addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", queryRouteVo.getHostCode() + "未提供服务", queryRouteVo);
                     throw new RuntimeException(queryRouteVo.getHostCode() + "未提供服务");
                 } else {
                     BaseShippingCompany baseShippingCompany = crawlService.getShipCompany(queryRouteVo.getHostCode());
@@ -120,7 +119,8 @@ public class CrawlChain {
                 crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(String.valueOf(queryRouteVo.getSpotId())).andHostCodeEqualTo(queryRouteVo.getHostCode());
                 CrawlRequestStatus requestStatus = new CrawlRequestStatus();
                 requestStatus.setStatus(Constant.CRAWL_STATUS.ERROR.ordinal());
-                requestStatus.setMsg(ExceptionUtil.stacktraceToString(e));
+                requestStatus.setMsg(Constant.ERROR_MSG_CRAWL);
+                requestStatus.setStackTrace(ExceptionUtil.stacktraceToString(e));
                 requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
             } finally {
                 String accountName = (String) redisService.get(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getUniqueId());

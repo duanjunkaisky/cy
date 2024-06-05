@@ -226,7 +226,8 @@ public class ConsumerPull implements CommandLineRunner {
                     requestStatus.setStatus(Constant.CRAWL_STATUS.ERROR.ordinal());
                     requestStatus.setEndTime(System.currentTimeMillis());
                     requestStatus.setUseTime(null);
-                    requestStatus.setMsg("爬取超过[" + maxCrawlTime / 1000 + "秒] -> \n" + requestStatus.getRequestParams());
+                    requestStatus.setMsg(Constant.ERROR_MSG_CRAWL);
+                    requestStatus.setStackTrace("爬取超过[" + maxCrawlTime / 1000 + "秒] -> \n" + requestStatus.getRequestParams());
                     requestStatusMapper.updateByPrimaryKeyWithBLOBs(requestStatus);
 
                     QueryRouteVo queryRouteVo = JSONObject.parseObject(requestStatus.getRequestParams(), QueryRouteVo.class);

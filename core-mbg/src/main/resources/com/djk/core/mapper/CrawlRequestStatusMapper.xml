@@ -17,6 +17,7 @@
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.djk.core.model.CrawlRequestStatus">
     <result column="msg" jdbcType="LONGVARCHAR" property="msg" />
+    <result column="stack_trace" jdbcType="LONGVARCHAR" property="stackTrace" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -81,7 +82,7 @@
     host_code, status, create_time, update_time
   </sql>
   <sql id="Blob_Column_List">
-    msg
+    msg, stack_trace
   </sql>
   <select id="selectByExampleWithBLOBs" parameterType="com.djk.core.model.CrawlRequestStatusExample" resultMap="ResultMapWithBLOBs">
     select
@@ -136,12 +137,12 @@
       start_time, end_time, use_time, 
       from_port, to_port, host_code, 
       status, create_time, update_time, 
-      msg)
+      msg, stack_trace)
     values (#{id,jdbcType=BIGINT}, #{spotId,jdbcType=VARCHAR}, #{requestParams,jdbcType=VARCHAR}, 
       #{startTime,jdbcType=BIGINT}, #{endTime,jdbcType=BIGINT}, #{useTime,jdbcType=BIGINT}, 
       #{fromPort,jdbcType=VARCHAR}, #{toPort,jdbcType=VARCHAR}, #{hostCode,jdbcType=VARCHAR}, 
       #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{msg,jdbcType=LONGVARCHAR})
+      #{msg,jdbcType=LONGVARCHAR}, #{stackTrace,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.djk.core.model.CrawlRequestStatus">
     insert into crawl_request_status
@@ -185,6 +186,9 @@
       <if test="msg != null">
         msg,
       </if>
+      <if test="stackTrace != null">
+        stack_trace,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -225,6 +229,9 @@
       </if>
       <if test="msg != null">
         #{msg,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="stackTrace != null">
+        #{stackTrace,jdbcType=LONGVARCHAR},
       </if>
     </trim>
   </insert>
@@ -276,6 +283,9 @@
       <if test="record.msg != null">
         msg = #{record.msg,jdbcType=LONGVARCHAR},
       </if>
+      <if test="record.stackTrace != null">
+        stack_trace = #{record.stackTrace,jdbcType=LONGVARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -295,7 +305,8 @@
       status = #{record.status,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      msg = #{record.msg,jdbcType=LONGVARCHAR}
+      msg = #{record.msg,jdbcType=LONGVARCHAR},
+      stack_trace = #{record.stackTrace,jdbcType=LONGVARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -357,6 +368,9 @@
       <if test="msg != null">
         msg = #{msg,jdbcType=LONGVARCHAR},
       </if>
+      <if test="stackTrace != null">
+        stack_trace = #{stackTrace,jdbcType=LONGVARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -373,7 +387,8 @@
       status = #{status,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      msg = #{msg,jdbcType=LONGVARCHAR}
+      msg = #{msg,jdbcType=LONGVARCHAR},
+      stack_trace = #{stackTrace,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.djk.core.model.CrawlRequestStatus">
@@ -397,14 +412,14 @@
         start_time, end_time, use_time, 
         from_port, to_port, host_code, 
         status, create_time, update_time, 
-        msg)
+        msg, stack_trace)
       values
       <foreach collection="items" item="item" index="index" separator=",">
       (#{item.id,jdbcType=BIGINT}, #{item.spotId,jdbcType=VARCHAR}, #{item.requestParams,jdbcType=VARCHAR}, 
         #{item.startTime,jdbcType=BIGINT}, #{item.endTime,jdbcType=BIGINT}, #{item.useTime,jdbcType=BIGINT}, 
         #{item.fromPort,jdbcType=VARCHAR}, #{item.toPort,jdbcType=VARCHAR}, #{item.hostCode,jdbcType=VARCHAR}, 
         #{item.status,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP}, 
-        #{item.msg,jdbcType=LONGVARCHAR})
+        #{item.msg,jdbcType=LONGVARCHAR}, #{item.stackTrace,jdbcType=LONGVARCHAR})
       </foreach>
     </if>
   </insert>

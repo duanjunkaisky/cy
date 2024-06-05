@@ -43,6 +43,8 @@ public class CrawlRequestStatus implements Serializable {
     @ApiModelProperty(value = "出错信息")
     private String msg;
 
+    private String stackTrace;
+
     private static final long serialVersionUID = 1L;
 
     public Long getId() {
@@ -149,6 +151,14 @@ public class CrawlRequestStatus implements Serializable {
         this.msg = msg;
     }
 
+    public String getStackTrace() {
+        return stackTrace;
+    }
+
+    public void setStackTrace(String stackTrace) {
+        this.stackTrace = stackTrace;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -168,6 +178,7 @@ public class CrawlRequestStatus implements Serializable {
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", msg=").append(msg);
+        sb.append(", stackTrace=").append(stackTrace);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
