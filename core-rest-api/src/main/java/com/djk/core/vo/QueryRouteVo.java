@@ -41,6 +41,8 @@ public class QueryRouteVo
 
     private String logId;
 
+    private String uniqueId;
+
     private String accountName;
 
     private Long maxExistTime;

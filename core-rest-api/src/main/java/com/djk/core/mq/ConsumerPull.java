@@ -134,7 +134,7 @@ public class ConsumerPull implements CommandLineRunner {
                                             QueryRouteVo queryRouteVo = JSON.parseObject(message.getBody(), QueryRouteVo.class);
 
                                             //10秒内,避免重复消费
-                                            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:unique-consumer:" + queryRouteVo.getLogId() + queryRouteVo.getHostCode() + queryRouteVo.getSpotId(), System.currentTimeMillis(), 10L, TimeUnit.SECONDS);
+                                            Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:unique-consumer:" + queryRouteVo.getUniqueId() + queryRouteVo.getHostCode() + queryRouteVo.getSpotId(), System.currentTimeMillis(), 10L, TimeUnit.SECONDS);
                                             if (aBoolean) {
                                                 crawlServiceFroMsk.addLog(null, BUSINESS_NAME_CRAWL, "消息队列准备受理爬虫请求", null, queryRouteVo);
                                                 try {
@@ -232,9 +232,9 @@ public class ConsumerPull implements CommandLineRunner {
                     QueryRouteVo queryRouteVo = JSONObject.parseObject(requestStatus.getRequestParams(), QueryRouteVo.class);
                     crawlServiceFroMsk.addLog(null, BUSINESS_NAME_CRAWL, "处理超时", null, queryRouteVo);
 
-                    String tokenIp = (String) redisService.get(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getLogId());
-                    redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getLogId());
-                    redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + tokenIp);
+                    String accountName = (String) redisService.get(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getUniqueId());
+                    redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getUniqueId());
+                    redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + accountName);
                 }
             }
         }

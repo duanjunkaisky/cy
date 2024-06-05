@@ -64,12 +64,12 @@ public class CrawlChain {
                 try {
                     crawlService = (CrawlService) SpringUtil.getBean(queryRouteVo.getBeanName());
                 } catch (Exception e) {
-                    log.error("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + queryRouteVo.getHostCode() + "未提供服务");
+                    log.error("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getUniqueId() + " - " + queryRouteVo.getHostCode() + "未提供服务");
                 }
                 if (null == crawlService) {
                     addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", queryRouteVo.getHostCode() + "未提供服务", queryRouteVo);
                     str += "0";
-                    log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + str);
+                    log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getUniqueId() + " - " + str);
                 } else {
                     BaseShippingCompany baseShippingCompany = crawlService.getShipCompany(queryRouteVo.getHostCode());
                     BasePort fromPort = crawlService.getFromPort(queryRouteVo);
@@ -98,7 +98,7 @@ public class CrawlChain {
 
                     addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", null, queryRouteVo);
 
-                    log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + str);
+                    log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getUniqueId() + " - " + str);
 
                     crawlRequestStatusExample = new CrawlRequestStatusExample();
                     crawlRequestStatusExample.createCriteria().andSpotIdEqualTo(queryRouteVo.getSpotId());
@@ -108,7 +108,7 @@ public class CrawlChain {
                                 .filter(item -> item.getStatus() <= Constant.CRAWL_STATUS.RUNNING.ordinal())
                                 .collect(Collectors.toList());
                         if (null == mergeList || mergeList.isEmpty()) {
-                            log.info("---> " + queryRouteVo.getSpotId() + " - 本次请求爬取结束! - " + queryRouteVo.getLogId());
+                            log.info("---> " + queryRouteVo.getSpotId() + " - 本次请求爬取结束! - " + queryRouteVo.getUniqueId());
                         }
                     }
                 }
@@ -124,13 +124,13 @@ public class CrawlChain {
                 requestStatus.setMsg(ExceptionUtil.stacktraceToString(e));
                 requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
             } finally {
-                String tokenIp = (String) redisService.get(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getLogId());
-                redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getLogId());
-                redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + tokenIp);
+                String accountName = (String) redisService.get(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getUniqueId());
+                redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getUniqueId());
+                redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + accountName);
 
                 ConsumerPull.currentJobs.remove(queryRouteVo.getSpotId() + queryRouteVo.getHostCode());
             }
-            return "---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getHostCode() + " - " + queryRouteVo.getLogId() + " -> 0";
+            return "---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getHostCode() + " - " + queryRouteVo.getUniqueId() + " -> 0";
         });
     }
 
@@ -138,7 +138,7 @@ public class CrawlChain {
     CrawlRequestLogMapper logMapper;
 
     public void addLog(Boolean addDataId, String businessName, String stepName, String msg, QueryRouteVo queryRouteVo) {
-        Long lastTimePoint = (Long) redisService.get(REDIS_DATABASE + ":tmp:lastTimePoint:" + queryRouteVo.getLogId());
+        Long lastTimePoint = (Long) redisService.get(REDIS_DATABASE + ":tmp:lastTimePoint:" + queryRouteVo.getUniqueId() );
         long timePoint = System.currentTimeMillis();
         CrawlRequestLog requestLog = new CrawlRequestLog();
         requestLog.setLogId(queryRouteVo.getLogId());
@@ -147,18 +147,18 @@ public class CrawlChain {
         requestLog.setSpotId(queryRouteVo.getSpotId());
         requestLog.setBusinessName(businessName);
         requestLog.setTimePoint(timePoint);
-        redisService.set(REDIS_DATABASE + ":tmp:lastTimePoint:" + queryRouteVo.getLogId(), timePoint, 360L);
+        redisService.set(REDIS_DATABASE + ":tmp:lastTimePoint:" + queryRouteVo.getUniqueId(), timePoint, 360L);
         if (null != lastTimePoint) {
             requestLog.setOffsetTime(timePoint - lastTimePoint);
         }
         if (null != addDataId && addDataId) {
-            Long dataId = redisService.generateId(REDIS_DATABASE + ":tmp:log-dataId:" + queryRouteVo.getLogId(), 360L);
+            Long dataId = redisService.generateId(REDIS_DATABASE + ":tmp:log-dataId:" + queryRouteVo.getUniqueId(), 360L);
             requestLog.setDataId(dataId);
         }
         requestLog.setFromPort(queryRouteVo.getDeparturePortEn());
         requestLog.setToPort(queryRouteVo.getDestinationPortEn());
         requestLog.setStepName(stepName);
-        Long aLong = redisService.generateId(REDIS_DATABASE + ":tmp:log-step-num:" + queryRouteVo.getLogId(), 360L);
+        Long aLong = redisService.generateId(REDIS_DATABASE + ":tmp:log-step-num:" + queryRouteVo.getUniqueId(), 360L);
         requestLog.setStepNum(aLong);
         logMapper.insertSelective(requestLog);
     }

@@ -111,7 +111,6 @@ public class ApiController {
         }
 
         queryRouteVo.setLogId(coscoCrawlService.getLogId());
-
         boolean hasOne = false;
         List<String> hostCodes = new ArrayList<>();
         for (TradeSpiderControl control : tradeSpiderControls) {
@@ -128,6 +127,8 @@ public class ApiController {
                 timeIntervalMin = 30;
             }
             queryRouteVo.setMaxExistTime(timeIntervalMin.longValue());
+
+            queryRouteVo.setUniqueId(coscoCrawlService.getUniqueId());
 
             coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "收到前端请求", null, queryRouteVo);
 
@@ -190,7 +191,7 @@ public class ApiController {
     @ResponseBody
     public CommonResult test(@RequestBody QueryRouteVo queryRouteVo) {
         try {
-            queryRouteVo.setLogId(coscoCrawlService.getLogId());
+            queryRouteVo.setUniqueId(coscoCrawlService.getUniqueId());
             List<String> beanNames = target.stream().filter(item -> item.toLowerCase().contains(queryRouteVo.getHostCode())).collect(Collectors.toList());
             queryRouteVo.setBeanName(beanNames.get(0));
             queryRouteVo.setStartTime(System.currentTimeMillis());
@@ -297,7 +298,7 @@ public class ApiController {
         BasePort fromPort = coscoCrawlService.getFromPort(queryRouteVo);
         BasePort toPort = coscoCrawlService.getToPort(queryRouteVo);
 
-        Long aLong = redisService.generateId(REDIS_DATABASE + ":tmp:log-chrome-data-id:" + queryRouteVo.getLogId(), 360L);
+        Long aLong = redisService.generateId(REDIS_DATABASE + ":tmp:log-chrome-data-id:" + queryRouteVo.getUniqueId(), 360L);
         coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "开始插入数据-" + aLong, null, queryRouteVo);
         coscoCrawlService.queryData(baseShippingCompany, fromPort, toPort, queryRouteVo);
         coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "数据插入完成-" + aLong, null, queryRouteVo);

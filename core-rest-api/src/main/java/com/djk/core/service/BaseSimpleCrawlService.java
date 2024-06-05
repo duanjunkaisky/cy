@@ -121,6 +121,12 @@ abstract class BaseSimpleCrawlService implements CrawlService {
         return "log_uniqueId_" + String.format("%0" + numLength + "d", logId);
     }
 
+    public String getUniqueId() {
+        final int numLength = 18;
+        Long logId = redisService.generateIdCommon("crawl_unique_id");
+        return "log_uniqueId_" + String.format("%0" + numLength + "d", logId);
+    }
+
     public JSONObject getToken(QueryRouteVo queryRouteVo) {
         CrawlMetadataWebsiteConfigExample crawlMetadataWebsiteConfigExample = new CrawlMetadataWebsiteConfigExample();
         crawlMetadataWebsiteConfigExample.createCriteria().andHostCodeEqualTo(queryRouteVo.getHostCode().toLowerCase()).andAccountNameEqualTo(queryRouteVo.getAccountName());
@@ -157,9 +163,9 @@ abstract class BaseSimpleCrawlService implements CrawlService {
 
     @Override
     public void flagDelData(QueryRouteVo queryRouteVo, Long shipId) {
-        redisService.del(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productInfo");
-        redisService.del(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productContainer");
-        redisService.del(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productFeeItem");
+        redisService.del(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getUniqueId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productInfo");
+        redisService.del(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getUniqueId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productContainer");
+        redisService.del(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getUniqueId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productFeeItem");
         List<LinkedHashMap<String, Object>> productInfoIds = new ArrayList<>();
         List<LinkedHashMap<String, Object>> productContainerIds = new ArrayList<>();
         List<LinkedHashMap<String, Object>> productFeeItemIds = new ArrayList<>();
@@ -179,17 +185,17 @@ abstract class BaseSimpleCrawlService implements CrawlService {
             productContainerIds = customDao.queryBySql("select id from product_container where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId);
             productFeeItemIds = customDao.queryBySql("select id from product_fee_item where spot_id='" + queryRouteVo.getSpotId() + "' and shipping_company_id=" + shipId);
         }
-        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productInfo", productInfoIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()), 600L);
-        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productContainer", productContainerIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()), 600L);
-        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productFeeItem", productFeeItemIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()), 600L);
+        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getUniqueId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productInfo", productInfoIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()), 600L);
+        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getUniqueId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productContainer", productContainerIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()), 600L);
+        redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getUniqueId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productFeeItem", productFeeItemIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()), 600L);
     }
 
     public void delData(QueryRouteVo queryRouteVo) {
-        boolean hasRole = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode(), "1", 600L, TimeUnit.SECONDS);
+        boolean hasRole = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getUniqueId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode(), "1", 600L, TimeUnit.SECONDS);
         if (hasRole) {
-            List<Long> productInfoIds = (List<Long>) redisService.get(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productInfo");
-            List<Long> productContainerIds = (List<Long>) redisService.get(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productContainer");
-            List<Long> productFeeItemIds = (List<Long>) redisService.get(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getLogId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productFeeItem");
+            List<Long> productInfoIds = (List<Long>) redisService.get(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getUniqueId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productInfo");
+            List<Long> productContainerIds = (List<Long>) redisService.get(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getUniqueId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productContainer");
+            List<Long> productFeeItemIds = (List<Long>) redisService.get(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getUniqueId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productFeeItem");
             if (null != productInfoIds && !productInfoIds.isEmpty()) {
                 customDao.executeSql("delete from product_info where id in (" + productInfoIds.stream().map(item -> String.valueOf(item)).collect(Collectors.joining(",")) + ")");
             }
@@ -227,7 +233,7 @@ abstract class BaseSimpleCrawlService implements CrawlService {
                 if (System.currentTimeMillis() - crawlMetadataWebsiteConfig.getTimePoint() < 30 * 1000L) {
                     Boolean aBoolean = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:token-busy:" + crawlMetadataWebsiteConfig.getAccountName(), 1, 300, TimeUnit.SECONDS);
                     if (aBoolean) {
-                        redisService.set(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getLogId(), crawlMetadataWebsiteConfig.getAccountName(), 300L);
+                        redisService.set(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getUniqueId(), crawlMetadataWebsiteConfig.getAccountName(), 300L);
                         queryRouteVo.setAccountName(crawlMetadataWebsiteConfig.getAccountName());
                         break Loop;
                     }
