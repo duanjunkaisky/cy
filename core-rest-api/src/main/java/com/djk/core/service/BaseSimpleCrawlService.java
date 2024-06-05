@@ -118,13 +118,13 @@ abstract class BaseSimpleCrawlService implements CrawlService {
     public String getLogId() {
         final int numLength = 18;
         Long logId = redisService.generateIdCommon("crawl_log_id");
-        return "log_uniqueId_" + String.format("%0" + numLength + "d", logId);
+        return "log_" + String.format("%0" + numLength + "d", logId);
     }
 
     public String getUniqueId() {
         final int numLength = 18;
         Long logId = redisService.generateIdCommon("crawl_unique_id");
-        return "log_uniqueId_" + String.format("%0" + numLength + "d", logId);
+        return "uniqueId_" + String.format("%0" + numLength + "d", logId);
     }
 
     public JSONObject getToken(QueryRouteVo queryRouteVo) {
