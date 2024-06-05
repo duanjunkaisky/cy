@@ -112,8 +112,13 @@ public class ApiController {
         }
 
         boolean hasOne = false;
+        List<String> hostCodes = new ArrayList<>();
         for (TradeSpiderControl control : tradeSpiderControls) {
             String hostCode = control.getShipownerCode().toLowerCase();
+            if (hostCodes.contains(hostCode)) {
+                continue;
+            }
+            hostCodes.add(hostCode);
             String beanName = getServiceName(hostCode);
             queryRouteVo.setBeanName(beanName);
             queryRouteVo.setHostCode(hostCode);
