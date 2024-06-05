@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
@@ -51,6 +52,10 @@ abstract class BaseSimpleCrawlService implements CrawlService {
     @Autowired
     CrawlRequestLogMapper logMapper;
 
+    @Lazy
+    @Autowired
+    CrawlChain crawlChain;
+
     private String hostCode;
 
     @Autowired
@@ -73,29 +78,7 @@ abstract class BaseSimpleCrawlService implements CrawlService {
 
     @Override
     public void addLog(Boolean addDataId, String businessName, String stepName, String msg, QueryRouteVo queryRouteVo) {
-        Long lastTimePoint = (Long) redisService.get(REDIS_DATABASE + ":tmp:lastTimePoint:" + queryRouteVo.getLogId());
-        long timePoint = System.currentTimeMillis();
-        CrawlRequestLog requestLog = new CrawlRequestLog();
-        requestLog.setLogId(queryRouteVo.getLogId());
-        requestLog.setHostCode(queryRouteVo.getHostCode());
-        requestLog.setMsg(msg);
-        requestLog.setSpotId(queryRouteVo.getSpotId());
-        requestLog.setBusinessName(businessName);
-        requestLog.setTimePoint(timePoint);
-        redisService.set(REDIS_DATABASE + ":tmp:lastTimePoint:" + queryRouteVo.getLogId(), timePoint, 360L);
-        if (null != lastTimePoint) {
-            requestLog.setOffsetTime(timePoint - lastTimePoint);
-        }
-        if (null != addDataId && addDataId) {
-            Long dataId = redisService.generateId(REDIS_DATABASE + ":tmp:log-dataId:" + queryRouteVo.getLogId(), 360L);
-            requestLog.setDataId(dataId);
-        }
-        requestLog.setFromPort(queryRouteVo.getDeparturePortEn());
-        requestLog.setToPort(queryRouteVo.getDestinationPortEn());
-        requestLog.setStepName(stepName);
-        Long aLong = redisService.generateId(REDIS_DATABASE + ":tmp:log-step-num:" + queryRouteVo.getLogId(), 360L);
-        requestLog.setStepNum(aLong);
-        logMapper.insertSelective(requestLog);
+        crawlChain.addLog(addDataId, businessName, stepName, msg, queryRouteVo);
     }
 
     private List<BasePort> getBasePorts(QueryRouteVo queryRouteVo, String flag) {

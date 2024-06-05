@@ -5,6 +5,7 @@ import com.djk.core.config.Constant;
 import com.djk.core.config.SpringUtil;
 import com.djk.core.dao.CustomDao;
 import com.djk.core.mapper.CrawlMetadataWebsiteConfigMapper;
+import com.djk.core.mapper.CrawlRequestLogMapper;
 import com.djk.core.mapper.CrawlRequestStatusMapper;
 import com.djk.core.model.*;
 import com.djk.core.mq.ConsumerPull;
@@ -66,7 +67,7 @@ public class CrawlChain {
                     log.error("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + queryRouteVo.getHostCode() + "未提供服务");
                 }
                 if (null == crawlService) {
-                    crawlService.addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", queryRouteVo.getHostCode() + "未提供服务", queryRouteVo);
+                    addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", queryRouteVo.getHostCode() + "未提供服务", queryRouteVo);
                     str += "0";
                     log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + str);
                 } else {
@@ -95,7 +96,7 @@ public class CrawlChain {
                     requestStatus.setStatus(Constant.CRAWL_STATUS.SUCCESS.ordinal());
                     requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
 
-                    crawlService.addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", null, queryRouteVo);
+                    addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", null, queryRouteVo);
 
                     log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + str);
 
@@ -113,7 +114,7 @@ public class CrawlChain {
                 }
                 return str;
             } catch (Exception e) {
-                crawlService.addLog(null, BUSINESS_NAME_CRAWL, "爬取出错", ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
+                addLog(null, BUSINESS_NAME_CRAWL, "爬取出错", ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
                 log.error(ExceptionUtil.getMessage(e));
                 log.error(ExceptionUtil.stacktraceToString(e));
                 CrawlRequestStatusExample crawlRequestStatusExample = new CrawlRequestStatusExample();
@@ -131,6 +132,35 @@ public class CrawlChain {
             }
             return "---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getHostCode() + " - " + queryRouteVo.getLogId() + " -> 0";
         });
+    }
+
+    @Autowired
+    CrawlRequestLogMapper logMapper;
+
+    public void addLog(Boolean addDataId, String businessName, String stepName, String msg, QueryRouteVo queryRouteVo) {
+        Long lastTimePoint = (Long) redisService.get(REDIS_DATABASE + ":tmp:lastTimePoint:" + queryRouteVo.getLogId());
+        long timePoint = System.currentTimeMillis();
+        CrawlRequestLog requestLog = new CrawlRequestLog();
+        requestLog.setLogId(queryRouteVo.getLogId());
+        requestLog.setHostCode(queryRouteVo.getHostCode());
+        requestLog.setMsg(msg);
+        requestLog.setSpotId(queryRouteVo.getSpotId());
+        requestLog.setBusinessName(businessName);
+        requestLog.setTimePoint(timePoint);
+        redisService.set(REDIS_DATABASE + ":tmp:lastTimePoint:" + queryRouteVo.getLogId(), timePoint, 360L);
+        if (null != lastTimePoint) {
+            requestLog.setOffsetTime(timePoint - lastTimePoint);
+        }
+        if (null != addDataId && addDataId) {
+            Long dataId = redisService.generateId(REDIS_DATABASE + ":tmp:log-dataId:" + queryRouteVo.getLogId(), 360L);
+            requestLog.setDataId(dataId);
+        }
+        requestLog.setFromPort(queryRouteVo.getDeparturePortEn());
+        requestLog.setToPort(queryRouteVo.getDestinationPortEn());
+        requestLog.setStepName(stepName);
+        Long aLong = redisService.generateId(REDIS_DATABASE + ":tmp:log-step-num:" + queryRouteVo.getLogId(), 360L);
+        requestLog.setStepNum(aLong);
+        logMapper.insertSelective(requestLog);
     }
 
 }
