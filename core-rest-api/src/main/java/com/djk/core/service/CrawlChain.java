@@ -63,10 +63,10 @@ public class CrawlChain {
                 try {
                     crawlService = (CrawlService) SpringUtil.getBean(queryRouteVo.getBeanName());
                 } catch (Exception e) {
-                    log.error("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + queryRouteVo.getBeanName() + "未提供服务");
+                    log.error("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + queryRouteVo.getHostCode() + "未提供服务");
                 }
                 if (null == crawlService) {
-                    crawlService.addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", queryRouteVo.getBeanName() + "未提供服务", queryRouteVo);
+                    crawlService.addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", queryRouteVo.getHostCode() + "未提供服务", queryRouteVo);
                     str += "0";
                     log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + str);
                 } else {
