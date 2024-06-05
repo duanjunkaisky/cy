@@ -6,7 +6,6 @@ spring:
   profiles:
     active:
       - local
-      - crawl
       - keystore
   application:
     name: rest-api
