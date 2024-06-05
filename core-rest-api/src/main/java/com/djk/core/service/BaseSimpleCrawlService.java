@@ -190,6 +190,7 @@ abstract class BaseSimpleCrawlService implements CrawlService {
         redisService.set(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getUniqueId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode() + "-productFeeItem", productFeeItemIds.stream().map(item -> Long.parseLong(String.valueOf(item.get("id")))).collect(Collectors.toList()), 600L);
     }
 
+    @Override
     public void delData(QueryRouteVo queryRouteVo) {
         boolean hasRole = redisTemplate.opsForValue().setIfAbsent(REDIS_DATABASE + ":tmp:wait_del:" + queryRouteVo.getUniqueId() + ":" + queryRouteVo.getSpotId() + "-" + queryRouteVo.getHostCode(), "1", 600L, TimeUnit.SECONDS);
         if (hasRole) {
