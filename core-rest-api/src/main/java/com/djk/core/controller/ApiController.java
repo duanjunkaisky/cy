@@ -111,6 +111,7 @@ public class ApiController {
             return CommonResult.failed("未找到开启的配置");
         }
 
+        boolean hasOne = false;
         for (TradeSpiderControl control : tradeSpiderControls) {
             String hostCode = control.getShipownerCode().toLowerCase();
             String beanName = getServiceName(hostCode);
@@ -135,8 +136,8 @@ public class ApiController {
             if (null == aBoolean || !aBoolean) {
                 coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "已经存在正在爬取的请求，忽略该请求", null, queryRouteVo);
                 log.info(queryRouteVo.getSpotId() + " - 已经存在正在爬取的请求，忽略该请求\n" + JSONObject.toJSONString(queryRouteVo));
-                return CommonResult.failed("请求太频繁,稍后再试");
             } else {
+                hasOne = true;
                 CrawlRequestStatus requestStatus = getCrawlRequestStatus(queryRouteVo, crawlRequestStatuses);
                 requestStatus.setFromPort(queryRouteVo.getDeparturePortEn());
                 requestStatus.setToPort(queryRouteVo.getDestinationPortEn());
@@ -150,6 +151,9 @@ public class ApiController {
                     log.info("推送到消息->\n topic: " + topic + ",\n " + JSONObject.toJSONString(queryRouteVo));
                 }
             }
+        }
+        if (!hasOne) {
+            return CommonResult.success("可查历史数据");
         }
 
         JSONObject retObj = new JSONObject();
