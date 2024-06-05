@@ -10,7 +10,6 @@ import com.djk.core.mapper.CrawlMetadataWebsiteConfigMapper;
 import com.djk.core.mapper.CrawlRequestStatusMapper;
 import com.djk.core.mapper.TradeSpiderControlMapper;
 import com.djk.core.model.*;
-import com.djk.core.mq.ConsumerPull;
 import com.djk.core.service.*;
 import com.djk.core.utils.FreeMakerUtil;
 import com.djk.core.vo.QueryRouteVo;
@@ -111,6 +110,8 @@ public class ApiController {
             return CommonResult.failed("未找到开启的配置");
         }
 
+        queryRouteVo.setLogId(coscoCrawlService.getLogId());
+
         boolean hasOne = false;
         List<String> hostCodes = new ArrayList<>();
         for (TradeSpiderControl control : tradeSpiderControls) {
@@ -127,8 +128,6 @@ public class ApiController {
                 timeIntervalMin = 30;
             }
             queryRouteVo.setMaxExistTime(timeIntervalMin.longValue());
-
-            queryRouteVo.setLogId(coscoCrawlService.getLogId());
 
             coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "收到前端请求", null, queryRouteVo);
 
