@@ -68,8 +68,7 @@ public class CrawlChain {
                 }
                 if (null == crawlService) {
                     addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", queryRouteVo.getHostCode() + "未提供服务", queryRouteVo);
-                    str += "0";
-                    log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + str);
+                    throw new RuntimeException(queryRouteVo.getHostCode() + "未提供服务");
                 } else {
                     BaseShippingCompany baseShippingCompany = crawlService.getShipCompany(queryRouteVo.getHostCode());
                     BasePort fromPort = crawlService.getFromPort(queryRouteVo);
@@ -138,7 +137,7 @@ public class CrawlChain {
     CrawlRequestLogMapper logMapper;
 
     public void addLog(Boolean addDataId, String businessName, String stepName, String msg, QueryRouteVo queryRouteVo) {
-        Long lastTimePoint = (Long) redisService.get(REDIS_DATABASE + ":tmp:lastTimePoint:" + queryRouteVo.getUniqueId() );
+        Long lastTimePoint = (Long) redisService.get(REDIS_DATABASE + ":tmp:lastTimePoint:" + queryRouteVo.getUniqueId());
         long timePoint = System.currentTimeMillis();
         CrawlRequestLog requestLog = new CrawlRequestLog();
         requestLog.setLogId(queryRouteVo.getLogId());
