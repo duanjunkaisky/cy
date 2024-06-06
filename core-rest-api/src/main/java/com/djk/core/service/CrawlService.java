@@ -72,4 +72,6 @@ public interface CrawlService
      * @param shipId
      */
     void flagDelData(QueryRouteVo queryRouteVo, Long shipId);
+
+    void delData(QueryRouteVo queryRouteVo);
 }

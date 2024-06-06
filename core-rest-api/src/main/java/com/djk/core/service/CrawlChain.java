@@ -33,7 +33,8 @@ import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
 @Component
 @Data
 @Slf4j
-public class CrawlChain {
+public class CrawlChain
+{
     public static ListeningExecutorService EXECUTOR_SERVICE = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(99));
 
     @Autowired
@@ -55,7 +56,8 @@ public class CrawlChain {
     RedisService redisService;
 
     @Async("asyncServiceExecutor")
-    public void doBusiness(QueryRouteVo queryRouteVo) {
+    public void doBusiness(QueryRouteVo queryRouteVo)
+    {
 
         EXECUTOR_SERVICE.submit(() -> {
             CrawlService crawlService = null;
@@ -95,6 +97,7 @@ public class CrawlChain {
                     requestStatusMapper.updateByExampleSelective(requestStatus, crawlRequestStatusExample);
 
                     addLog(null, BUSINESS_NAME_CRAWL, "爬取结束", null, queryRouteVo);
+                    crawlService.delData(queryRouteVo);
 
                     log.info("---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getLogId() + " - " + str);
 
@@ -126,7 +129,6 @@ public class CrawlChain {
                 String accountName = (String) redisService.get(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getUniqueId());
                 redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getUniqueId());
                 redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + accountName);
-
                 ConsumerPull.currentJobs.remove(queryRouteVo.getSpotId() + queryRouteVo.getHostCode());
             }
             return "---> " + queryRouteVo.getSpotId() + " - " + queryRouteVo.getHostCode() + " - " + queryRouteVo.getLogId() + " -> 0";
@@ -136,7 +138,8 @@ public class CrawlChain {
     @Autowired
     CrawlRequestLogMapper logMapper;
 
-    public void addLog(Boolean addDataId, String businessName, String stepName, String msg, QueryRouteVo queryRouteVo) {
+    public void addLog(Boolean addDataId, String businessName, String stepName, String msg, QueryRouteVo queryRouteVo)
+    {
         Long lastTimePoint = (Long) redisService.get(REDIS_DATABASE + ":tmp:lastTimePoint:" + queryRouteVo.getUniqueId());
         long timePoint = System.currentTimeMillis();
         CrawlRequestLog requestLog = new CrawlRequestLog();

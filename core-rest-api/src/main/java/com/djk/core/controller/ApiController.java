@@ -316,6 +316,7 @@ public class ApiController {
         requestStatusMapper.updateByPrimaryKey(requestStatus);
         QueryRouteVo queryRouteVo = JSONObject.parseObject(requestStatus.getRequestParams(), QueryRouteVo.class);
         coscoCrawlService.addLog(null, BUSINESS_NAME_CRAWL, "更新爬取状态,爬取结束", null, queryRouteVo);
+        coscoCrawlService.delData(queryRouteVo);
         return CommonResult.success("操作成功");
     }
 
