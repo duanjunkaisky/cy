@@ -104,7 +104,7 @@ public class ApiController {
         queryRouteVo.setSpotId(coscoCrawlService.createSpotId(queryRouteVo, queryRouteVo.getContainerType()));
 
         TradeSpiderControlExample tradeSpiderControlExample = new TradeSpiderControlExample();
-        tradeSpiderControlExample.createCriteria().andStatusEqualTo((byte) 0);
+        tradeSpiderControlExample.createCriteria().andStatusEqualTo((byte) 0).andDeletedEqualTo(false);
         List<TradeSpiderControl> tradeSpiderControls = controlMapper.selectByExample(tradeSpiderControlExample);
         if (null == tradeSpiderControls || tradeSpiderControls.isEmpty()) {
             return CommonResult.failed("未找到开启的配置");
