@@ -1,0 +1,75 @@
+{
+  "bookingType": "NEW",
+  "originLocation": {
+    "geoId": "1YCLYW8V7RZB2",
+    "rkstCode": "CNTST",
+    "countryCode": "CN"
+  },
+  "destinationLocation": {
+    "geoId": "3HXEUPPJWKGVZ",
+    "rkstCode": "ROCND",
+    "countryCode": "RO"
+  },
+  "batchSizeInWeeks": 2,
+  "productsFetchSizeInWeeks": 2,
+  "validationFlags": {
+    "checkEquipmentAvailability": true,
+    "checkDeadlines": true,
+    "checkSpace": true,
+    "checkYield": true,
+    "checkFixedPrices": true
+  },
+  "carrierCode": "MAEU",
+  "exportServiceMode": "CY",
+  "importServiceMode": "CY",
+  "cargoDetails": {
+    "commodityCode": "004403",
+    "cargoType": "DRY",
+    "isDangerous": false,
+    "isTempControlled": false
+  },
+  "containerDetails": [
+    {
+      "size": "20",
+      "type": "DRY",
+      "height": "8 6",
+      "quantity": 1,
+      "cargoWeight": 18000,
+      "weightMeasurementUnit": "KGS",
+      "isNOR": false,
+      "isFoodGrade": false,
+      "isoCode": "22G1",
+      "isShipperOwned": false,
+      "isOutOfGauge": false,
+      "isImportReturned": false,
+      "containerRefs": [
+        "WT8R1CYCS80BS"
+      ]
+    }
+  ],
+  "metricUnits": true,
+  "isContainerPickedUp": false,
+  "isContainerGatedIn": false,
+  "earliestDepartureDate": "2024-06-08",
+  "priceCalculationDate": "2024-06-08",
+  "parties": [
+    {
+      "scvCode": "40604978695",
+      "cmdCode": "CN04978695",
+      "roleName": "Booked By",
+      "roleCode": 1,
+      "companyName": "QINGDAO HIGHWAY CLOUD TECHNOLOGY DEVELOPMENT CO.,LTD.",
+      "companyAddress": "40 , HONGKONG MIDDLE ROAD , QINGDAO , CHINA , 266000"
+    },
+    {
+      "scvCode": "40604978695",
+      "cmdCode": "CN04978695",
+      "roleName": "Price Owner",
+      "companyName": "QINGDAO HIGHWAY CLOUD TECHNOLOGY DEVELOPMENT CO.,LTD.",
+      "roleCode": 44
+    }
+  ],
+  "buCode": "2162",
+  "productsEagerFetch": true,
+  "previousCorrelationId": "7a8a764e-079e-4cd2-a0fa-03942b10dd12"
+}
