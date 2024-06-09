@@ -1,60 +1,12 @@
-{
-  "appid": "eyqq4t1ubp4fbjklkrguol6zcc8o5jp5",
-  "method": "POST",
-  "url": "https://api.maersk.com/productoffer/v2/productoffers",
-  "headers": {
-    "akamai-bm-telemetry":"a=B724782786F31A52DBCC344AADB3B712&&&e=MjNDMUZFOUEzQzZDNTQ0NTlENjFBRjE5NkJEMkE3RkR+WUFBUVhIK0dmTkU4RDh1UEFRQUFacENNNFJpWGVBMjY1SGc0WFpOYytpbDl4K3g2NHVDSmxydytCMm1pcjRaTC9vcFR3RUd3QWNNOS9MZGd0NjYvRzBPcmpZOHl2Z1p3emVvUnJhd29GM2NDZ3hMZXplZHN5QTh1ZWZmLzdmcXRENWY5eXNGZExxV2N0cFQ3T2czWit3bVlhK3pocUt3RXl3OXFLTjNIT1pMb25BdTBEczJSTDRRQnJ0ZEx5WW02MysyOE1VMUlIVldIeVNuZjdqcG5oazU5dWNGMmVDYlhLWWpwdjFaTHlnZm1yaVJLUnF0alNhR3pzamRYK2lFNG10Z1VqbjZVdGZwQlVYQWtKWHNEYnpJYldkZ2JEcjFvUm9KanFSTitqTDlLZGJDTms2STliZzBTQS9FaC9SaUlPSU93OXNuRlZwSVEzSVZNeFpFeTArSjFlNnNHdk1hRi9RdzVFa0svZGVFTmxqMVptNitXZ1haSGpYMlBTbDVJNitEeU81UHRoVEN6WmdCM2JjQ3FzNExuYW95T2ZUd3BQcERuMit2cUx1VTBIZk1oWi81a2tWSVpTcS9aL3hSYVJrN3gvME44bC9VdXBFcHlsdU9LODVLSDRCMGc0c0VOTkNNQm0yVWUvNmlNTEhhS3hGcjRiWXBHMlNTZk1qSHpYTU56cXRtaGhQVU9DdVJ1c0JPYXhKaXNWanFEYUtMdlk4MmxSdWhUd0Rtb1hNVWptTHZMSDV2WGFUeloxdHFuVjcreVd2RXNMMUZPMmc9PX4zMTU4MzI0fjQ2MDIxNjY=&&&sensor_data=MjszMTU4MzI0OzQ2MDIxNjY7MzksMSwwLDAsMiwzMzs2U2diN0hlRlZDcG5JeEYoOz00JkJUM3RuVmBJUzw4bFBsNCFxfkAhPzRlWjshRCs8Ykk9bSNuQ2FzenF7KTZyW3dAQjlPWk9tbU9Ad3BONURxVl8oTS1peGkodSRsWWdzQkFTRmUmdlM2Xkc/PTQjP2JbZSNbSy8+OFdTaFdxX1N8TlI/UD0xZltDTj0+fGUhUFloMVpgPmRed3V1cHs9MV9BTDxjfmIofWFwXl9JQ2k1PVAmU11RY2s5LVNkfm5nSjElNWNDMngpeTsufXRuRncpOXVETE5rbTtZeXc6OUpxUGh6XzklKyl7LTdKNixqSktwWTE+PF57MFAlN09SVUYuQE46d3RqbyE5OUZHRCFgfUN6cix+N1YyTDt2TDZIPXtdI2dEQkYqQ2hoLCg3KT5hUU83SU4vKz1uTDZhc2RaZio5JiVhayEoOk1oWi54I0psa1JwKUNnajp5Pm5YdnJYM1VDO0FJbyNSX19kal5gQmRUPzM9cz98VT5dLkVvc144ZmBDajg5SjA+RGcuPFggc1Z7bVY7Vk4ma1RNVm4rSF1weG5rbEwlWy1RUGEud0FxIGczVkRyWS0rXj5kMS8zcmBRRnEgV3RdflNxMjs5eU9aXjhiNnhyfXhfaShecGlON0I7ZiVfI2YvYCFiVFlILTM/eUAte2RVVC5yUCEkPCNreyxScl98aTp1LWBxJnJSZnJdOnNbaz9OLyVVNFBkTD1XWCZWP2NlL2sxWjY+P3AyQz1POkg9N0h8VUFxOyhiS3UzYjN4Szohbi9yNkQtIVplTysjIzF3fG5tUkNaLilLdzFdWitqYDViaj9hekgxX31lVjAmPn5oU15DME8hY1YgKkxMRSgyYzpdR142PSlXfW5bbWAgLCxkbTN4PGp2eTpgUi8pb3NlWDc1Tnl9JVd6cnl8aig8WlBmSk12TVJmPmNUMT8oK3olX1dzPj9DIU5lcVRTfCVkakNWWjBzckZ3T0EjOy0zJjJxPHhZXilWVl1RdHVBV3AvTjBsSzp1JFU5P3Qkfi85USY1XUdPYk46MDhWZDBHcShbTFM4fD1BOW1fYmt5LSVERzNmUyExbV5iX1ghU2hPZDhNK2MyQjQhLT9BRkgjWGl1dEo5XjQpc3o5W31Qe1UhWTtOWXdKV0Y/a3d5MERBV0MyPVhzLitiSCwsQThYNEhbdnxzeV8uLnAhIExRKzxZY3JkVnVPRDNZZT0tJUYgXkhjXmRhb0kpVGkxUHRMXismS3I+QWk8NGJ5TntxQH4pbHpMO3BHdyNEY3V2fl11dVl9d0sgLVcwV28rLEAkbG8lRD5FT14mOF1SbUQrQlhmdzQ9QW1dZmcyaUd3bnsoS0A9WWd0UjdBQmIxUyVxKXouSkc4dV45SXx7Nz45ICN7QG5yLUMtYW9NTWBKfDJjbWQvbHZWQShzVEdzUVRnRklqbSBlLHBUOj8ocVMmfkYrWTg5d2ZoaTh7VUYhKCN6cV83LENfPD5Lc0JjSjEkUDxxSF8qZGYqOlpQW1NdY2dEPylvLVFJRWN6Yi53S2kzIVk3V3dsaC9lOnAxdyEsPC8/b1UgT0tUdCh3QTRzaVk3S3s5d3Jtcl9pOVM4SkUzZWteP3EwMXp8dyoxcElJVTRmZjkvbzk7Wi8hbk4jUFFOKSVBQ2g7OEk4Z30yKD5QMUFfTnAtN2oheVliWU5hOG92Uy10MT50VVRScW5DdlFONlEtN2kpNiAtbmlLejklWWpQcj5uZ1ZlTmJKelFvXVYrS052ZCBMJSFXJWhvVVo4eW0vLCN2SlAsNUwhNV5tYThqJSBYKDRhc2ZRaEtWaS9bWik8TUEuTDtaNzg2bzsgQXRpWmJZQi5tPWFCSzVsbU1kYk13b2AwRVpbemR7dE57YnpacV5uQk5lfHAqPCElVCxpPTtTJnxkc01ZW3VlJDEvalA6SGJuLkZpOD9yPCgmV3EpSylYQkhEbjcuQTZ3WHggLlpOVW58fm83Tio6aipybiFiXl08U1lyLU86cDYlclpAZzFETVB3NFpGN2JEb1lDfmZBVHB0RDM+RDtoSVd8IEl8NXx3OnVWLyprZTswYjR4UjN4blM2KmwqQjZpQ15XWCNsKitkNnFiXUE5cGsxYnd9ZiU8byxKNmI+fFFoNVR7YENPRXx0akkpI3xVUCtVejFvZXYpWH1yNnxFRWcrQFVBP1piSHpqX1ZYWjk+elBkI3RtIC53Oi1ZWCpyPX40QnZoKXdVWGNNZzN9d3ZOPFQ3TkhVIE5CVmBPTTJlbStDfTE2TFA5RjQ9N042QCtpOGhYXyw5fFJLLi5pYzoqRmlscilZVDVBPkFbZ1BdRzVqQDE3ajB7TlpDNH4hW0VzPjFPezQrezB7JSRIO3FuYjRrd3hHc2BJQjI7ey5uXyhNcW5AeXxydjJPT2VwfnlwUDdDQndCNiMtXnNYMnVgNmN7PHE6SUdjWH1BZHYlLC9aNVNnPHRsWHVfeXh2al42dz0+KV9jaS04ZytKXXB9JmUgXkUtazgqRW9gWz0hNmx6X30yc14xWTo1TS1BYmFwVlEzUT8kSERaLl1SbmtNI2cvT0IvOXVnVFtTLXNoSGJPLFsoa0dNVyYpOU5hZW9QS3Q/L30/THAzbjZpOWN6Oip1SHRgT1JiJDNdaDg4SzUjVCZ9YjBAdD8oSClOPlJZWVgoT0g/XlExOmx5RFNlZmIoWF9VfillNWFVNGpEV2tlaGQsKHs5QiA5ZyVZX3pZRlIsJSpeb2ImeUFCb0hxQ0VUd1paW3UraCxdciVScnB4eD9KOmstM0Yzc3ZHK3NxKjQ1Q2B6eD50OztrSGIhMzopZmJuTCVjRkl4cl9HQncpaUwwOn1wZnpLJk86flQxN1c5eGRtbFQ6aipXZ103ZFIyKDNGLSEpQV1KK2hiOHksc2QmYEJXSjg3JHdwZTRualJJN3pnRW58JEBIb1tFIz1lWm85fVMjSEo8QzU1PCEga18rTyZubTA4MWsvMnBTJEIzW1huWCVvW3taUVc+U0B1ZGE1RyhlVjo6fmlKL0wlbHZCWWVEQzhMR2pWb1ZJdzk8PmEtdV9KNjYjaVpMZjZEQF1AKkhbVmUjSXdePV8uXWRzPl1OQUMoLnwmX1V0UEhhNmdvXml9NjpPaHtoZw==",
-    "authorization":"Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJPK0FZTDdiY083WlNLL2NjdFRjOHFrSStIemc9IiwiYWxnIjoiUlMyNTYifQ.eyJhdF9oYXNoIjoiRGhWSmFwNVZHSWY5NE45bkluektFQSIsInN1YiI6Imx5Z3pxMjAyMyIsImZpcnN0bmFtZSI6InFpbmciLCJhdWRpdFRyYWNraW5nSWQiOiJhOWFhNGMyOS1kMmYxLTQxMTYtOWNkZC1jNmQ5MTUwZDJkY2QtNDUzOTgwODgiLCJyb2xlcyI6WyJXQk9MQXBwcm92ZXIiLCJCb29raW5nIiwiUGF5bWVudHMiLCJDb250cmFjdFJhdGUiLCJJbnZvaWNlcyIsIkRvY3VtZW50YXRpb24iLCJCYXNpY0N1c3RvbWVyIl0sImlzcyI6Imh0dHBzOi8vaWFtLm1hZXJzay5jb20vYWNtL29hdXRoMi9tYXUiLCJ0b2tlbk5hbWUiOiJpZF90b2tlbiIsIm9mZmljZSI6Ik5hbmppbmcgLSBDTiIsImxhc3RuYW1lIjoiemhhbmciLCJhdWQiOiJiY2EwMDEiLCJhY3IiOiIwIiwiY2FycmllciI6Ik1BRVUiLCJhenAiOiJiY2EwMDEiLCJhdXRoX3RpbWUiOjE3MTc0NTk0NzUsInVzZXJVdWlkIjoiOTNlN2MzZWUtOGYyZC00NWQ4LTg0OTYtZDNkMmQ2YzQzN2NmIiwicmVhbG0iOiIvbWF1IiwicGVyc29uaWQiOiI0MDYwNjUwNjIwMiIsImV4cCI6MTcxNzQ4MTE0MywidG9rZW5UeXBlIjoiSldUVG9rZW4iLCJpYXQiOjE3MTc0NzM5NDMsImN1c3RvbWVyX2NvZGUiOiI0MDYwNTE2MzA1OSIsImVtYWlsIjoib3AyLmx5Z0Bod2lsLmNvbS5jbiIsInVzZXJuYW1lIjoibHlnenEyMDIzIn0.EQ6wEffLb42aQxETVWi0ysjNJw_56akNUw8IlPJcMfLZEFjc-Oi7GYRcPiaqAGRYdIQ3Rv3rbp23QiZ2zO71Hrw4H4wVvQLhDTGTuvW3B4-sBuTZxYpo0PG5JUZSnRx7W_On9fNnQiGr_KXfA4O2GFZOeTMDythCB6-50MOp9tWPaRf2C51i1Q3vQv5DwTF1mtZcVeC-rCPP4iLnvPnmZRuiFvqkAGDXl4H3kwE7YhBjYvARUs1mGISPe1hfnI48-aMU2T120rOnVNoHweYATVWvFaRezkajvfXJHStwiNIVOVioQgtMR_FIFlTWEPt0xjiYUJFyNwBfg9lcLm_zXch04iJIawsevD6UXwaaHH1-6GBfdHYd6igsRxPYpOF8LIZvdJdCTzVtkenOJg0jDGwLO0EWkBb3cZgISwf0F1slEajs9rpEimuTGHLYYXexCsuyZF20vLuaQASx9fRjfRi3wwVsszgTGGBdKQGrJz3zEaLf2S8IJnEE-vreRAms",
-    "consumer-key":"4d3yfgADGPhccLLfl1w1QhefwCdhzcFj",
-    "content-type":"application/json",
-    "Accept-Encoding":"gzip, deflate, br, zstd",
-    "Accept-Language":"zh-CN,zh;q=0.9",
-    "Origin":"https://www.maersk.com.cn/book"
-  },
-  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
-  "body": {
-    "alternateOfferRequest": true,
-    "from": {
-      "maerskGeoId": "2PQ6Y8YUD5UGU",
-      "maerskRkstCode": "CNYAZ",
-      "countryCode": "CN",
-      "maerskServiceMode": "CY",
-      "name": "Yangzhou (Jiangsu Sheng), China"
-    },
-    "to": {
-      "maerskGeoId": "1JUKNJGWHQBNJ",
-      "maerskRkstCode": "NLROT",
-      "countryCode": "NL",
-      "maerskServiceMode": "CY",
-      "name": "Rotterdam (Zuid-holland), Netherlands"
-    },
-    "containers": [
-      {
-        "isoCode": "45G1",
-        "size": "40",
-        "type": "HDRY",
-        "weight": 18000,
-        "quantity": 1,
-        "isReefer": false,
-        "isNonOperatingReefer": false,
-        "isShipperOwnedContainer": false
-      }
-    ],
-    "shipmentPriceCalculationDate": "2024-06-06",
-    "commodity": {
-      "id": "004403",
-      "isDangerous": false,
-      "dangerousDetails": []
-    },
-    "unit": "KG",
-    "brandCode": "MAEU",
-    "customerCode": "40605163059",
-    "loadAFLS": false,
-    "weekOffset": 2
-  }
-,
-  "timeOut":15,
-  "proxyIp": "221.229.212.173",
-  "proxyPort": "25118",
-  "proxyUserPwd": "d2408575423:gl4pk39d"
-}
+User-Agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+X-Auth-Token:77523a00-ecfb-432a-830e-e1e7ee2f8bd7
+X-Client-Timestamp:1717845430896
+X-Custom-Cc:dd673f7d279ea5555c28645e94ebf37a
+X-Custom-Uc:cf0ba6c269bc13fde1375b06d7122147
+Accept:application/json, text/plain, */*
+Accept-Language:zh-CN,zh;q=0.9,en;q=0.8
+Cache-Control:no-cache
+Connection:keep-alive
+Content-Type:application/json;charset=UTF-8
+Origin:https://synconhub.coscoshipping.com
+Cookie:FECW=af9b2f84aa7f6d5c0b2f9a21c4fdb40094c20a119b3bdab682c1010a398a0c70926c943f7c4cc73843119d4239124e28c4305d3c6e86d3e1bb03336154f94bad4d2ffdca6135a48469a996b2c071af629e;FECN=af9b2f84aa7f6d5c0b2f9a21c4fdb40094c20a119b3bdab682c1010a398a0c7080ade44fafd18c35e3713e9e5f7aeeebc6c5e8b2e26648d9fa2b28c367f978c550a6bcd44305724de05e3ec25e94524fca; HMF_CI=f563deeda03e57ee8909a6fcb26125c033c7a5a89d25c9ee87ed22f247c7c738b055ee3effb094c256678fa2f7765364e6c3395e9c1dac9a0cde8ecb14e79256a8; django_language=zh-cn; sessionid=a68iicsoilaxt62xsnfrq5xj91ywwdua; cookiePolicy=Accepted; cookiePreference=Accepted; unified_account_switch=true; Hm_lvt_d16e4336470e6b4d88aa16ff927d7daf=1716615903,1716820375,1717006497,1717832127; token=77523a00-ecfb-432a-830e-e1e7ee2f8bd7; Hm_lpvt_d16e4336470e6b4d88aa16ff927d7daf=1717837071; HOY_TR=EFXPJLTUNCMYVGRQ,59C427386ABD0EF1,sxldXqkvgfhmnzuw,0; FECA=9LEvYlRQFP3lj9FeQf4qu8jP9xHCXsNYXOIKEUyyK736NoC98IZibtc4/uizYfBLGiFbTtAmeAR3c3JGj0qypQmk3XGqqHNCNfKmAoJKyCgs7uFxhjxXBveeCKygXGzWOzchF14a4Kbuq3A8BsqP6m6CDGf4vSbCEBzrzlldxSIqWBtUryCn5W/67wPHpwR4l6
