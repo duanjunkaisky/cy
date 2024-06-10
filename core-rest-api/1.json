@@ -1,16 +1,119 @@
 {
-  "appid": "eyqq4t1ubp4fbjklkrguol6zcc8o5jp5",
-  "method": "GET",
-  "url": "https://api.maersk.com/v2/departures/c361e9f0-5fb6-4592-8e9c-02129de0da50/validated?batch=4",
-  "headers": {
-    "Authorization":"Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJPK0FZTDdiY083WlNLL2NjdFRjOHFrSStIemc9IiwiYWxnIjoiUlMyNTYifQ.eyJhdF9oYXNoIjoiMDVxeDV0VlE1MnV0T3NTNHp5bEpfUSIsInN1YiI6Indhbm5lIiwiZmlyc3RuYW1lIjoiSklBWElVIiwiYXVkaXRUcmFja2luZ0lkIjoiMjQ1ZjE0NzMtYzVhYS00Y2M2LWE1ZTMtYmZhZjA5YTZkNDViLTkzOTA2ODkiLCJyb2xlcyI6WyJXQk9MQXBwcm92ZXIiLCJCb29raW5nIiwiUGF5bWVudHMiLCJEb2N1bWVudGF0aW9uIiwiSW52b2ljZXMiLCJDb250cmFjdFJhdGUiLCJCYXNpY0N1c3RvbWVyIl0sImlzcyI6Imh0dHBzOi8vaWFtLm1hZXJzay5jb20vYWNtL29hdXRoMi9tYXUiLCJ0b2tlbk5hbWUiOiJpZF90b2tlbiIsIm9mZmljZSI6IlFpbmdkYW8gLSBDTiIsImxhc3RuYW1lIjoiV0FOIiwiYXVkIjoiYmNhMDAxIiwiYWNyIjoiMCIsImNhcnJpZXIiOiJNQUVVIiwiYXpwIjoiYmNhMDAxIiwiYXV0aF90aW1lIjoxNzE3ODUxNTYwLCJ1c2VyVXVpZCI6IjI2ODFkNjY1LWZjYWUtNDMzNi04NDc1LTRiM2I5ZDQwNTc2ZiIsInJlYWxtIjoiL21hdSIsInBlcnNvbmlkIjoiNDA2MDUwNjQxNjAiLCJleHAiOjE3MTc5ODMyMzUsInRva2VuVHlwZSI6IkpXVFRva2VuIiwiaWF0IjoxNzE3OTc2MDM1LCJjdXN0b21lcl9jb2RlIjoiNDA2MDQ5Nzg2OTUiLCJlbWFpbCI6Im9wMTUucWRAaGlnaHdheWxvZ2lzdGljcy5jb20uY24iLCJ1c2VybmFtZSI6Indhbm5lIn0.Y683EL2WppPXHE9MOMlCB2zaGIWirTfn9_MrY4xOOrrIYlqPPNwbLHX0GAFqAmhTTA3lwI2Dy_Zo0exo1oKEZKFoEcHwkD__ns_Fb7RLp4jdhTGY1xk8X8bMnz9rVT_8MIXBRmdB9DNE8D0ijo4400FOtN5NgHsquFsi_Nd0a4ovK-ng1V3cJBP1AvBiV6UnWCCYnIwLYegrXwJUX0CLF88QQCfB4ix2Cy8iRJB2zXkHuES-1JDcEG_Xei9YGbwdaJ7Z5RmZry-mnZP9dVnQP090I5D-tQLJBQhcDuttAc4ZJP2pKoZBWzWlEpYPSMgnUiiZ6I_H5zPLFn9XdFGHtMsY7eelyGqZo0XQz3un5zFOphC9SH4dc_00AyPw1XX7019-S-RpZAIm3C2phe9wY0Qk-PtzIjxLf0gXXxTTX3bv8J2qc4EgseoeMuzY1q8XVhhe17Tb2hhMWjBc4tPYOo43Y7i4f_XFXkVT4nlgo3GD-ShQ9ONHqKTgTzbwQtkf",
-    "Origin":"https://www.maersk.com.cn/",
-    "Consumer-Key":"xXIXujnYnqne1yiEnRfIAY7UMAWsbh7J",
-    "Correlationid":"c361e9f0-5fb6-4592-8e9c-02129de0da50",
-    "Akamai-Bm-Telemetry":"a=1C6CCA164D99135BE82DB9DF1E2D5E20&&&e=MkVFNTIyOEU4QjY1RTAxMUVCRTRFQUVDNzhDNzhBNDB+WUFBUXBlQmIyaTd0Q3NLUEFRQUF4MHBhL3hqWnBCT3RsNkxFUHlZVE04TUIvV2V6OXFqdldwbEptTlV6Umw5KzZvTGkyN1RjdWMyTWRxT1dYektHbzlVZHBzejFTQklBMjZnd0dteTZJcVB5cTRPWWhtQklhVExWa1Q2UmJxYk5lQndvUzMvcEgwekdXTGRlUTNhQ2dYM3ZmbldVNnJKZHdCSDUzWW5XOEhNUHJ4SU1yZi9DbmgvcTdZUjY5dWRNNmY5TjM5c2FVM3FCQjB0SXlseS9POXk1bmVGSEU3dkFGczJtNnRrUzlJTHN5c0RSeWY5cEJtQnV0ZXlGS2lnTE4zcDVNem5leE5temVSYXVUQ0JJWVNoTWx0c1JKSm05K3kxL1ZxSGhNaHZWZU1XUGFwY0dwcXFtY0NRcTg4bGpRd05rNVZQVTQ3SHpxOURrU2MxRFdqRzdFZ1F3c0F0L2RkbENwVy9FcVNwNW4zaFUvR1IrRFZEM1RpZFdaYTJaa2oxajJjb2NpY2haMUkwUWdnOUV5K1Qzc0FlRXF2VHpnSGFGeDBCQUxwd0dJNzluVUkrbUk3amVYd0xVfjM0ODY3Nzd+MzIyOTIzMg==&&&sensor_data=MjszNDg2Nzc3OzMyMjkyMzI7MzcsMSwwLDAsMiwzNzs5bDcud2kpNk5oaHRlTmBfX2ZCa2ArViotcyAvWSNpZUU9cDo8VHRuRzZ3fmtwRiNuTitfYz85M0NIXSw7X0NRKEQlO1Y8aSkrOWJ7KyRTLUlSLGdgSXVhdGRlRWAuMTE4em1lbHQod3dAQ21tdmJNSUdLLGx6KzBPTFFCTjFxfVhJLCg3NWdxam1JUH0/ZFBJdFk6S0JHVHZ4QjcxbWZ+eTVwLC9ea0tvUV4pOE84KU9uaUVVTyV8QkZDX29eRmg2JnMobWwxZCVKYGluK1JacDteR1JUbn45ZyM+QTchS29QaX4/cDp4Nz9YMTZsJHhaLDh8RE99K1o1IS40KSVUSkpAY3xTRkF3Y0AgPVdNLTs8WV1tel5ELlM0djRePDJ6IFVMaCB6aDdIRyZCX1poP2wtOHEsYCFNcVFVc0M9LV5gTFhGKXFeNChiQWc7UFUzIXV5QjQ4UVZtQVQ9LzRvaGN4PUhiLyNtYiVBWTcjYTRAPUVaR2kwakQkQHYqMHRPbn1lJDVrYz9KfH1VMTtSIWt3WiFFJjNNeUEsTHp7a0t2KkNBOHt7cnVhbz1wIEMzKUJVLk9LSHBEXSk1fW9aRmouQ3xJNnVeajYsbXg8ZF8hPE9fMSM0MWVbWGJKP2oxVH5lQ3hBIUtRRiAzfUZzblV9TCBrTzckcnNGK0JyPGVmX1dfQV9EIzVhPX46bD0yQm0jbCRHWjd2T1VBMTY7MmY1WG4jV0NLZF5ANy5UW2FrOlhOOF1+K21xVkFwS0AvKWBdS2VrIEdRWmVzP3JBUV1DQloxa1Jgb0sye0s3d0l+IHoqfHZic3FIWTBiN1tRZlM6WzY/LShFS001eD5galo8OThWRzZGSF15cigoSSs+eV1aY2FdanQoYSBaNF52ZTVUTWkhWHRFYyRXPEc9Vz8kNjwvfHxBdjRMVjpZODx+bnhZIURCLDxWSzBFUk09X3thNDktW1hmT0soP19+UXNZSSYjSyFKJTxJITooKEN1Y21sanl1ZGdoMkZKN1R2V2wsLSp9X3doTUcyVX5hKzNVcXMvWGY6UTZSWklOMFhSQW51Wn1QPi1SNEt3bnZGeHF2Ly5qd01TOE1MXldrVV1ZeVs+bDtzZUVsJUxgaT81Z3swYXo8NSlsfUdjUnlgZmxEWE49U3hmQDpJeHsrbk1NaCo5aVJ2Q3dMZWtiQiQ1R3UmMGcjR0JyIUJteG1vVWRoP2E5WUBKVmg8SXFALz9IJVVHLytSUihQek97e2tKZHRYa1cgdkgsSSY2Py98LVEzV100Vj0/b3xOKElPOW5jckMmZTx7YUVtUWYoalM3PH1Ra09XOCpCOHBeKEQ1KEVeOWhUOytiUy9qJUBBMWsmaEtXS1BFUFFRPSB4b2dbKTwmXVY5Lm8pPSxEZGZmNl1JJkAvIUFQZGRKK3c6OSkyelo1Niwpa2xJL1t9JCxVeyg/Uk07Jk1GTilCYj5BRnQ7O3xxbmJWWEQyViM0NHg+enJJSF0qNDlLQjR2QkcqcDQ0XmAxTjY6KiwxaDA3e0tAMkF4PkRxcjUsJCxJWF1+dXVTblh4bjhtbDhyLzhoRUFqJSpfZiFMakRySzNZaEwgJC0lKzwyRzMzUFcpU3hAZG1vRnReMEpecjZDayBbN3F8czAtLVJlbWhkPVlvbEdVZTxMNk18KjFFTEZgdTZ9c3h2JXNmXT8zMm9lLUtFLmVgKUE/RiNHeCFgNChNeWhWY28qO1pnNzNIMyRbIC13NDN7NipKNFErNG1hS3VUSypNWXI9VX40VFBANm4xZUFiNDRKblsgfWdzakZ4T3d4ZHxaRExrUWZ+K2EvNlJALHs3LzdtQD1UPFpdPHdDSUF0R05fP0xpfjlRcyllZnkyXi1oLyo2XX5yTTNvPURfdkpGTHhxcXpwamJEciFVK0czTShPSTRHaV92ISNgfVVYUiAydV8scXpEK05jZWZCNGNPeyx5eUwyT0RCJHpbcj9RS0RJV0ovbGB0ZHBkOHhEQSYgXyted3ZUbnw6Lkp5M0F3fXJBRzIuUF8qZz03JnpMMUZpI3xvX3tWKCYkfWRjPztxLHl4NkZMOVkjTEl+YGtYKSNLaTdxdjx6YGlAeWZXJk8rZll8OU0wU0NfaF8hckJGI1dPWXNjXTtnVzc/cEl6QShLNjFvJVEkSWpCWUE7Kj50KDpqTyEtWHYxUGM2VzF9Yj8ha0tmYUp4U1IhLVRrWmg8aUggMlpsXkdudXpzbU51Ly06aFstVX4hfG5MJDlqWiVxY0tHQi0/MmJPSGojMWVEST5nZzxkTyhAX3ZDV0syKXo7dUBjdyRudEZvcXg0UD99fnxsdW9dQWNpVDlAMlsvLm0tPllmRD5TaFc4MCZAQWZqfnRaWz0/T3pYYWk8TDZXJkdneS9zYiA9Y29zeTFTX24jJCxyZCopeWlLWSBDd04pQTxaNyskUGpZQDJgU1teYy0tcSpPcXVmLn45ZyE8bUJoRiBQPmdjWn5wKTMyaEFZfjJFYX1RIXtgPkpQOWhUaXk/XnhEO1I/NWpLW2xFdUNfZ1lUWmldbiV4SyVBKlh3QEthNzhAeUVPSml3V2dEY3RKZzpKOTMsOHgqcUdNeWc6Z0hwNi5zOkhIb05sOG5JazJLNmM7WlRiQl14UVE0M1pRfWBiTCxqdTF4NnQ+QFIzQXV4MXNabiZmLndRNUs6X3FSLGtTPiViRkE5T0w3NSBqQ0tnUjx+akN6eWRrenlDaDhMXVA2YkF3X3g8PzA1JSZYZVVvb2BwIztgP11LeTEubmJ5MHpYczRrVmFqWkAuekkjcmxgMEFQOUAsMjc/NjRyUUQkfndAV2s+OXpkUkZ2XnRKPC5eLlplYER4dV8gfCF3SHNzSX1VaUkvKkBNaz9PbHlHN3pGNCkwakRAb2hbOEFfX0FFbilLamZQU2lbRkFlRHl+VnhTMU1VZXpCeTYoZ3N9IUB1NlgsRQ==",
-    "Content-Type":"application/json",
-    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
-  },
-  "body": {},
-  "timeOut":15
+  "routeScheduleId": "dc9fcd33-c1b1-4b13-a994-64a0c33f6f53_1_0",
+  "equipmentAndHaulage": [
+    {
+      "containerDetails": {
+        "isoCode": "22G1",
+        "size": "20",
+        "type": "DRY",
+        "height": "8 6",
+        "isShipperOwned": false,
+        "isOutOfGauge": false,
+        "isImportReturned": false,
+        "quantity": 1,
+        "containerRefs": [
+          "3W5O0DE5WC1BK"
+        ]
+      },
+      "stuffingDetails": [
+        {
+          "propertyMeasurementType": "WEIGHT",
+          "propertyMeasurementUnit": "KGS",
+          "propertyValue": 18000
+        }
+      ],
+      "haulageDetails": [
+        {
+          "arrangementType": "MERCHANT",
+          "operationalStage": "EXPORT",
+          "haulageSites": [
+            {
+              "maerskHaulageSiteRole": "EMPTY_EQUIPMENT_PICKUP",
+              "maerskSiteReferenceId": "0QX6S8N7IDCZ9",
+              "cityGeoId": "1JUKNJGWHQBNJ",
+              "siteGeoId": "0QX6S8N7IDCZ9",
+              "haulageStartTimestampLocal": "2024-06-10T00:00:00"
+            },
+            {
+              "maerskHaulageSiteRole": "EMPTY_EQUIPMENT_RETURN",
+              "maerskSiteReferenceId": "2LME4YKE32WZJ",
+              "cityGeoId": "1JUKNJGWHQBNJ",
+              "siteGeoId": "2LME4YKE32WZJ",
+              "haulageStartTimestampLocal": "2024-06-14T03:00:00"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "parties": [
+    {
+      "roleCode": "1",
+      "companyName": "QINGDAO HIGHWAY CLOUD TECHNOLOGY DEVELOPMENT CO.,LTD.",
+      "companyAddress": "40|HONGKONG MIDDLE ROAD|QINGDAO,CHINA|266000",
+      "maerskPartyCode": "40604978695",
+      "cmdCode": "CN04978695"
+    }
+  ],
+  "vasSurcharges": [
+    {
+      "freightType": "F01",
+      "currency": "USD",
+      "description": " Freetime Extension 1Day",
+      "amendmentNumber": "5",
+      "effectivePeriod": {
+        "dateRangeBegin": "2023-10-23",
+        "dateRangeEnd": "2099-12-31"
+      },
+      "offeredLevel": "CONTAINER",
+      "isAdditionalInfoRequired": false,
+      "isQuantityRequired": false,
+      "rateId": "0273123342",
+      "rateUnit": "PER_CONTAINER",
+      "rateAsFiled": 8,
+      "conversionRate": 1,
+      "amountInRequestCurrency": 8,
+      "amount": 8,
+      "isRestricted": false,
+      "isContract": false,
+      "requestedCurrency": "USD",
+      "type": "Detention",
+      "additionalFreeDays": 1,
+      "freeDays": 14
+    },
+    {
+      "freightType": "D03",
+      "currency": "USD",
+      "description": "DMR Free time extension 3 days",
+      "lineItemNumber": "SLI-47427217",
+      "amendmentNumber": "2",
+      "effectivePeriod": {
+        "dateRangeBegin": "2024-04-16",
+        "dateRangeEnd": "2099-12-31"
+      },
+      "offeredLevel": "CONTAINER",
+      "isAdditionalInfoRequired": false,
+      "isQuantityRequired": false,
+      "rateId": "474272172",
+      "rateUnit": "PER_CONTAINER",
+      "rateAsFiled": 30,
+      "conversionRate": 1,
+      "amountInRequestCurrency": 30,
+      "amount": 30,
+      "isRestricted": false,
+      "isContract": false,
+      "requestedCurrency": "USD",
+      "type": "Demurrage",
+      "additionalFreeDays": 3,
+      "freeDays": 7
+    }
+  ],
+  "statusInfos": [
+    {
+      "code": "BI_CI_I_3",
+      "description": "Insurance not available for the Price Owners Country",
+      "type": "Info"
+    }
+  ],
+  "additionalReferences": []
 }
