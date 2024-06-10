@@ -1,0 +1,119 @@
+{
+  "routeScheduleId": "5415a9af-70c0-4db5-b719-abc169257cfe_1_1",
+  "equipmentAndHaulage": [
+    {
+      "containerDetails": {
+        "isoCode": "22G1",
+        "size": "20",
+        "type": "DRY",
+        "height": "8 6",
+        "isShipperOwned": false,
+        "isOutOfGauge": false,
+        "isImportReturned": false,
+        "quantity": 1,
+        "containerRefs": [
+          "I6L1IWWLV8L3N"
+        ]
+      },
+      "stuffingDetails": [
+        {
+          "propertyMeasurementType": "WEIGHT",
+          "propertyMeasurementUnit": "KGS",
+          "propertyValue": 18000
+        }
+      ],
+      "haulageDetails": [
+        {
+          "arrangementType": "MERCHANT",
+          "operationalStage": "EXPORT",
+          "haulageSites": [
+            {
+              "maerskHaulageSiteRole": "EMPTY_EQUIPMENT_PICKUP",
+              "maerskSiteReferenceId": "0QX6S8N7IDCZ9",
+              "cityGeoId": "1JUKNJGWHQBNJ",
+              "siteGeoId": "0QX6S8N7IDCZ9",
+              "haulageStartTimestampLocal": "2024-06-10T00:00:00"
+            },
+            {
+              "maerskHaulageSiteRole": "EMPTY_EQUIPMENT_RETURN",
+              "maerskSiteReferenceId": "2LME4YKE32WZJ",
+              "cityGeoId": "1JUKNJGWHQBNJ",
+              "siteGeoId": "2LME4YKE32WZJ",
+              "haulageStartTimestampLocal": "2024-06-20T07:00:00"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "parties": [
+    {
+      "roleCode": "1",
+      "companyName": "QINGDAO HIGHWAY CLOUD TECHNOLOGY DEVELOPMENT CO.,LTD.",
+      "companyAddress": "40|HONGKONG MIDDLE ROAD|QINGDAO,CHINA|266000",
+      "maerskPartyCode": "40604978695",
+      "cmdCode": "CN04978695"
+    }
+  ],
+  "vasSurcharges": [
+    {
+      "freightType": "F01",
+      "currency": "USD",
+      "description": " Freetime Extension 1Day",
+      "amendmentNumber": "5",
+      "effectivePeriod": {
+        "dateRangeBegin": "2023-10-23",
+        "dateRangeEnd": "2099-12-31"
+      },
+      "offeredLevel": "CONTAINER",
+      "isAdditionalInfoRequired": false,
+      "isQuantityRequired": false,
+      "rateId": "0722940403",
+      "rateUnit": "PER_CONTAINER",
+      "rateAsFiled": 8,
+      "conversionRate": 1,
+      "amountInRequestCurrency": 8,
+      "amount": 8,
+      "isRestricted": false,
+      "isContract": false,
+      "requestedCurrency": "USD",
+      "type": "Detention",
+      "additionalFreeDays": 1,
+      "freeDays": 14
+    },
+    {
+      "freightType": "D03",
+      "currency": "USD",
+      "description": "DMR Free time extension 3 days",
+      "lineItemNumber": "SLI-47427217",
+      "amendmentNumber": "2",
+      "effectivePeriod": {
+        "dateRangeBegin": "2024-04-16",
+        "dateRangeEnd": "2099-12-31"
+      },
+      "offeredLevel": "CONTAINER",
+      "isAdditionalInfoRequired": false,
+      "isQuantityRequired": false,
+      "rateId": "474272172",
+      "rateUnit": "PER_CONTAINER",
+      "rateAsFiled": 30,
+      "conversionRate": 1,
+      "amountInRequestCurrency": 30,
+      "amount": 30,
+      "isRestricted": false,
+      "isContract": false,
+      "requestedCurrency": "USD",
+      "type": "Demurrage",
+      "additionalFreeDays": 3,
+      "freeDays": 7
+    }
+  ],
+  "statusInfos": [
+    {
+      "code": "BI_CI_I_3",
+      "description": "Insurance not available for the Price Owners Country",
+      "type": "Info"
+    }
+  ],
+  "additionalReferences": []
+}
