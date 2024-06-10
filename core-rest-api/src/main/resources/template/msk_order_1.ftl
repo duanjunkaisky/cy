@@ -1,14 +1,14 @@
 {
   "bookingType": "NEW",
   "originLocation": {
-    "geoId": "1YCLYW8V7RZB2",
-    "rkstCode": "CNTST",
-    "countryCode": "CN"
+    "geoId": "${fromPortId}",
+    "rkstCode": "${fromPortCode}",
+    "countryCode": "${fromPortCountryCode}"
   },
   "destinationLocation": {
-    "geoId": "3HXEUPPJWKGVZ",
-    "rkstCode": "ROCND",
-    "countryCode": "RO"
+    "geoId": "${toPortId}",
+    "rkstCode": "${toPortCode}",
+    "countryCode": "${toPortCountryCode}"
   },
   "batchSizeInWeeks": 2,
   "productsFetchSizeInWeeks": 2,
@@ -30,28 +30,28 @@
   },
   "containerDetails": [
     {
-      "size": "20",
-      "type": "DRY",
-      "height": "8 6",
+      "size": "${containerSize}",
+      "type": "${containerType}",
+      "height": "${containerHeight}",
       "quantity": 1,
-      "cargoWeight": 18000,
+      "cargoWeight": "${cargoWeight}",
       "weightMeasurementUnit": "KGS",
       "isNOR": false,
       "isFoodGrade": false,
-      "isoCode": "22G1",
+      "isoCode": "${containerCode}",
       "isShipperOwned": false,
       "isOutOfGauge": false,
       "isImportReturned": false,
       "containerRefs": [
-        "WT8R1CYCS80BS"
+        "8R70CQ9OQAKE8"
       ]
     }
   ],
   "metricUnits": true,
   "isContainerPickedUp": false,
   "isContainerGatedIn": false,
-  "earliestDepartureDate": "2024-06-08",
-  "priceCalculationDate": "2024-06-08",
+  "earliestDepartureDate": "${departureDate}",
+  "priceCalculationDate": "${departureDate}",
   "parties": [
     {
       "scvCode": "40604978695",
@@ -70,6 +70,5 @@
     }
   ],
   "buCode": "2162",
-  "productsEagerFetch": true,
-  "previousCorrelationId": "7a8a764e-079e-4cd2-a0fa-03942b10dd12"
+  "productsEagerFetch": true
 }

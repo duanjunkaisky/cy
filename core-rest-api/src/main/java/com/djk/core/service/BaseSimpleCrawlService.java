@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 abstract class BaseSimpleCrawlService implements CrawlService {
     public static final String FROM_FLAG = "from";
     public static final String TO_FLAG = "to";
+    public static final String DANLI_ACCESS_KEY = "eyqq4t1ubp4fbjklkrguol6zcc8o5jp5";
 
     @Autowired
     BasePortMapper basePortMapper;
@@ -250,6 +251,13 @@ abstract class BaseSimpleCrawlService implements CrawlService {
         if (StringUtils.isEmpty(queryRouteVo.getAccountName())) {
             throw new RuntimeException("30秒内未得到token");
         }
+    }
+
+    @Override
+    public void returnAccount(QueryRouteVo queryRouteVo) {
+        String accountName = (String) redisService.get(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getUniqueId());
+        redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + queryRouteVo.getUniqueId());
+        redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + accountName);
     }
 
     public int parseCurrentCy(String currency) {

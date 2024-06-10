@@ -1,5 +1,6 @@
 package com.djk.core.utils;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,8 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class MyProxyUtil {
+public class MyProxyUtil
+{
     public static final boolean proxyOn = true;
     public static final String PROXY_USERNAME = "d2408575423";
     public static final String PROXY_PASSWORD = "gl4pk39d";
@@ -21,7 +23,8 @@ public class MyProxyUtil {
     public static final int PER_PROXY_COUNT = 10;
     public static ConcurrentHashMap<Integer, String> proxyMap = new ConcurrentHashMap<>(10);
 
-    public synchronized static void newProxyList() {
+    public synchronized static void newProxyList()
+    {
         Map<String, Object> params = new HashMap<>();
         params.put("secret_id", SECRET_ID);
         params.put("secret_key", SECRET_KEY);
@@ -52,31 +55,47 @@ public class MyProxyUtil {
 
     }
 
-    public static String getProxy() {
+    public static String getProxy()
+    {
+        String errorMsg = "";
         if (proxyOn) {
             try {
-                String proxy = null;
                 int count = 1;
-                while (proxyMap.isEmpty() && StringUtils.isEmpty(proxy) && count <= 3) {
+                while (proxyMap.isEmpty() && count <= 3) {
                     newProxyList();
-                    int index = new Random().nextInt(proxyMap.size());
-                    proxy = proxyMap.get(index);
-                    if (!StringUtils.isEmpty(proxy)) {
-                        return proxy;
-                    }
                     count++;
                 }
                 int index = new Random().nextInt(proxyMap.size());
                 return proxyMap.get(index);
             } catch (Exception e) {
-                return null;
+                log.error(ExceptionUtil.getMessage(e));
+                log.error(ExceptionUtil.stacktraceToString(e));
+                errorMsg = ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e);
             }
-        } else {
-            return null;
         }
+        throw new RuntimeException("获取代理失败\n" + errorMsg);
     }
 
-    public static void main(String[] args) {
+    public static String getProxyIp(String proxy)
+    {
+        if (!StringUtils.isEmpty(proxy) && proxy.split(":").length == 2) {
+            String[] split = proxy.split(":");
+            return split[0];
+        }
+        return null;
+    }
+
+    public static String getProxyPort(String proxy)
+    {
+        if (!StringUtils.isEmpty(proxy) && proxy.split(":").length == 2) {
+            String[] split = proxy.split(":");
+            return split[1];
+        }
+        return null;
+    }
+
+    public static void main(String[] args)
+    {
         String proxy = getProxy();
         System.out.println(proxy);
     }

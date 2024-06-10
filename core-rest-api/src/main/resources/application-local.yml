@@ -14,8 +14,8 @@ spring:
   redis:
     host: crawl.meiri56.com
     database: 0
-    port: 8397
-    timeout: 3000ms
+    port: 8379
+    timeout: 6000ms
 redis:
   database: crawl
 

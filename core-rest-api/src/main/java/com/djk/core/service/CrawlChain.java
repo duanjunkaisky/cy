@@ -15,10 +15,10 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.concurrent.*;
@@ -140,6 +140,12 @@ public class CrawlChain
 
     public void addLog(Boolean addDataId, String businessName, String stepName, String msg, QueryRouteVo queryRouteVo)
     {
+        if (StringUtils.isEmpty(msg)) {
+            log.info(getLogPrefix(queryRouteVo.getSpotId(), queryRouteVo.getHostCode()) + stepName);
+        } else {
+            log.info(getLogPrefix(queryRouteVo.getSpotId(), queryRouteVo.getHostCode()) + stepName + "\n" + msg);
+        }
+
         Long lastTimePoint = (Long) redisService.get(REDIS_DATABASE + ":tmp:lastTimePoint:" + queryRouteVo.getUniqueId());
         long timePoint = System.currentTimeMillis();
         CrawlRequestLog requestLog = new CrawlRequestLog();
@@ -163,6 +169,11 @@ public class CrawlChain
         Long aLong = redisService.generateId(REDIS_DATABASE + ":tmp:log-step-num:" + queryRouteVo.getUniqueId(), 360L);
         requestLog.setStepNum(aLong);
         logMapper.insertSelective(requestLog);
+    }
+
+    public String getLogPrefix(String spotId, String hostCode)
+    {
+        return (StringUtils.isEmpty(spotId) ? "" : (spotId + " - ")) + hostCode + " - ";
     }
 
 }

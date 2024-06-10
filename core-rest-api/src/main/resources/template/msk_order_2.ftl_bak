@@ -1,48 +1,48 @@
 {
-  "routeScheduleId": "1b414a41-470e-431a-a4e0-6cf360c99d77_1_0",
+  "routeScheduleId": "${routeScheduleId}",
   "equipmentAndHaulage": [
     {
       "containerDetails": {
-        "isoCode": "22G1",
-        "size": "20",
-        "type": "DRY",
-        "height": "8 6",
+        "isoCode": "${containerCode}",
+        "size": "${containerSize}",
+        "type": "${containerType}",
+        "height": "${containerHeight}",
         "isShipperOwned": false,
         "isOutOfGauge": false,
         "isImportReturned": false,
         "quantity": 1,
         "containerRefs": [
-          "JFW1HUSXE5CP2"
+          "I6L1IWWLV8L3N"
         ]
       },
       "stuffingDetails": [
         {
           "propertyMeasurementType": "WEIGHT",
           "propertyMeasurementUnit": "KGS",
-          "propertyValue": 18000
+          "propertyValue": "${cargoWeight}"
         }
       ],
       "haulageDetails": [
-        {
-          "arrangementType": "MERCHANT",
-          "operationalStage": "EXPORT",
-          "haulageSites": [
-            {
-              "maerskHaulageSiteRole": "EMPTY_EQUIPMENT_PICKUP",
-              "maerskSiteReferenceId": "0QX6S8N7IDCZ9",
-              "cityGeoId": "1JUKNJGWHQBNJ",
-              "siteGeoId": "0QX6S8N7IDCZ9",
-              "haulageStartTimestampLocal": "2024-06-11T00:00:00"
-            },
-            {
-              "maerskHaulageSiteRole": "EMPTY_EQUIPMENT_RETURN",
-              "maerskSiteReferenceId": "2LME4YKE32WZJ",
-              "cityGeoId": "1JUKNJGWHQBNJ",
-              "siteGeoId": "2LME4YKE32WZJ",
-              "haulageStartTimestampLocal": "2024-06-14T03:00:00"
-            }
-          ]
-        }
+{
+"arrangementType": "MERCHANT",
+"operationalStage": "EXPORT",
+"haulageSites": [
+{
+"maerskHaulageSiteRole": "EMPTY_EQUIPMENT_PICKUP",
+"maerskSiteReferenceId": "0QX6S8N7IDCZ9",
+"cityGeoId": "1JUKNJGWHQBNJ",
+"siteGeoId": "0QX6S8N7IDCZ9",
+"haulageStartTimestampLocal": "2024-06-10T00:00:00"
+},
+{
+"maerskHaulageSiteRole": "EMPTY_EQUIPMENT_RETURN",
+"maerskSiteReferenceId": "2LME4YKE32WZJ",
+"cityGeoId": "1JUKNJGWHQBNJ",
+"siteGeoId": "2LME4YKE32WZJ",
+"haulageStartTimestampLocal": "2024-06-20T07:00:00"
+}
+]
+}
       ]
     }
   ],
@@ -68,7 +68,7 @@
       "offeredLevel": "CONTAINER",
       "isAdditionalInfoRequired": false,
       "isQuantityRequired": false,
-      "rateId": "0661692849",
+      "rateId": "0510962188",
       "rateUnit": "PER_CONTAINER",
       "rateAsFiled": 8,
       "conversionRate": 1,

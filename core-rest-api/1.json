@@ -1,119 +1,136 @@
 {
-  "routeScheduleId": "dc9fcd33-c1b1-4b13-a994-64a0c33f6f53_1_0",
-  "equipmentAndHaulage": [
-    {
-      "containerDetails": {
-        "isoCode": "22G1",
-        "size": "20",
-        "type": "DRY",
-        "height": "8 6",
-        "isShipperOwned": false,
-        "isOutOfGauge": false,
-        "isImportReturned": false,
-        "quantity": 1,
-        "containerRefs": [
-          "3W5O0DE5WC1BK"
+  "appid": "eyqq4t1ubp4fbjklkrguol6zcc8o5jp5",
+  "method": "POST",
+  "url": "https://api.maersk.com/booking-request/87ac3847-5838-48d8-98d0-706c0d9608b3/additionalDetails",
+  "headers": {
+    "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJPK0FZTDdiY083WlNLL2NjdFRjOHFrSStIemc9IiwiYWxnIjoiUlMyNTYifQ.eyJhdF9oYXNoIjoiVFktaFktdjlsSGpvbmRZRW9yOVJMZyIsInN1YiI6Imx5Z3pxMjAyMyIsImZpcnN0bmFtZSI6InFpbmciLCJhdWRpdFRyYWNraW5nSWQiOiIyNDVmMTQ3My1jNWFhLTRjYzYtYTVlMy1iZmFmMDlhNmQ0NWItMTMxODcwODkiLCJyb2xlcyI6WyJXQk9MQXBwcm92ZXIiLCJCb29raW5nIiwiUGF5bWVudHMiLCJDb250cmFjdFJhdGUiLCJJbnZvaWNlcyIsIkRvY3VtZW50YXRpb24iLCJCYXNpY0N1c3RvbWVyIl0sImlzcyI6Imh0dHBzOi8vaWFtLm1hZXJzay5jb20vYWNtL29hdXRoMi9tYXUiLCJ0b2tlbk5hbWUiOiJpZF90b2tlbiIsIm9mZmljZSI6Ik5hbmppbmcgLSBDTiIsImxhc3RuYW1lIjoiemhhbmciLCJhdWQiOiJiY2EwMDEiLCJhY3IiOiIwIiwiY2FycmllciI6Ik1BRVUiLCJhenAiOiJiY2EwMDEiLCJhdXRoX3RpbWUiOjE3MTc5NjY4ODEsInVzZXJVdWlkIjoiOTNlN2MzZWUtOGYyZC00NWQ4LTg0OTYtZDNkMmQ2YzQzN2NmIiwicmVhbG0iOiIvbWF1IiwicGVyc29uaWQiOiI0MDYwNjUwNjIwMiIsImV4cCI6MTcxODAxNjgwOCwidG9rZW5UeXBlIjoiSldUVG9rZW4iLCJpYXQiOjE3MTgwMDk2MDgsImN1c3RvbWVyX2NvZGUiOiI0MDYwNTE2MzA1OSIsImVtYWlsIjoib3AyLmx5Z0Bod2lsLmNvbS5jbiIsInVzZXJuYW1lIjoibHlnenEyMDIzIn0.tL_300bEw2BrLCcVXvu73qXqCHXnaUeR2iztQViHJ0nX4oL9C2bw1DCI6Lma5Tkj3GghXVU5cowylDodELZVaJJYGbeFrG9-owHardtQDNjDrjYhxTrNbcbm8LIy3HrEOOzopPkNzpXAGdncpL7JJaB0SuvE9NNzRRkDSsHUPwEn6I5iDYvltJCEpoPEj1RWVZa-HA62WYdCBN0kb6m-Gf0H_R4bIH93LJtsrOriwHBAPt_lyWEvBInMJOnAX21-DzjpOf8-vGMW7QytVYA5a_y67Jh6IQmS7buTjmk4cPlfeUmkmy6l8EIgVVapgToYM-duV39cN3Tu_a-a6QObVMkWEiZNgS4iJCGftCzjw2YlJJRgRMTIlgJhy5uOFpaw5-H5fyGCpLlOB-Mflvqb-HiDPpFOWeZpgycidOq4fTt-D1HUzJU1qvSNZdWXZfmDKwTCjnxZtikYxoYWSfKnzejdAcIjIc1QfUgsDnCO57YliPDutZubE4eD0lN5W4bf",
+    "Origin": "https://www.maersk.com.cn/",
+    "Consumer-Key": "xXIXujnYnqne1yiEnRfIAY7UMAWsbh7J",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
+    "Correlationid": "87ac3847-5838-48d8-98d0-706c0d9608b3",
+    "Content-Type": "application/json"
+  },
+  "body": {
+    "routeScheduleId": "87ac3847-5838-48d8-98d0-706c0d9608b3_1_0",
+    "equipmentAndHaulage": [
+      {
+        "haulageDetails": [
+          {
+            "arrangementType": "MERCHANT",
+            "operationalStage": "EXPORT",
+            "haulageSites": [
+              {
+                "maerskHaulageSiteRole": "EMPTY_EQUIPMENT_PICKUP",
+                "haulageStartTimestampLocal": "2024-06-10T00:00:00",
+                "cityGeoId": "1JUKNJGWHQBNJ",
+                "siteGeoId": "0QX6S8N7IDCZ9",
+                "maerskSiteReferenceId": "0QX6S8N7IDCZ9"
+              },
+              {
+                "maerskHaulageSiteRole": "EMPTY_EQUIPMENT_RETURN",
+                "haulageStartTimestampLocal": "2024-06-20T07:00:00",
+                "cityGeoId": "1JUKNJGWHQBNJ",
+                "siteGeoId": "2LME4YKE32WZJ",
+                "maerskSiteReferenceId": "2LME4YKE32WZJ"
+              }
+            ]
+          }
+        ],
+        "containerDetails": {
+          "quantity": 1,
+          "size": "20",
+          "isoCode": "22G1",
+          "isShipperOwned": false,
+          "containerRefs": [
+            "I6L1IWWLV8L3N"
+          ],
+          "type": "DRY",
+          "isOutOfGauge": false,
+          "isImportReturned": false,
+          "height": "8 6"
+        },
+        "stuffingDetails": [
+          {
+            "propertyMeasurementUnit": "KGS",
+            "propertyMeasurementType": "WEIGHT",
+            "propertyValue": "18000"
+          }
         ]
+      }
+    ],
+    "parties": [
+      {
+        "roleCode": "1",
+        "companyName": "QINGDAO HIGHWAY CLOUD TECHNOLOGY DEVELOPMENT CO.,LTD.",
+        "companyAddress": "40|HONGKONG MIDDLE ROAD|QINGDAO,CHINA|266000",
+        "maerskPartyCode": "40604978695",
+        "cmdCode": "CN04978695"
+      }
+    ],
+    "statusInfos": [
+      {
+        "code": "BI_CI_I_3",
+        "description": "Insurance not available for the Price Owners Country",
+        "type": "Info"
+      }
+    ],
+    "vasSurcharges": [
+      {
+        "isAdditionalInfoRequired": false,
+        "amountInRequestCurrency": 8,
+        "amount": 8,
+        "effectivePeriod": {
+          "dateRangeEnd": "2099-12-31",
+          "dateRangeBegin": "2023-10-23"
+        },
+        "freeDays": 14,
+        "rateUnit": "PER_CONTAINER",
+        "description": " Freetime Extension 1Day",
+        "type": "Detention",
+        "conversionRate": 1,
+        "freightType": "F01",
+        "offeredLevel": "CONTAINER",
+        "rateId": "0510962188",
+        "isContract": false,
+        "amendmentNumber": "5",
+        "isQuantityRequired": false,
+        "rateAsFiled": 8,
+        "currency": "USD",
+        "requestedCurrency": "USD",
+        "isRestricted": false,
+        "additionalFreeDays": 1
       },
-      "stuffingDetails": [
-        {
-          "propertyMeasurementType": "WEIGHT",
-          "propertyMeasurementUnit": "KGS",
-          "propertyValue": 18000
-        }
-      ],
-      "haulageDetails": [
-        {
-          "arrangementType": "MERCHANT",
-          "operationalStage": "EXPORT",
-          "haulageSites": [
-            {
-              "maerskHaulageSiteRole": "EMPTY_EQUIPMENT_PICKUP",
-              "maerskSiteReferenceId": "0QX6S8N7IDCZ9",
-              "cityGeoId": "1JUKNJGWHQBNJ",
-              "siteGeoId": "0QX6S8N7IDCZ9",
-              "haulageStartTimestampLocal": "2024-06-10T00:00:00"
-            },
-            {
-              "maerskHaulageSiteRole": "EMPTY_EQUIPMENT_RETURN",
-              "maerskSiteReferenceId": "2LME4YKE32WZJ",
-              "cityGeoId": "1JUKNJGWHQBNJ",
-              "siteGeoId": "2LME4YKE32WZJ",
-              "haulageStartTimestampLocal": "2024-06-14T03:00:00"
-            }
-          ]
-        }
-      ]
-    }
-  ],
-  "parties": [
-    {
-      "roleCode": "1",
-      "companyName": "QINGDAO HIGHWAY CLOUD TECHNOLOGY DEVELOPMENT CO.,LTD.",
-      "companyAddress": "40|HONGKONG MIDDLE ROAD|QINGDAO,CHINA|266000",
-      "maerskPartyCode": "40604978695",
-      "cmdCode": "CN04978695"
-    }
-  ],
-  "vasSurcharges": [
-    {
-      "freightType": "F01",
-      "currency": "USD",
-      "description": " Freetime Extension 1Day",
-      "amendmentNumber": "5",
-      "effectivePeriod": {
-        "dateRangeBegin": "2023-10-23",
-        "dateRangeEnd": "2099-12-31"
-      },
-      "offeredLevel": "CONTAINER",
-      "isAdditionalInfoRequired": false,
-      "isQuantityRequired": false,
-      "rateId": "0273123342",
-      "rateUnit": "PER_CONTAINER",
-      "rateAsFiled": 8,
-      "conversionRate": 1,
-      "amountInRequestCurrency": 8,
-      "amount": 8,
-      "isRestricted": false,
-      "isContract": false,
-      "requestedCurrency": "USD",
-      "type": "Detention",
-      "additionalFreeDays": 1,
-      "freeDays": 14
-    },
-    {
-      "freightType": "D03",
-      "currency": "USD",
-      "description": "DMR Free time extension 3 days",
-      "lineItemNumber": "SLI-47427217",
-      "amendmentNumber": "2",
-      "effectivePeriod": {
-        "dateRangeBegin": "2024-04-16",
-        "dateRangeEnd": "2099-12-31"
-      },
-      "offeredLevel": "CONTAINER",
-      "isAdditionalInfoRequired": false,
-      "isQuantityRequired": false,
-      "rateId": "474272172",
-      "rateUnit": "PER_CONTAINER",
-      "rateAsFiled": 30,
-      "conversionRate": 1,
-      "amountInRequestCurrency": 30,
-      "amount": 30,
-      "isRestricted": false,
-      "isContract": false,
-      "requestedCurrency": "USD",
-      "type": "Demurrage",
-      "additionalFreeDays": 3,
-      "freeDays": 7
-    }
-  ],
-  "statusInfos": [
-    {
-      "code": "BI_CI_I_3",
-      "description": "Insurance not available for the Price Owners Country",
-      "type": "Info"
-    }
-  ],
-  "additionalReferences": []
+      {
+        "isAdditionalInfoRequired": false,
+        "amountInRequestCurrency": 30,
+        "amount": 30,
+        "effectivePeriod": {
+          "dateRangeEnd": "2099-12-31",
+          "dateRangeBegin": "2024-04-16"
+        },
+        "freeDays": 7,
+        "rateUnit": "PER_CONTAINER",
+        "description": "DMR Free time extension 3 days",
+        "type": "Demurrage",
+        "conversionRate": 1,
+        "freightType": "D03",
+        "offeredLevel": "CONTAINER",
+        "rateId": "474272172",
+        "isContract": false,
+        "amendmentNumber": "2",
+        "isQuantityRequired": false,
+        "rateAsFiled": 30,
+        "currency": "USD",
+        "requestedCurrency": "USD",
+        "lineItemNumber": "SLI-47427217",
+        "isRestricted": false,
+        "additionalFreeDays": 3
+      }
+    ],
+    "additionalReferences": []
+  },
+  "timeOut": 15,
+  "proxyIp": "122.239.182.44",
+  "proxyPort": "21718",
+  "proxyUserPwd": "d2408575423:gl4pk39d"
 }

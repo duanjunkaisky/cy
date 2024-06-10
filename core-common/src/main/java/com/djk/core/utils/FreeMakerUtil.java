@@ -40,6 +40,7 @@ public class FreeMakerUtil
 
             Configuration configuration = new Configuration(Configuration.VERSION_2_3_30);
             configuration.setTemplateLoader(new StringTemplateLoader());
+//            configuration.setClassicCompatible(true);
             configuration.setDefaultEncoding("UTF-8");
 
             Template template = new Template(templateFileName, sb.toString(), configuration);

@@ -1,5 +1,5 @@
 {
-  "routeScheduleId": "1b414a41-470e-431a-a4e0-6cf360c99d77_1_0",
+  "routeScheduleId": "${routeScheduleId}",
   "equipmentAndHaulage": [
     {
       "containerDetails": {
