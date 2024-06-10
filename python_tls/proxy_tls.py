@@ -31,24 +31,34 @@ def proxy():
         "data": None
     }
 
-#     print(request.json)
+    response = {
+        "status_code": 404,
+        "text": "未匹配methon: " + method
+    }
 
     try:
         if "post" == method.lower():
             response = requests.post(api, headers=headers, json=data, impersonate="chrome110", proxies=proxies,
                                      timeout=timeout)
-        else:
-            response = requests.get(api, headers=headers, params=data, impersonate="chrome110", proxies=proxies,
+        elif "get" == method.lower():
+            response = requests.get(api, headers=headers, impersonate="chrome110", proxies=proxies,
                                     timeout=timeout)
+        elif "put" == method.lower():
+            response = requests.put(api, headers=headers, json=data, impersonate="chrome110", proxies=proxies,
+                                    timeout=timeout)
+        elif "options" == method.lower():
+            response = requests.options(api, headers=headers, json=data, impersonate="chrome110", proxies=proxies,
+                                        timeout=timeout)
         ret = {
-            "succ": True if response.status_code == 200 else False,
+            "succ": True if (
+                    response.status_code == 200 or response.status_code == 202 or response.status_code == 204) else False,
             "data": response.text
         }
 
-#         print(ret)
+    #         print(ret)
 
     except RequestsError as e:
-#         print("error")
+        #         print("error")
         print(e)
         ret["data"] = e.args[0]
     return ret
