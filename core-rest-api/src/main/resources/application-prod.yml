@@ -20,7 +20,7 @@ redis:
   database: crawl
 
 rocketmq:
-  name-server: 124.223.114.215:9876
+  name-server: 47.99.89.49:9876
   producer:
     group: async_crawl_prod_group
     topic: ASYNC_CRAWL_PROD_TOPIC
