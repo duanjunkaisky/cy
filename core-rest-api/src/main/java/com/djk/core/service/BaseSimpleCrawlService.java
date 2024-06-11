@@ -159,7 +159,7 @@ abstract class BaseSimpleCrawlService implements CrawlService {
         } else if ("45G1".equals(code)) {
             return 3;
         }
-        throw new RuntimeException("箱型解析出错");
+        return 100;
     }
 
     @Override
@@ -270,7 +270,7 @@ abstract class BaseSimpleCrawlService implements CrawlService {
         } else if ("THB".equalsIgnoreCase(currency)) {
             return 4;
         }
-        throw new RuntimeException(currency + "解析币种出错,无法适配当前的币种信息");
+        return 100;
     }
 
     public String checkPortName(String portName) {
