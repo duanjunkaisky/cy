@@ -462,7 +462,6 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         redisService.del(REDIS_DATABASE + ":MSK:sensorData");
         redisService.del(REDIS_DATABASE + ":tmp:get-sensorData-api");
         header.put("Authorization", tokenBean.getString("authorization"));
-        header.put("Content-Type", "application/json");
         header.put("Consumer-Key", tokenBean.getString("consumer-key"));
         header.put("Akamai-Bm-Telemetry", tokenBean.getString("akamai-bm-telemetry"));
         header.put("customerCode", tokenBean.getString("customerCode"));
