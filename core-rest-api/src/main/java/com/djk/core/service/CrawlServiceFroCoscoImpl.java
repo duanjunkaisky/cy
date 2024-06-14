@@ -141,7 +141,8 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
                         productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
                         productFeeItem.setFeeCurrency(parseCurrentCy(chargeDetail.getString("currency")));
                         productFeeItem.setPriceComputeType(0);
-                        //费用类型 1海运费，2附加费，3其他费用，4亏仓费，5目的港费用
+                        productFeeItem.setFeeUnit(0);
+                        //费用类型 1海运费，2附加费，3其他费用，4亏仓费，5目的港费用, 6.免箱期
                         if ("OCEAN".equalsIgnoreCase(chargeDetail.getString("chargeTag"))) {
                             productFeeItem.setFeeCostType(1);
                         } else if ("POR".equalsIgnoreCase(chargeDetail.getString("chargeTag"))) {
@@ -179,6 +180,7 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
                     productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
                     productFeeItem.setFeeCurrency(parseCurrentCy(chargeDetail.getString("currency")));
                     productFeeItem.setPriceComputeType(1);
+                    productFeeItem.setFeeUnit(1);
                     //费用类型 1海运费，2附加费，3其他费用，4亏仓费，5目的港费用
                     if ("OCEAN".equalsIgnoreCase(chargeDetail.getString("chargeTag"))) {
                         productFeeItem.setFeeCostType(1);
@@ -205,7 +207,7 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
         } else if ("40HQ".equalsIgnoreCase(cntrType)) {
             return 3;
         }
-        return 0;
+        return 100;
     }
 
 }
