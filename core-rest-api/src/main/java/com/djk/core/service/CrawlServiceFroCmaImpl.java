@@ -279,22 +279,28 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
             }
 
             JSONObject blChargeDetail = fee.getJSONObject("BlChargeDetail");
-            JSONArray prepaidChargeDetails2 = blChargeDetail.getJSONArray("PrepaidChargeDetails");
-            for (Object pcd : prepaidChargeDetails2) {
-                JSONObject prepaidChargeDetail = (JSONObject) pcd;
-                parseFeeIntoList(productFeeItemList, productFeeItem, prepaidChargeDetail, 5, productContainer);//1->5
+            if (null != blChargeDetail) {
+                JSONArray prepaidChargeDetails2 = blChargeDetail.getJSONArray("PrepaidChargeDetails");
+                for (Object pcd : prepaidChargeDetails2) {
+                    JSONObject prepaidChargeDetail = (JSONObject) pcd;
+                    parseFeeIntoList(productFeeItemList, productFeeItem, prepaidChargeDetail, 5, productContainer);//1->5
+                }
             }
 
             JSONArray prepaidChargeDetails3 = chargeDetail.getJSONArray("FreightChargeDetails");
-            for (Object pcd : prepaidChargeDetails3) {
-                JSONObject prepaidChargeDetail = (JSONObject) pcd;
-                parseFeeIntoList(productFeeItemList, productFeeItem, prepaidChargeDetail, 2, productContainer); //1->2
+            if (null != prepaidChargeDetails3) {
+                for (Object pcd : prepaidChargeDetails3) {
+                    JSONObject prepaidChargeDetail = (JSONObject) pcd;
+                    parseFeeIntoList(productFeeItemList, productFeeItem, prepaidChargeDetail, 2, productContainer); //1->2
+                }
             }
 
             JSONArray collectChargeDetails = chargeDetail.getJSONArray("CollectChargeDetails");
-            for (Object ccd : collectChargeDetails) {
-                JSONObject collectChargeDetail = (JSONObject) ccd;
-                parseFeeIntoList(productFeeItemList, productFeeItem, collectChargeDetail, 2, productContainer);
+            if (null != collectChargeDetails) {
+                for (Object ccd : collectChargeDetails) {
+                    JSONObject collectChargeDetail = (JSONObject) ccd;
+                    parseFeeIntoList(productFeeItemList, productFeeItem, collectChargeDetail, 2, productContainer);
+                }
             }
 
             getFreeFee(queryRouteVo, productFeeItemList, productFeeItem, item.getString("traceId"), item.getString("OfferId"), index);
