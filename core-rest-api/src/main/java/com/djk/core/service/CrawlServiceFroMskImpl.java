@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -264,6 +265,16 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 productInfo.setTenantId(0L);
                 productInfo.setSpotId(queryRouteVo.getSpotId());
                 productInfo.setId(redisService.generateIdCommon("product_info"));
+
+                String key = productInfo.getDeparturePortEn()
+                        + productInfo.getDestinationPortEn()
+                        + productInfo.getShippingCompanyId()
+                        + productInfo.getEstimatedDepartureDate()
+                        + productInfo.getShipName()
+                        + productInfo.getVoyageNumber();
+                String spotPk = DigestUtils.md5DigestAsHex(key.getBytes());
+                productInfo.setSpotPk(spotPk);
+                
                 productInfoList.add(productInfo);
 
                 productInfoMapper.insertSelective(productInfo);

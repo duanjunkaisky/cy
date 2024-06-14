@@ -140,8 +140,11 @@ public class ProductInfo implements Serializable {
     @ApiModelProperty(value = "产品标签 10.自营产品 11.秒杀 12.低价 ")
     private String productLabels;
 
-    @ApiModelProperty(value = "爬虫字段唯一标识")
+    @ApiModelProperty(value = "爬虫批次")
     private String spotId;
+
+    @ApiModelProperty(value = "爬虫字段唯一标识")
+    private String spotPk;
 
     @ApiModelProperty(value = "数据权限部门字段")
     private Long dpDeptId;
@@ -169,6 +172,9 @@ public class ProductInfo implements Serializable {
 
     @ApiModelProperty(value = "删除时间")
     private Date deletedTime;
+
+    @ApiModelProperty(value = "创建人姓名")
+    private String creatorName;
 
     private static final long serialVersionUID = 1L;
 
@@ -540,6 +546,14 @@ public class ProductInfo implements Serializable {
         this.spotId = spotId;
     }
 
+    public String getSpotPk() {
+        return spotPk;
+    }
+
+    public void setSpotPk(String spotPk) {
+        this.spotPk = spotPk;
+    }
+
     public Long getDpDeptId() {
         return dpDeptId;
     }
@@ -612,6 +626,14 @@ public class ProductInfo implements Serializable {
         this.deletedTime = deletedTime;
     }
 
+    public String getCreatorName() {
+        return creatorName;
+    }
+
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -664,6 +686,7 @@ public class ProductInfo implements Serializable {
         sb.append(", approvalComment=").append(approvalComment);
         sb.append(", productLabels=").append(productLabels);
         sb.append(", spotId=").append(spotId);
+        sb.append(", spotPk=").append(spotPk);
         sb.append(", dpDeptId=").append(dpDeptId);
         sb.append(", creator=").append(creator);
         sb.append(", createTime=").append(createTime);
@@ -673,6 +696,7 @@ public class ProductInfo implements Serializable {
         sb.append(", tenantId=").append(tenantId);
         sb.append(", deletedBy=").append(deletedBy);
         sb.append(", deletedTime=").append(deletedTime);
+        sb.append(", creatorName=").append(creatorName);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

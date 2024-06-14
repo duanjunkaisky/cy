@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -232,6 +233,15 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
             productInfo.setSpotId(queryRouteVo.getSpotId());
 
             productInfo.setId(redisService.generateIdCommon("product_info"));
+
+            String key = productInfo.getDeparturePortEn()
+                    + productInfo.getDestinationPortEn()
+                    + productInfo.getShippingCompanyId()
+                    + productInfo.getEstimatedDepartureDate()
+                    + productInfo.getShipName()
+                    + productInfo.getVoyageNumber();
+            String spotPk = DigestUtils.md5DigestAsHex(key.getBytes());
+            productInfo.setSpotPk(spotPk);
 
             productInfoList.add(productInfo);
 

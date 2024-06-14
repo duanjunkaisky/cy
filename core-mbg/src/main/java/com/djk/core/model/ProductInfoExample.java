@@ -3175,6 +3175,76 @@ public class ProductInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andSpotPkIsNull() {
+            addCriterion("spot_pk is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpotPkIsNotNull() {
+            addCriterion("spot_pk is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpotPkEqualTo(String value) {
+            addCriterion("spot_pk =", value, "spotPk");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpotPkNotEqualTo(String value) {
+            addCriterion("spot_pk <>", value, "spotPk");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpotPkGreaterThan(String value) {
+            addCriterion("spot_pk >", value, "spotPk");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpotPkGreaterThanOrEqualTo(String value) {
+            addCriterion("spot_pk >=", value, "spotPk");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpotPkLessThan(String value) {
+            addCriterion("spot_pk <", value, "spotPk");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpotPkLessThanOrEqualTo(String value) {
+            addCriterion("spot_pk <=", value, "spotPk");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpotPkLike(String value) {
+            addCriterion("spot_pk like", value, "spotPk");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpotPkNotLike(String value) {
+            addCriterion("spot_pk not like", value, "spotPk");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpotPkIn(List<String> values) {
+            addCriterion("spot_pk in", values, "spotPk");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpotPkNotIn(List<String> values) {
+            addCriterion("spot_pk not in", values, "spotPk");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpotPkBetween(String value1, String value2) {
+            addCriterion("spot_pk between", value1, value2, "spotPk");
+            return (Criteria) this;
+        }
+
+        public Criteria andSpotPkNotBetween(String value1, String value2) {
+            addCriterion("spot_pk not between", value1, value2, "spotPk");
+            return (Criteria) this;
+        }
+
         public Criteria andDpDeptIdIsNull() {
             addCriterion("dp_dept_id is null");
             return (Criteria) this;
@@ -3742,6 +3812,76 @@ public class ProductInfoExample {
 
         public Criteria andDeletedTimeNotBetween(Date value1, Date value2) {
             addCriterion("deleted_time not between", value1, value2, "deletedTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatorNameIsNull() {
+            addCriterion("creator_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatorNameIsNotNull() {
+            addCriterion("creator_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatorNameEqualTo(String value) {
+            addCriterion("creator_name =", value, "creatorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatorNameNotEqualTo(String value) {
+            addCriterion("creator_name <>", value, "creatorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatorNameGreaterThan(String value) {
+            addCriterion("creator_name >", value, "creatorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatorNameGreaterThanOrEqualTo(String value) {
+            addCriterion("creator_name >=", value, "creatorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatorNameLessThan(String value) {
+            addCriterion("creator_name <", value, "creatorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatorNameLessThanOrEqualTo(String value) {
+            addCriterion("creator_name <=", value, "creatorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatorNameLike(String value) {
+            addCriterion("creator_name like", value, "creatorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatorNameNotLike(String value) {
+            addCriterion("creator_name not like", value, "creatorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatorNameIn(List<String> values) {
+            addCriterion("creator_name in", values, "creatorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatorNameNotIn(List<String> values) {
+            addCriterion("creator_name not in", values, "creatorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatorNameBetween(String value1, String value2) {
+            addCriterion("creator_name between", value1, value2, "creatorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatorNameNotBetween(String value1, String value2) {
+            addCriterion("creator_name not between", value1, value2, "creatorName");
             return (Criteria) this;
         }
     }

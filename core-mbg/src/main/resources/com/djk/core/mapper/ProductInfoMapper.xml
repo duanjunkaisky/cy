@@ -48,6 +48,7 @@
     <result column="approval_comment" jdbcType="VARCHAR" property="approvalComment" />
     <result column="product_labels" jdbcType="VARCHAR" property="productLabels" />
     <result column="spot_id" jdbcType="VARCHAR" property="spotId" />
+    <result column="spot_pk" jdbcType="VARCHAR" property="spotPk" />
     <result column="dp_dept_id" jdbcType="BIGINT" property="dpDeptId" />
     <result column="creator" jdbcType="VARCHAR" property="creator" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -57,6 +58,7 @@
     <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
     <result column="deleted_by" jdbcType="VARCHAR" property="deletedBy" />
     <result column="deleted_time" jdbcType="TIMESTAMP" property="deletedTime" />
+    <result column="creator_name" jdbcType="VARCHAR" property="creatorName" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -125,8 +127,8 @@
     waiver_of_container_instructions, deficit_freight_instructions, customer_remarks, 
     publisher, publisher_phone, product_owner, agent_company, product_remarks, submission_time, 
     review_status, shelves_time, views, business_type, status, approver, approval_time, 
-    approval_comment, product_labels, spot_id, dp_dept_id, creator, create_time, updater, 
-    update_time, deleted, tenant_id, deleted_by, deleted_time
+    approval_comment, product_labels, spot_id, spot_pk, dp_dept_id, creator, create_time, 
+    updater, update_time, deleted, tenant_id, deleted_by, deleted_time, creator_name
   </sql>
   <select id="selectByExample" parameterType="com.djk.core.model.ProductInfoExample" resultMap="BaseResultMap">
     select
@@ -175,10 +177,11 @@
       submission_time, review_status, shelves_time, 
       views, business_type, status, 
       approver, approval_time, approval_comment, 
-      product_labels, spot_id, dp_dept_id, 
-      creator, create_time, updater, 
-      update_time, deleted, tenant_id, 
-      deleted_by, deleted_time)
+      product_labels, spot_id, spot_pk, 
+      dp_dept_id, creator, create_time, 
+      updater, update_time, deleted, 
+      tenant_id, deleted_by, deleted_time, 
+      creator_name)
     values (#{id,jdbcType=BIGINT}, #{productNumber,jdbcType=VARCHAR}, #{departurePortZh,jdbcType=VARCHAR}, 
       #{departurePortEn,jdbcType=VARCHAR}, #{destinationPortZh,jdbcType=VARCHAR}, #{destinationPortEn,jdbcType=VARCHAR}, 
       #{shippingCompanyId,jdbcType=BIGINT}, #{cnFullName,jdbcType=VARCHAR}, #{cnAbbreviation,jdbcType=VARCHAR}, 
@@ -195,10 +198,11 @@
       #{submissionTime,jdbcType=TIMESTAMP}, #{reviewStatus,jdbcType=INTEGER}, #{shelvesTime,jdbcType=TIMESTAMP}, 
       #{views,jdbcType=INTEGER}, #{businessType,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
       #{approver,jdbcType=BIGINT}, #{approvalTime,jdbcType=TIMESTAMP}, #{approvalComment,jdbcType=VARCHAR}, 
-      #{productLabels,jdbcType=VARCHAR}, #{spotId,jdbcType=VARCHAR}, #{dpDeptId,jdbcType=BIGINT}, 
-      #{creator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updater,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=BIT}, #{tenantId,jdbcType=BIGINT}, 
-      #{deletedBy,jdbcType=VARCHAR}, #{deletedTime,jdbcType=TIMESTAMP})
+      #{productLabels,jdbcType=VARCHAR}, #{spotId,jdbcType=VARCHAR}, #{spotPk,jdbcType=VARCHAR}, 
+      #{dpDeptId,jdbcType=BIGINT}, #{creator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updater,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, #{deleted,jdbcType=BIT}, 
+      #{tenantId,jdbcType=BIGINT}, #{deletedBy,jdbcType=VARCHAR}, #{deletedTime,jdbcType=TIMESTAMP}, 
+      #{creatorName,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.djk.core.model.ProductInfo">
     insert into product_info
@@ -341,6 +345,9 @@
       <if test="spotId != null">
         spot_id,
       </if>
+      <if test="spotPk != null">
+        spot_pk,
+      </if>
       <if test="dpDeptId != null">
         dp_dept_id,
       </if>
@@ -367,6 +374,9 @@
       </if>
       <if test="deletedTime != null">
         deleted_time,
+      </if>
+      <if test="creatorName != null">
+        creator_name,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -508,6 +518,9 @@
       <if test="spotId != null">
         #{spotId,jdbcType=VARCHAR},
       </if>
+      <if test="spotPk != null">
+        #{spotPk,jdbcType=VARCHAR},
+      </if>
       <if test="dpDeptId != null">
         #{dpDeptId,jdbcType=BIGINT},
       </if>
@@ -534,6 +547,9 @@
       </if>
       <if test="deletedTime != null">
         #{deletedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creatorName != null">
+        #{creatorName,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -684,6 +700,9 @@
       <if test="record.spotId != null">
         spot_id = #{record.spotId,jdbcType=VARCHAR},
       </if>
+      <if test="record.spotPk != null">
+        spot_pk = #{record.spotPk,jdbcType=VARCHAR},
+      </if>
       <if test="record.dpDeptId != null">
         dp_dept_id = #{record.dpDeptId,jdbcType=BIGINT},
       </if>
@@ -710,6 +729,9 @@
       </if>
       <if test="record.deletedTime != null">
         deleted_time = #{record.deletedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.creatorName != null">
+        creator_name = #{record.creatorName,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -764,6 +786,7 @@
       approval_comment = #{record.approvalComment,jdbcType=VARCHAR},
       product_labels = #{record.productLabels,jdbcType=VARCHAR},
       spot_id = #{record.spotId,jdbcType=VARCHAR},
+      spot_pk = #{record.spotPk,jdbcType=VARCHAR},
       dp_dept_id = #{record.dpDeptId,jdbcType=BIGINT},
       creator = #{record.creator,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -772,7 +795,8 @@
       deleted = #{record.deleted,jdbcType=BIT},
       tenant_id = #{record.tenantId,jdbcType=BIGINT},
       deleted_by = #{record.deletedBy,jdbcType=VARCHAR},
-      deleted_time = #{record.deletedTime,jdbcType=TIMESTAMP}
+      deleted_time = #{record.deletedTime,jdbcType=TIMESTAMP},
+      creator_name = #{record.creatorName,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -915,6 +939,9 @@
       <if test="spotId != null">
         spot_id = #{spotId,jdbcType=VARCHAR},
       </if>
+      <if test="spotPk != null">
+        spot_pk = #{spotPk,jdbcType=VARCHAR},
+      </if>
       <if test="dpDeptId != null">
         dp_dept_id = #{dpDeptId,jdbcType=BIGINT},
       </if>
@@ -941,6 +968,9 @@
       </if>
       <if test="deletedTime != null">
         deleted_time = #{deletedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creatorName != null">
+        creator_name = #{creatorName,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -992,6 +1022,7 @@
       approval_comment = #{approvalComment,jdbcType=VARCHAR},
       product_labels = #{productLabels,jdbcType=VARCHAR},
       spot_id = #{spotId,jdbcType=VARCHAR},
+      spot_pk = #{spotPk,jdbcType=VARCHAR},
       dp_dept_id = #{dpDeptId,jdbcType=BIGINT},
       creator = #{creator,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -1000,7 +1031,8 @@
       deleted = #{deleted,jdbcType=BIT},
       tenant_id = #{tenantId,jdbcType=BIGINT},
       deleted_by = #{deletedBy,jdbcType=VARCHAR},
-      deleted_time = #{deletedTime,jdbcType=TIMESTAMP}
+      deleted_time = #{deletedTime,jdbcType=TIMESTAMP},
+      creator_name = #{creatorName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <insert id="batchInsert">
@@ -1021,10 +1053,11 @@
         submission_time, review_status, shelves_time, 
         views, business_type, status, 
         approver, approval_time, approval_comment, 
-        product_labels, spot_id, dp_dept_id, 
-        creator, create_time, updater, 
-        update_time, deleted, tenant_id, 
-        deleted_by, deleted_time)
+        product_labels, spot_id, spot_pk, 
+        dp_dept_id, creator, create_time, 
+        updater, update_time, deleted, 
+        tenant_id, deleted_by, deleted_time, 
+        creator_name)
       values
       <foreach collection="items" item="item" index="index" separator=",">
       (#{item.id,jdbcType=BIGINT}, #{item.productNumber,jdbcType=VARCHAR}, #{item.departurePortZh,jdbcType=VARCHAR}, 
@@ -1043,10 +1076,11 @@
         #{item.submissionTime,jdbcType=TIMESTAMP}, #{item.reviewStatus,jdbcType=INTEGER}, #{item.shelvesTime,jdbcType=TIMESTAMP}, 
         #{item.views,jdbcType=INTEGER}, #{item.businessType,jdbcType=VARCHAR}, #{item.status,jdbcType=TINYINT}, 
         #{item.approver,jdbcType=BIGINT}, #{item.approvalTime,jdbcType=TIMESTAMP}, #{item.approvalComment,jdbcType=VARCHAR}, 
-        #{item.productLabels,jdbcType=VARCHAR}, #{item.spotId,jdbcType=VARCHAR}, #{item.dpDeptId,jdbcType=BIGINT}, 
-        #{item.creator,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updater,jdbcType=VARCHAR}, 
-        #{item.updateTime,jdbcType=TIMESTAMP}, #{item.deleted,jdbcType=BIT}, #{item.tenantId,jdbcType=BIGINT}, 
-        #{item.deletedBy,jdbcType=VARCHAR}, #{item.deletedTime,jdbcType=TIMESTAMP})
+        #{item.productLabels,jdbcType=VARCHAR}, #{item.spotId,jdbcType=VARCHAR}, #{item.spotPk,jdbcType=VARCHAR}, 
+        #{item.dpDeptId,jdbcType=BIGINT}, #{item.creator,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, 
+        #{item.updater,jdbcType=VARCHAR}, #{item.updateTime,jdbcType=TIMESTAMP}, #{item.deleted,jdbcType=BIT}, 
+        #{item.tenantId,jdbcType=BIGINT}, #{item.deletedBy,jdbcType=VARCHAR}, #{item.deletedTime,jdbcType=TIMESTAMP}, 
+        #{item.creatorName,jdbcType=VARCHAR})
       </foreach>
     </if>
   </insert>

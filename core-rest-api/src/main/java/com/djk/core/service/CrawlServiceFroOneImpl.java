@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -202,6 +203,16 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 productInfo.setTenantId(0L);
 
                 productInfo.setSpotId(queryRouteVo.getSpotId());
+
+                String key = productInfo.getDeparturePortEn()
+                        + productInfo.getDestinationPortEn()
+                        + productInfo.getShippingCompanyId()
+                        + productInfo.getEstimatedDepartureDate()
+                        + productInfo.getShipName()
+                        + productInfo.getVoyageNumber();
+                String spotPk = DigestUtils.md5DigestAsHex(key.getBytes());
+                productInfo.setSpotPk(spotPk);
+
                 productInfo.setId(redisService.generateIdCommon("product_info"));
                 productInfoList.add(productInfo);
 

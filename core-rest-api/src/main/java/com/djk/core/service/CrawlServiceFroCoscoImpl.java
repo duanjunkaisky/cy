@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -86,6 +87,15 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
         productInfo.setSpotId(queryRouteVo.getSpotId());
 
         productInfo.setId(redisService.generateIdCommon("product_info"));
+
+        String key = productInfo.getDeparturePortEn()
+                + productInfo.getDestinationPortEn()
+                + productInfo.getShippingCompanyId()
+                + productInfo.getEstimatedDepartureDate()
+                + productInfo.getShipName()
+                + productInfo.getVoyageNumber();
+        String spotPk = DigestUtils.md5DigestAsHex(key.getBytes());
+        productInfo.setSpotPk(spotPk);
 
         productInfoMapper.insertSelective(productInfo);
         addLog(true, BUSINESS_NAME_CRAWL, "product_info完成入库", null, queryRouteVo);
