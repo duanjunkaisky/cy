@@ -23,25 +23,22 @@ import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
 @Service
 @Slf4j
 @Data
-public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements CrawlService
-{
+public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements CrawlService {
     @Autowired
     CrawlRequestStatusMapper requestStatusMapper;
 
     @Override
-    public String queryData(BaseShippingCompany shippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo) throws Exception
-    {
+    public String queryData(BaseShippingCompany shippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo) throws Exception {
         String hostCode = queryRouteVo.getHostCode();
         this.setHostCode(hostCode);
         if (null != queryRouteVo.getOtherData() && !queryRouteVo.getOtherData().isEmpty()) {
             BaseShippingCompany shipCompany = getShipCompany(hostCode);
-            parseData(queryRouteVo, shipCompany);
+            parseData(queryRouteVo, shipCompany, fromPort, toPort);
         }
         return "0";
     }
 
-    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany) throws ParseException
-    {
+    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort) throws ParseException {
         JSONObject otherData = queryRouteVo.getOtherData();
         Long id = otherData.getLong("id");
         JSONObject order = otherData.getJSONObject("order");
@@ -51,10 +48,10 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
 
         ProductInfo productInfo = new ProductInfo();
         productInfo.setProductNumber(getProductNumber());
-        productInfo.setDeparturePortZh(order.getJSONObject("porCity").getString("cityFullNameCn"));
-        productInfo.setDeparturePortEn(order.getJSONObject("porCity").getString("cityFullNameEn"));
-        productInfo.setDestinationPortZh(order.getJSONObject("fndCity").getString("cityFullNameCn"));
-        productInfo.setDestinationPortEn(order.getJSONObject("fndCity").getString("cityFullNameEn"));
+        productInfo.setDeparturePortZh(fromPort.getPortNameZh());
+        productInfo.setDeparturePortEn(fromPort.getPortCode());
+        productInfo.setDestinationPortZh(toPort.getPortNameZh());
+        productInfo.setDestinationPortEn(toPort.getPortCode());
         productInfo.setShippingCompanyId(baseShippingCompany.getId());
         productInfo.setCnFullName(baseShippingCompany.getCnFullName());
         productInfo.setCnAbbreviation(baseShippingCompany.getCnAbbreviation());
@@ -198,8 +195,7 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
         }
     }
 
-    private int getContainerType(String cntrType)
-    {
+    private int getContainerType(String cntrType) {
         if ("20GP".equalsIgnoreCase(cntrType)) {
             return 1;
         } else if ("40GP".equalsIgnoreCase(cntrType)) {
