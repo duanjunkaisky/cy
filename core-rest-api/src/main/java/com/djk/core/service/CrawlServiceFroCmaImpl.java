@@ -230,8 +230,11 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
             productInfo.setTenantId(0L);
 
             productInfo.setSpotId(queryRouteVo.getSpotId());
-            productInfo.setId(Generator.nextId());
+
+            productInfo.setId(redisService.generateIdCommon("product_info"));
+
             productInfoList.add(productInfo);
+
             productInfoMapper.insertSelective(productInfo);
             addLog(true, BUSINESS_NAME_CRAWL, "第" + index + "条product_info完成入库", null, queryRouteVo);
 
@@ -562,14 +565,20 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
     }
 
     public Date parseDate(String dateString, long gmt) {
-        String pattern = "\\d+(\\.\\d+)?";
-        Pattern p = Pattern.compile(pattern);
-        Matcher m = p.matcher(dateString);
+        try {
+            String pattern = "\\d+(\\.\\d+)?";
+            Pattern p = Pattern.compile(pattern);
+            Matcher m = p.matcher(dateString);
 
-        if (m.find()) {
-            return new Date(Long.parseLong(m.group()) - gmt);
+            if (m.find()) {
+                return new Date(Long.parseLong(m.group()) - gmt);
+            }
+        } catch (Exception e) {
+            log.error("解析时间出错: 时间 -> " + dateString);
+            log.error(ExceptionUtil.getMessage(e));
+            log.error(ExceptionUtil.stacktraceToString(e));
         }
-        throw new RuntimeException("时间解析出错: " + dateString);
+        return null;
     }
 
     public String parsePartnerCode(String cookie) {

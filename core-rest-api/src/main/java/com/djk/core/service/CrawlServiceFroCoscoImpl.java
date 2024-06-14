@@ -84,7 +84,9 @@ public class CrawlServiceFroCoscoImpl extends BaseSimpleCrawlService implements 
         productInfo.setDeleted(false);
         productInfo.setTenantId(0L);
         productInfo.setSpotId(queryRouteVo.getSpotId());
-        productInfo.setId(Generator.nextId());
+
+        productInfo.setId(redisService.generateIdCommon("product_info"));
+
         productInfoMapper.insertSelective(productInfo);
         addLog(true, BUSINESS_NAME_CRAWL, "product_info完成入库", null, queryRouteVo);
 

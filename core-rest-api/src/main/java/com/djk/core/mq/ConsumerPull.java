@@ -28,6 +28,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -238,6 +239,15 @@ public class ConsumerPull implements CommandLineRunner {
                     redisService.del(REDIS_DATABASE + ":tmp:token-busy:" + accountName);
                 }
             }
+        }
+    }
+
+    @PostConstruct
+    public void initTableId() {
+        String tableName = "product_info";
+        long id = redisService.generateIdCommon(tableName);
+        if (id < 100000000000L) {
+            redisService.set(REDIS_DATABASE + ":commons:ids:" + tableName, 100000000000L);
         }
     }
 

@@ -202,21 +202,9 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 productInfo.setTenantId(0L);
 
                 productInfo.setSpotId(queryRouteVo.getSpotId());
+                productInfo.setId(redisService.generateIdCommon("product_info"));
+                productInfoList.add(productInfo);
 
-                String existKey = productInfo.getDeparturePortEn()
-                        + productInfo.getDestinationPortEn()
-                        + productInfo.getShippingCompanyId()
-                        + productInfo.getEstimatedDepartureDate()
-                        + productInfo.getShipName()
-                        + productInfo.getVoyageNumber();
-                if (!existMap.containsKey(existKey)) {
-                    productInfo.setId(Generator.nextId());
-                    productInfoList.add(productInfo);
-                    existMap.put(existKey, productInfo);
-                } else {
-                    ProductInfo existProduct = existMap.get(existKey);
-                    productInfo.setId(existProduct.getId());
-                }
                 productInfoMapper.insertSelective(productInfo);
 
                 addLog(true, BUSINESS_NAME_CRAWL, "第" + index + "条product_info完成入库", null, queryRouteVo);

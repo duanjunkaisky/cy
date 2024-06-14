@@ -262,11 +262,12 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                 productInfo.setUpdateTime(new Date());
                 productInfo.setDeleted(false);
                 productInfo.setTenantId(0L);
-
                 productInfo.setSpotId(queryRouteVo.getSpotId());
-                productInfo.setId(Generator.nextId());
+                productInfo.setId(redisService.generateIdCommon("product_info"));
                 productInfoList.add(productInfo);
+
                 productInfoMapper.insertSelective(productInfo);
+
                 addLog(true, BUSINESS_NAME_CRAWL, "第" + page + "页,第" + index + "条product_info完成入库", null, queryRouteVo);
 
                 delData(queryRouteVo);
