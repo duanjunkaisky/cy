@@ -51,7 +51,7 @@ def proxy():
                                         timeout=timeout)
         ret = {
             "succ": True if (
-                    response.status_code == 200 or response.status_code == 202 or response.status_code == 204) else False,
+                    response.status_code == 200 or response.status_code == 201 or response.status_code == 202 or response.status_code == 204) else False,
             "data": response.text
         }
 
