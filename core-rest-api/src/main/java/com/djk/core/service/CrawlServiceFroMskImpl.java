@@ -327,6 +327,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     productFeeItem.setFeeCurrency(cy);
 
                     productFeeItem.setPriceComputeType(1);
+                    productFeeItem.setFeeUnit(1);
                     //亏仓费
                     productFeeItem.setFeeCostType(4);
 
@@ -347,6 +348,7 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
                     String freetimeStartEvent = importDnDCondition.getString("freetimeStartEvent");
 
                     productFeeItem.setPriceComputeType(0);
+                    productFeeItem.setFeeUnit(0);
                     //免用箱
                     productFeeItem.setFeeCostType(6);
 
@@ -413,8 +415,10 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
         String ratebasis = surcharge.getString("ratebasis");
         if ("PER_DOC".equalsIgnoreCase(ratebasis)) {
             productFeeItem.setPriceComputeType(1);
+            productFeeItem.setFeeUnit(1);
         } else {
             productFeeItem.setPriceComputeType(0);
+            productFeeItem.setFeeUnit(0);
         }
         productFeeItem.setPrice(price);
         productFeeItem.setFeeCnName(surcharge.getString("chargedescription"));

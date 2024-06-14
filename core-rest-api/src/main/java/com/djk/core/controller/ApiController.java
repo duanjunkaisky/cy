@@ -192,8 +192,9 @@ public class ApiController {
     public CommonResult test(@RequestBody QueryRouteVo queryRouteVo) {
         try {
             queryRouteVo.setUniqueId(coscoCrawlService.getUniqueId());
-            List<String> beanNames = target.stream().filter(item -> item.toLowerCase().contains(queryRouteVo.getHostCode())).collect(Collectors.toList());
-            queryRouteVo.setBeanName(beanNames.get(0));
+            queryRouteVo.setLogId(coscoCrawlService.getLogId());
+            String serviceName = "crawlServiceFroCmaImpl";
+            queryRouteVo.setBeanName(serviceName);
             queryRouteVo.setStartTime(System.currentTimeMillis());
             queryRouteVo.setSpotId(coscoCrawlService.createSpotId(queryRouteVo, queryRouteVo.getContainerType()));
             crawlChain.doBusiness(queryRouteVo);
