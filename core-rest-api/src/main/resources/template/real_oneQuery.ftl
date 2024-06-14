@@ -56,7 +56,7 @@
       }
     </#if>
   ],
-  "commodityCode": "000000",
+  "commodityCode": "${commodityCode}",
   "reeferType": "",
   "isSoc": false,
   "commodityGroups": [],

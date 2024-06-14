@@ -78,7 +78,10 @@ public class CrawlServiceFroMskImpl extends BaseSimpleCrawlService implements Cr
     {
         String hostCode = queryRouteVo.getHostCode();
         this.setHostCode(hostCode);
-        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据");
+
+        if (StringUtils.isEmpty(fromPort.getMskCode()) || StringUtils.isEmpty(toPort.getMskCode()) || StringUtils.isEmpty(fromPort.getMskRkstCode()) || StringUtils.isEmpty(toPort.getMskRkstCode())) {
+            throw new RuntimeException("base_port未配置cma_code");
+        }
 
         List<ProductInfo> productInfoList = new ArrayList<>();
 

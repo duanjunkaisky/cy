@@ -193,7 +193,7 @@ public class ApiController {
         try {
             queryRouteVo.setUniqueId(coscoCrawlService.getUniqueId());
             queryRouteVo.setLogId(coscoCrawlService.getLogId());
-            String serviceName = "crawlServiceFroCmaImpl";
+            String serviceName = "crawlServiceFroOneImpl";
             queryRouteVo.setBeanName(serviceName);
             queryRouteVo.setStartTime(System.currentTimeMillis());
             queryRouteVo.setSpotId(coscoCrawlService.createSpotId(queryRouteVo, queryRouteVo.getContainerType()));

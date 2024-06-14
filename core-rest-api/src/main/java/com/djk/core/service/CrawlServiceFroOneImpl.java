@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -25,15 +26,17 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.djk.core.config.Constant.BUSINESS_NAME_CRAWL;
+import static com.djk.core.config.Constant.BUSINESS_NAME_ORDER;
+
 /**
  * @author duanjunkai
  * @date 2024/05/01
  */
-//@Service
+@Service
 @Slf4j
 @Data
-public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements CrawlService
-{
+public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements CrawlService {
     private static int reqCount = 0;
 
     @Autowired
@@ -60,11 +63,15 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
     }
 
     @Override
-    public String queryData(BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo)
-    {
+    public String queryData(BaseShippingCompany baseShippingCompany, BasePort fromPort, BasePort toPort, QueryRouteVo queryRouteVo) {
         String hostCode = queryRouteVo.getHostCode();
         this.setHostCode(hostCode);
-        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 开始爬取数据, ip: " + null);
+
+        if (StringUtils.isEmpty(fromPort.getOneCode()) || StringUtils.isEmpty(toPort.getOneCode())) {
+            throw new RuntimeException("base_port未配置cma_code");
+        }
+
+        String commodityCode = getCommodityCode(queryRouteVo, fromPort, toPort);
 
         Map<String, ProductInfo> existMap = new HashMap<>();
         List<ProductInfo> productInfoList = new ArrayList<>();
@@ -73,39 +80,68 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
 
         List<ContainerDist> realList = containerList.stream().filter(i -> i.getFlag().equalsIgnoreCase(queryRouteVo.getContainerType())).collect(Collectors.toList());
         for (ContainerDist container : realList) {
-            String proxy = MyProxyUtil.getProxy();
             while (reqCount < Constant.MAX_REQ_COUNT) {
+                String bodyJson = null;
                 try {
+                    addLog(null, BUSINESS_NAME_CRAWL, "组织请求参数", null, queryRouteVo);
                     reqCount++;
+                    String proxy = MyProxyUtil.getProxy();
+                    String proxyIp = MyProxyUtil.getProxyIp(proxy);
+                    String proxyPort = MyProxyUtil.getProxyPort(proxy);
+
+
+                    addLog(null, BUSINESS_NAME_CRAWL, "获取代理ip: " + proxy, null, queryRouteVo);
+
                     Map<String, Object> fillData = new HashMap<>(1);
                     fillData.put("fromPortCode", fromPort.getOneCode());
                     fillData.put("toPortCode", toPort.getOneCode());
                     fillData.put("containerCode", container.getContainerCode());
-                    String jsonParam = FreeMakerUtil.createByTemplate("real_oneQuery.ftl", fillData);
+                    fillData.put("commodityCode", commodityCode);
+                    String innerJsonParam = FreeMakerUtil.createByTemplate("real_oneQuery.ftl", fillData);
 
-                    log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求, \nbody: " + JSONObject.toJSONString(JSONObject.parseObject(jsonParam)));
+                    fillData = new HashMap<>(1);
+                    fillData.put("appId", DANLI_ACCESS_KEY);
+                    fillData.put("method", "POST");
+                    fillData.put("api", "https://ecomm.one-line.com/api/v1/quotation/schedules/vessel-dates");
 
-                    TimeUnit.MILLISECONDS.sleep(500L);
-                    HttpResp resp = HttpUtil.postBody("https://ecomm.one-line.com/api/v1/quotation/schedules/vessel-dates", getHeader(queryRouteVo), jsonParam, proxy);
-                    Response response = resp.getResponse();
-                    String bodyJson = resp.getBodyJson();
-                    JSONObject retObj = JSONObject.parseObject(bodyJson);
-                    if (response.code() != 200 && response.code() != 201) {
-                        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求返回失败\n" + bodyJson);
-                        continue;
+                    Map<String, String> header = getHeader(queryRouteVo);
+                    header.put("content-type", "application/json");
+                    header.put("Origin", "https://ecomm.one-line.com");
+                    fillData.put("header", header);
+
+                    fillData.put("jsonParam", innerJsonParam);
+                    fillData.put("timeOut", 15);
+                    fillData.put("ip", proxyIp);
+                    fillData.put("port", proxyPort);
+                    fillData.put("password", MyProxyUtil.PROXY_USERNAME + ":" + MyProxyUtil.PROXY_PASSWORD);
+                    String jsonParam = FreeMakerUtil.createByTemplate("danli_req.ftl", fillData);
+
+                    addLog(null, BUSINESS_NAME_CRAWL, "发起请求->开始第" + reqCount + "次请求数据接口", jsonParam, queryRouteVo);
+                    HttpResp resp = HttpUtil.postBody("http://localhost:8899/py/proxy", null, jsonParam, null);
+                    bodyJson = resp.getBodyJson();
+
+                    try {
+                        JSONObject jsonObject = JSONObject.parseObject(bodyJson);
+                        if (jsonObject.getBoolean("succ")) {
+                            String data = jsonObject.getString("data");
+                            addLog(null, BUSINESS_NAME_CRAWL, "成功->第" + reqCount + "次请求数据接口", data, queryRouteVo);
+                            JSONObject retObj = JSONObject.parseObject(data);
+
+                            //开始处理入库
+                            JSONArray offers = retObj.getJSONArray("data");
+                            if (null == offers || offers.isEmpty()) {
+                                addLog(null, BUSINESS_NAME_CRAWL, "成功->第" + reqCount + "次请求数据接口返回未空", data, queryRouteVo);
+                            } else {
+                                parseData(queryRouteVo, baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap, proxy);
+                            }
+                            break;
+                        } else {
+                            addLog(null, BUSINESS_NAME_CRAWL, "鉴权失败->第" + reqCount + "次请求数据接口", bodyJson, queryRouteVo);
+                            continue;
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
-                    //code == 201成功
-                    log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求返回成功");
-
-                    //开始处理入库
-                    JSONArray offers = retObj.getJSONArray("data");
-                    if (null == offers || offers.isEmpty()) {
-                        log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次 请求获取返回未空");
-                    } else {
-                        parseData(queryRouteVo, baseShippingCompany, container, offers, fromPort, toPort, productInfoList, productContainerList, productFeeItemList, existMap, proxy);
-                    }
-                    reqCount = 0;
-                    break;
                 } catch (Exception e) {
                     log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求出错");
                     log.error(ExceptionUtil.getMessage(e));
@@ -118,15 +154,14 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         return String.valueOf(productInfoList.size());
     }
 
-    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap, String proxy) throws ParseException
-    {
+    private void parseData(QueryRouteVo queryRouteVo, BaseShippingCompany baseShippingCompany, ContainerDist container, JSONArray offers, BasePort fromPort, BasePort toPort, List<ProductInfo> productInfoList, List<ProductContainer> productContainerList, List<ProductFeeItem> productFeeItemList, Map<String, ProductInfo> existMap, String proxy) throws ParseException {
         int containerType = computeContainerType(container.getContainerCode());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
+        int index = 1;
         for (Object o : offers) {
             JSONObject item = (JSONObject) o;
             JSONArray freightInfos = item.getJSONArray("freightInfos");
-//            if (null != freightInfos && !freightInfos.isEmpty()) {
             //排除售罄
             if (null != freightInfos && !freightInfos.isEmpty()
                     && !freightInfos.getJSONObject(0).getString("status").equalsIgnoreCase("Sold Out")) {
@@ -186,6 +221,10 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 }
                 productInfoMapper.insertSelective(productInfo);
 
+                addLog(true, BUSINESS_NAME_CRAWL, "第" + index + "条product_info完成入库", null, queryRouteVo);
+
+                delData(queryRouteVo);
+
                 ProductContainer productContainer = new ProductContainer();
                 productContainer.setContainerType(containerType);
                 productContainer.setProductId(productInfo.getId());
@@ -203,7 +242,8 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 productContainer.setTenantId(0L);
                 productContainer.setShippingCompanyId(productInfo.getShippingCompanyId());
                 productContainerList.add(productContainer);
-                productContainerMapper.insertSelective(productContainer);
+//                productContainerMapper.insertSelective(productContainer);
+                addLog(true, BUSINESS_NAME_CRAWL, "第" + index + "条product_container完成入库", null, queryRouteVo);
 
                 ProductFeeItem productFeeItem = new ProductFeeItem();
                 productFeeItem.setShippingCompanyId(productInfo.getShippingCompanyId());
@@ -221,35 +261,35 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
                 JSONArray basicOceanFreightCharges = freightInfo.getJSONArray("basicOceanFreightCharges");
                 for (Object bofc : basicOceanFreightCharges) {
                     JSONObject basicOceanFreightCharge = (JSONObject) bofc;
-                    confirmValue(productFeeItem, basicOceanFreightCharge);
+                    confirmValue(productFeeItem, basicOceanFreightCharge, productContainer);
                     productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                 }
 
                 JSONArray originCharges = freightInfo.getJSONArray("originCharges");
                 for (Object oc : originCharges) {
                     JSONObject originCharge = (JSONObject) oc;
-                    confirmValue(productFeeItem, originCharge);
+                    confirmValue(productFeeItem, originCharge, productContainer);
                     productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                 }
 
                 JSONArray premiumCharges = freightInfo.getJSONArray("premiumCharges");
                 for (Object oc : premiumCharges) {
                     JSONObject premiumCharge = (JSONObject) oc;
-                    confirmValue(productFeeItem, premiumCharge);
+                    confirmValue(productFeeItem, premiumCharge, productContainer);
                     productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                 }
 
                 JSONArray freightCharges = freightInfo.getJSONArray("freightCharges");
                 for (Object oc : freightCharges) {
                     JSONObject freightCharge = (JSONObject) oc;
-                    confirmValue(productFeeItem, freightCharge);
+                    confirmValue(productFeeItem, freightCharge, productContainer);
                     productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                 }
 
                 JSONArray destinationCharges = freightInfo.getJSONArray("destinationCharges");
                 for (Object dc : destinationCharges) {
                     JSONObject destinationCharge = (JSONObject) dc;
-                    confirmValue(productFeeItem, destinationCharge);
+                    confirmValue(productFeeItem, destinationCharge, productContainer);
                     productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
                 }
 
@@ -257,22 +297,29 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
 
                 productFeeItemMapper.batchInsert(productFeeItemList);
 
+                productContainer.setCost(productContainer.getSellingPrice());
+                productContainerMapper.insertSelective(productContainer);
+                productFeeItemMapper.batchInsert(productFeeItemList);
+                addLog(true, BUSINESS_NAME_CRAWL, "第" + index + "条product_fee_item完成入库", null, queryRouteVo);
+
                 customDao.executeSql("update crawl_request_status set use_time=" + System.currentTimeMillis() + "-start_time where spot_id='" + queryRouteVo.getSpotId() + "' and host_code='" + queryRouteVo.getHostCode() + "' and (use_time is null or use_time='')");
+            } else {
+                addLog(true, BUSINESS_NAME_CRAWL, "第" + index + "条product_info为售罄,忽略", null, queryRouteVo);
             }
+            index++;
         }
 
     }
 
-    private void confirmValue(ProductFeeItem productFeeItem, JSONObject surcharge)
-    {
+    private void confirmValue(ProductFeeItem productFeeItem, JSONObject surcharge, ProductContainer productContainer) {
         String chargeTarget = surcharge.getString("chargeTarget");
         if ("ORIGIN".equalsIgnoreCase(chargeTarget)) {
-            productFeeItem.setFeeCostType(1);
-        } else if ("DESTINATION".equalsIgnoreCase(chargeTarget)) {
             productFeeItem.setFeeCostType(2);
+        } else if ("DESTINATION".equalsIgnoreCase(chargeTarget)) {
+            productFeeItem.setFeeCostType(5);
         } else if ("FREIGHT".equalsIgnoreCase(chargeTarget)) {
             //基本海运费
-            productFeeItem.setFeeCostType(6);
+            productFeeItem.setFeeCostType(1); //6-1
         }
         String currency = surcharge.getString("chargeCurrency");
         int cy = parseCurrentCy(currency);
@@ -281,8 +328,20 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         String chargeCode = surcharge.getString("chargeCode");
         if ("DOC".equalsIgnoreCase(chargeCode)) {
             productFeeItem.setPriceComputeType(1);
+            productFeeItem.setFeeUnit(1);
         } else {
             productFeeItem.setPriceComputeType(0);
+            productFeeItem.setFeeUnit(0);
+        }
+
+        int costType = productFeeItem.getFeeCostType();
+        if (costType == 1 || costType == 2) {
+            BigDecimal sellingPrice = productContainer.getSellingPrice();
+            if (null != sellingPrice && sellingPrice.longValue() > 0) {
+                productContainer.setSellingPrice(productContainer.getSellingPrice().add(surcharge.getBigDecimal("chargeAmount")));
+            } else {
+                productContainer.setSellingPrice(surcharge.getBigDecimal("chargeAmount"));
+            }
         }
 
         productFeeItem.setPrice(surcharge.getBigDecimal("chargeAmount"));
@@ -290,53 +349,61 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
         productFeeItem.setFeeEnName(surcharge.getString("chargeName"));
     }
 
-    private Map<String, String> getHeader(QueryRouteVo queryRouteVo)
-    {
+    private Map<String, String> getHeader(QueryRouteVo queryRouteVo) {
         JSONObject tokenBean = getToken(queryRouteVo);
         Map<String, String> header = new HashMap<>(3);
-        header.put("Authorization", tokenBean.getString("authorization"));
-        header.put("Host", "del");
-        header.put("User-Agent", "del");
+        tokenBean.keySet().stream().forEach(key -> {
+            header.put(key, tokenBean.getString(key).replaceAll("\"", "\\\\\""));
+        });
         return header;
     }
 
-    public JSONObject getPortInfo(QueryRouteVo queryRouteVo, String portCodeEn, String countryCode, String proxy)
-    {
-        int count = 0;
-        while (count < Constant.MAX_REQ_COUNT) {
-            String api = "https://ecomm.one-line.com/api/v1/quotation/locations?location=" + portCodeEn + "&orgDest=origin";
-            Map<String, String> header = getHeader(queryRouteVo);
+    private String getCommodityCode(QueryRouteVo queryRouteVo, BasePort fromPort, BasePort toPort) {
+        String commodityCode = null;
+        int reqCount = 0;
+        while (null == commodityCode && reqCount < Constant.MAX_REQ_COUNT) {
             try {
-                TimeUnit.MILLISECONDS.sleep(500L);
-                HttpResp resp = HttpUtil.get(api, header, proxy);
+                Map<String, String> header = getHeader(queryRouteVo);
+                String proxy = MyProxyUtil.getProxy();
+                addLog(null, BUSINESS_NAME_ORDER, "获取代理ip: " + proxy, null, queryRouteVo);
+                String proxyIp = MyProxyUtil.getProxyIp(proxy);
+                String proxyPort = MyProxyUtil.getProxyPort(proxy);
+
+                Map<String, Object> fillData = new HashMap<>(1);
+                fillData.put("appId", DANLI_ACCESS_KEY);
+                fillData.put("method", "POST");
+                fillData.put("api", "https://ecomm.one-line.com/api/v1/quotation/commodity");
+
+                fillData.put("header", header);
+
+                fillData.put("jsonParam", FreeMakerUtil.createByTemplate("real_oneQuery_step1.ftl", fillData));
+                fillData.put("timeOut", 15);
+                fillData.put("ip", proxyIp);
+                fillData.put("port", proxyPort);
+                fillData.put("password", MyProxyUtil.PROXY_USERNAME + ":" + MyProxyUtil.PROXY_PASSWORD);
+                String jsonParam = FreeMakerUtil.createByTemplate("danli_req.ftl", fillData);
+
+                addLog(null, BUSINESS_NAME_ORDER, "第" + (reqCount + 1) + "次发起请求-getCommodityCode", jsonParam, queryRouteVo);
+                HttpResp resp = HttpUtil.postBody("http://localhost:8899/py/proxy", null, jsonParam, null);
                 String bodyJson = resp.getBodyJson();
-                JSONObject retObj = JSONObject.parseObject(bodyJson);
-                JSONArray arr = retObj.getJSONArray("data");
-                for (Object o : arr) {
-                    JSONObject item = (JSONObject) o;
-                    if (checkDisplayedName(item.getString("displayedName"), portCodeEn) && item.getString("countryCode").equalsIgnoreCase(countryCode)) {
-                        return item;
-                    }
+                JSONObject jsonObject = JSONObject.parseObject(bodyJson);
+                if (null != jsonObject && null != jsonObject.getJSONObject("data") && jsonObject.getBoolean("succ")) {
+                    commodityCode = jsonObject.getJSONObject("data").getJSONArray("data").getJSONObject(0).getString("commodityCode");
+                    addLog(null, BUSINESS_NAME_ORDER, "第" + (reqCount + 1) + "次请求-getCommodityCode成功", bodyJson, queryRouteVo);
+                    break;
                 }
+                throw new RuntimeException("第" + (reqCount + 1) + "次获取getCommodityCode失败: " + bodyJson);
             } catch (Exception e) {
-                log.error(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + " - 查询港口代码出错,\n" + api + "\n" + JSONObject.toJSONString(header));
+                addLog(null, BUSINESS_NAME_ORDER, "第" + (reqCount + 1) + "次请求-getCommodityCode出错", ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
+                reqCount++;
                 log.error(ExceptionUtil.getMessage(e));
                 log.error(ExceptionUtil.stacktraceToString(e));
             }
-            count++;
         }
-        throw new RuntimeException(getLogPrefix(queryRouteVo.getSpotId(), this.getHostCode()) + "查询港口代码出错： ");
-    }
-
-    private boolean checkDisplayedName(String displayedName, String portCodeEn)
-    {
-        String[] split = displayedName.split(",");
-        for (String str : split) {
-            if (str.toLowerCase().contains(portCodeEn.toLowerCase())) {
-                return true;
-            }
+        if (StringUtils.isEmpty(commodityCode)) {
+            throw new RuntimeException("getCommodityCode为空");
         }
-        return false;
+        return commodityCode;
     }
 
     /**
@@ -344,108 +411,121 @@ public class CrawlServiceFroOneImpl extends BaseSimpleCrawlService implements Cr
      *
      * @return
      */
-    public String getFreeFee(QueryRouteVo queryRouteVo, List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String fromCode, String toCode, String arriveTime, ContainerDist containerDist, String spotRateOfferingId, String proxy)
-    {
-        String jsonParam = "{" +
-                "    \"originUNLocationCode\": \"" + fromCode + "\",\n" +
-                "    \"destinationUNLocationCode\": \"" + toCode + "\",\n" +
-                "    \"effectiveDateTime\": \"" + arriveTime + "\",\n" +
-                "    \"additionalDays\": 1,\n" +
-                "    \"containerCargos\": [\n" +
-                "        {\n" +
-                "            \"equipmentIsoCode\": \"" + containerDist.getContainerCode() + "\",\n" +
-                "            \"equipmentONECntrTpSz\": \"" + containerDist.getContainerType() + "\",\n" +
-                "            \"quantity\": 1\n" +
-                "        }\n" +
-                "    ],\n" +
-                "    \"oftCurrency\": \"USD\",\n" +
-                "    \"spotRateOfferingId\": \"" + spotRateOfferingId + "\",\n" +
-                "    \"isExtendedFreeTime\": false\n" +
-                "}";
+    public String getFreeFee(QueryRouteVo queryRouteVo, List<ProductFeeItem> productFeeItemList, ProductFeeItem productFeeItem, String fromCode, String toCode, String arriveTime, ContainerDist containerDist, String spotRateOfferingId, String proxy) {
+        int reqCount = 0;
+        while (reqCount < Constant.MAX_REQ_COUNT) {
+            reqCount++;
+            try {
+                String jsonParam = "{" +
+                        "    \"originUNLocationCode\": \"" + fromCode + "\",\n" +
+                        "    \"destinationUNLocationCode\": \"" + toCode + "\",\n" +
+                        "    \"effectiveDateTime\": \"" + arriveTime + "\",\n" +
+                        "    \"additionalDays\": 1,\n" +
+                        "    \"containerCargos\": [\n" +
+                        "        {\n" +
+                        "            \"equipmentIsoCode\": \"" + containerDist.getContainerCode() + "\",\n" +
+                        "            \"equipmentONECntrTpSz\": \"" + containerDist.getContainerType() + "\",\n" +
+                        "            \"quantity\": 1\n" +
+                        "        }\n" +
+                        "    ],\n" +
+                        "    \"oftCurrency\": \"USD\",\n" +
+                        "    \"spotRateOfferingId\": \"" + spotRateOfferingId + "\",\n" +
+                        "    \"isExtendedFreeTime\": false\n" +
+                        "}";
 
-        try {
-            TimeUnit.MILLISECONDS.sleep(1000L);
-            HttpResp resp = HttpUtil.postBody("https://ecomm.one-line.com/api/v1/quotation/demurrage-detention-info", getHeader(queryRouteVo), JSONObject.parseObject(jsonParam).toJSONString(), proxy);
-            String bodyJson = resp.getBodyJson();
-            JSONObject jsonObject = JSONObject.parseObject(bodyJson);
-            JSONObject origin = jsonObject.getJSONObject("origin");
-            String ftDys1 = origin.getJSONObject("demurrage").getString("ftDys");
-            String ftDys1Price = origin.getJSONObject("demurrage").getJSONArray("additionalAmount").getJSONObject(0).getString("pricePerUnit");
-            String currentCy1 = origin.getJSONObject("demurrage").getJSONArray("additionalAmount").getJSONObject(0).getString("currency");
-            String ftDys2 = origin.getJSONObject("detention").getString("ftDys");
-            String ftDys2Price = origin.getJSONObject("detention").getJSONArray("additionalAmount").getJSONObject(0).getString("pricePerUnit");
-            String currentCy2 = origin.getJSONObject("detention").getJSONArray("additionalAmount").getJSONObject(0).getString("currency");
+                try {
+                    addLog(null, BUSINESS_NAME_ORDER, "第" + (reqCount) + "次发起请求-标准免费期信息", jsonParam, queryRouteVo);
+                    HttpResp resp = HttpUtil.postBody("https://ecomm.one-line.com/api/v1/quotation/demurrage-detention-info", getHeader(queryRouteVo), JSONObject.parseObject(jsonParam).toJSONString(), proxy);
+                    String bodyJson = resp.getBodyJson();
+                    JSONObject jsonObject = JSONObject.parseObject(bodyJson);
 
-            JSONObject destination = jsonObject.getJSONObject("destination");
-            String ftDys3 = destination.getJSONObject("demurrage").getString("ftDys");
-            String ftDys3Price = destination.getJSONObject("demurrage").getJSONArray("additionalAmount").getJSONObject(0).getString("pricePerUnit");
-            String currentCy3 = destination.getJSONObject("demurrage").getJSONArray("additionalAmount").getJSONObject(0).getString("currency");
-            String ftDys4 = destination.getJSONObject("detention").getString("ftDys");
-            String ftDys4Price = destination.getJSONObject("detention").getJSONArray("additionalAmount").getJSONObject(0).getString("pricePerUnit");
-            String currentCy4 = destination.getJSONObject("detention").getJSONArray("additionalAmount").getJSONObject(0).getString("currency");
+                    addLog(null, BUSINESS_NAME_ORDER, "第" + (reqCount) + "次请求-标准免费期信息成功", jsonParam, queryRouteVo);
 
-            String msg = "ONE QUOTE 免箱期信息\n" +
-                    "始发地\n" +
-                    "合并滞港费和滞箱费 " + Math.max(Integer.parseInt(ftDys1), Integer.parseInt(ftDys2)) + "天\n" +
-                    "目的地\n" +
-                    "滞期费 " + ftDys3 + "天\n" +
-                    "滞期费 " + ftDys4 + "天";
-            productFeeItem.setPriceComputeType(0);
-            productFeeItem.setFeeCostType(5);
+                    JSONObject origin = jsonObject.getJSONObject("origin");
+                    String ftDys1 = origin.getJSONObject("demurrage").getString("ftDys");
+                    String ftDys1Price = origin.getJSONObject("demurrage").getJSONArray("additionalAmount").getJSONObject(0).getString("pricePerUnit");
+                    String currentCy1 = origin.getJSONObject("demurrage").getJSONArray("additionalAmount").getJSONObject(0).getString("currency");
+                    String ftDys2 = origin.getJSONObject("detention").getString("ftDys");
+                    String ftDys2Price = origin.getJSONObject("detention").getJSONArray("additionalAmount").getJSONObject(0).getString("pricePerUnit");
+                    String currentCy2 = origin.getJSONObject("detention").getJSONArray("additionalAmount").getJSONObject(0).getString("currency");
 
-            productFeeItem.setPrice(new BigDecimal(0));
-            productFeeItem.setFeeCnName("origin demurrage (1-" + ftDys1 + ")");
-            productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
-            productFeeItem.setFeeCurrency(parseCurrentCy(currentCy1));
-            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
+                    JSONObject destination = jsonObject.getJSONObject("destination");
+                    String ftDys3 = destination.getJSONObject("demurrage").getString("ftDys");
+                    String ftDys3Price = destination.getJSONObject("demurrage").getJSONArray("additionalAmount").getJSONObject(0).getString("pricePerUnit");
+                    String currentCy3 = destination.getJSONObject("demurrage").getJSONArray("additionalAmount").getJSONObject(0).getString("currency");
+                    String ftDys4 = destination.getJSONObject("detention").getString("ftDys");
+                    String ftDys4Price = destination.getJSONObject("detention").getJSONArray("additionalAmount").getJSONObject(0).getString("pricePerUnit");
+                    String currentCy4 = destination.getJSONObject("detention").getJSONArray("additionalAmount").getJSONObject(0).getString("currency");
 
-            productFeeItem.setPrice(new BigDecimal(ftDys1Price));
-            productFeeItem.setFeeCnName("origin demurrage (" + ftDys1 + "+)");
-            productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
-            productFeeItem.setFeeCurrency(parseCurrentCy(currentCy1));
-            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
+                    String msg = "ONE QUOTE 免箱期信息\n" +
+                            "始发地\n" +
+                            "合并滞港费和滞箱费 " + Math.max(Integer.parseInt(ftDys1), Integer.parseInt(ftDys2)) + "天\n" +
+                            "目的地\n" +
+                            "滞期费 " + ftDys3 + "天\n" +
+                            "滞期费 " + ftDys4 + "天";
+                    productFeeItem.setPriceComputeType(0);
+                    productFeeItem.setFeeUnit(0);
+                    productFeeItem.setFeeCostType(6);
 
-            productFeeItem.setPrice(new BigDecimal(0));
-            productFeeItem.setFeeCnName("origin detention (1-" + ftDys2 + ")");
-            productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
-            productFeeItem.setFeeCurrency(parseCurrentCy(currentCy2));
-            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
+                    productFeeItem.setPrice(new BigDecimal(0));
+                    productFeeItem.setFeeCnName("origin demurrage (1-" + ftDys1 + ")");
+                    productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
+                    productFeeItem.setFeeCurrency(parseCurrentCy(currentCy1));
+                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
-            productFeeItem.setPrice(new BigDecimal(ftDys2Price));
-            productFeeItem.setFeeCnName("origin detention (" + ftDys2 + "+)");
-            productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
-            productFeeItem.setFeeCurrency(parseCurrentCy(currentCy2));
-            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
+                    productFeeItem.setPrice(new BigDecimal(ftDys1Price));
+                    productFeeItem.setFeeCnName("origin demurrage (" + ftDys1 + "+)");
+                    productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
+                    productFeeItem.setFeeCurrency(parseCurrentCy(currentCy1));
+                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
-            productFeeItem.setPrice(new BigDecimal(0));
-            productFeeItem.setFeeCnName("destination demurrage (1-" + ftDys3 + ")");
-            productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
-            productFeeItem.setFeeCurrency(parseCurrentCy(currentCy3));
-            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
+                    productFeeItem.setPrice(new BigDecimal(0));
+                    productFeeItem.setFeeCnName("origin detention (1-" + ftDys2 + ")");
+                    productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
+                    productFeeItem.setFeeCurrency(parseCurrentCy(currentCy2));
+                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
-            productFeeItem.setPrice(new BigDecimal(ftDys3Price));
-            productFeeItem.setFeeCnName("destination demurrage (" + ftDys3 + "+)");
-            productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
-            productFeeItem.setFeeCurrency(parseCurrentCy(currentCy3));
-            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
+                    productFeeItem.setPrice(new BigDecimal(ftDys2Price));
+                    productFeeItem.setFeeCnName("origin detention (" + ftDys2 + "+)");
+                    productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
+                    productFeeItem.setFeeCurrency(parseCurrentCy(currentCy2));
+                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
-            productFeeItem.setPrice(new BigDecimal(0));
-            productFeeItem.setFeeCnName("destination detention (1-" + ftDys4 + ")");
-            productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
-            productFeeItem.setFeeCurrency(parseCurrentCy(currentCy4));
-            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
+                    productFeeItem.setPrice(new BigDecimal(0));
+                    productFeeItem.setFeeCnName("destination demurrage (1-" + ftDys3 + ")");
+                    productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
+                    productFeeItem.setFeeCurrency(parseCurrentCy(currentCy3));
+                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
-            productFeeItem.setPrice(new BigDecimal(ftDys4Price));
-            productFeeItem.setFeeCnName("destination detention (" + ftDys4 + "+)");
-            productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
-            productFeeItem.setFeeCurrency(parseCurrentCy(currentCy4));
-            productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
+                    productFeeItem.setPrice(new BigDecimal(ftDys3Price));
+                    productFeeItem.setFeeCnName("destination demurrage (" + ftDys3 + "+)");
+                    productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
+                    productFeeItem.setFeeCurrency(parseCurrentCy(currentCy3));
+                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
 
-            return msg;
-        } catch (Exception e) {
-            log.error("查询标准免费期信息出错");
-            log.error(ExceptionUtil.getMessage(e));
-            log.error(ExceptionUtil.stacktraceToString(e));
+                    productFeeItem.setPrice(new BigDecimal(0));
+                    productFeeItem.setFeeCnName("destination detention (1-" + ftDys4 + ")");
+                    productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
+                    productFeeItem.setFeeCurrency(parseCurrentCy(currentCy4));
+                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
+
+                    productFeeItem.setPrice(new BigDecimal(ftDys4Price));
+                    productFeeItem.setFeeCnName("destination detention (" + ftDys4 + "+)");
+                    productFeeItem.setFeeEnName(productFeeItem.getFeeCnName());
+                    productFeeItem.setFeeCurrency(parseCurrentCy(currentCy4));
+                    productFeeItemList.add(JSONObject.parseObject(JSONObject.toJSONString(productFeeItem), ProductFeeItem.class));
+
+                    return msg;
+                } catch (Exception e) {
+                    log.error("查询标准免费期信息出错");
+                    log.error(ExceptionUtil.getMessage(e));
+                    log.error(ExceptionUtil.stacktraceToString(e));
+                }
+            } catch (Exception e) {
+                addLog(null, BUSINESS_NAME_ORDER, "第" + (reqCount) + "次请求-标准免费期信息出错出错", ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
+                log.error(ExceptionUtil.getMessage(e));
+                log.error(ExceptionUtil.stacktraceToString(e));
+            }
         }
         return null;
     }
