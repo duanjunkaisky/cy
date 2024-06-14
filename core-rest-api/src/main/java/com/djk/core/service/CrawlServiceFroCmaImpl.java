@@ -176,7 +176,8 @@ public class CrawlServiceFroCmaImpl extends BaseSimpleCrawlService implements Cr
                     log.info(getLogPrefix(queryRouteVo.getSpotId(), hostCode) + " - 第" + reqCount + "次发起请求出错");
                     log.error(ExceptionUtil.getMessage(e));
                     log.error(ExceptionUtil.stacktraceToString(e));
-                    addLog(null, BUSINESS_NAME_CRAWL, "第" + reqCount + "次发起请求出错", ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
+                    addLog(null, BUSINESS_NAME_CRAWL, "第" + reqCount + "次发起请求出错", bodyJson + "\n" + ExceptionUtil.getMessage(e) + "\n" + ExceptionUtil.stacktraceToString(e), queryRouteVo);
+                    break;
                 }
             }
             reqCount = 0;
